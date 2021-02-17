@@ -40,10 +40,10 @@ namespace UmbrellaToolKit.Collision
 
         public bool checkOverlapActor(Actor actor = null)
         {
-            RowGrid = this.getcell(actor.Left);
-            WidthGrid = this.getcell(actor.Right);
-            ColumnGrid = this.getcell(actor.Top);
-            HeightGrid = this.getcell(actor.Bottom);
+            RowGrid = this.getcell(actor.Left - this.Scene.ScreemOffset.X);
+            WidthGrid = this.getcell(actor.Right - this.Scene.ScreemOffset.X);
+            ColumnGrid = this.getcell(actor.Top - this.Scene.ScreemOffset.Y);
+            HeightGrid = this.getcell(actor.Bottom - -this.Scene.ScreemOffset.Y);
 
             RowGrid = RowGrid < 0 ?  0 : RowGrid;
             ColumnGrid = ColumnGrid < 0 ? 0 : ColumnGrid;
@@ -56,7 +56,7 @@ namespace UmbrellaToolKit.Collision
             {
                 for (int y = ColumnGrid; y <= HeightGrid; y++)
                 {
-                    if (this.check(actor.size, actor.Position, new Point(8,8), new Vector2(x*8, y*8)))
+                    if (this.check(actor.size, actor.Position, new Point(this.Scene.CellSize, this.Scene.CellSize), new Vector2(x*this.Scene.CellSize, y* this.Scene.CellSize)))
                     {
                         if (this.Collides.Contains(this.GridCollides[y][x]))
                             rt = true;
@@ -96,7 +96,7 @@ namespace UmbrellaToolKit.Collision
 
         public int getcell(float position)
         {
-            int cell = (int)(position / 8);
+            int cell = (int)(position / this.Scene.CellSize);
             return cell;
         }
 
@@ -106,12 +106,14 @@ namespace UmbrellaToolKit.Collision
             {
                 for (int y = ColumnGrid; y <= HeightGrid; y++)
                 {
-                    if (this.check(this.Scene.AllActors[0].size, this.Scene.AllActors[0].Position, new Point(8, 8), new Vector2(x * 8, y * 8)))
+                    if (this.check(this.Scene.AllActors[0].size, this.Scene.AllActors[0].Position, 
+                        new Point(this.Scene.CellSize, this.Scene.CellSize), 
+                        new Vector2(x * this.Scene.CellSize, y * this.Scene.CellSize)))
                     {
                         if (this.Collides.Contains(this.GridCollides[x][y]))
                         {
-                            this.Body = new Rectangle(new Point(0,0), new Point(8,8));
-                            this.Position = new Vector2(x*8, y*8);
+                            this.Body = new Rectangle(new Point(0,0), new Point(this.Scene.CellSize, this.Scene.CellSize));
+                            this.Position = new Vector2(x* this.Scene.CellSize, y* this.Scene.CellSize);
                             this.DrawSprite(spriteBatch);
                         }
                     }

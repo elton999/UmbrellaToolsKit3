@@ -10,8 +10,10 @@ namespace UmbrellaToolKit
 {
     public class Scene
     {
-        public Scene()
+        public Scene(GraphicsDevice ScreemGraphicsDevice, ContentManager Content)
         {
+            this.ScreemGraphicsDevice = ScreemGraphicsDevice;
+            this.Content = Content;
             this.addLayers();
         }
 
@@ -32,6 +34,7 @@ namespace UmbrellaToolKit
         public List<Solid> AllSolids = new List<Solid>();
         public List<Actor> AllActors = new List<Actor>();
         public Grid Grid = new Grid();
+        public int CellSize = 8;
 
         public void addLayers()
         {
@@ -231,15 +234,19 @@ namespace UmbrellaToolKit
                 this.DrawGameObjects(spriteBatch, SortLayers);
                 //if(this.Collision != null) this.Collision.Draw(spriteBatch);
 
-                //UI Draw
-                for (int i = this.UI.Count - 1; i >= 0; i--)
-                {
-                    if(!this.UI[i].RemoveFromScene)this.UI[i].Draw(spriteBatch);
-                }
-
                 if (this.Grid != null)
                     this.Grid.Draw(spriteBatch);
             }
+
+            spriteBatch.End();
+
+
+            //UI Draw
+            spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp, null, null, null);
+            for (int i = this.UI.Count - 1; i >= 0; i--)
+                this.UI[i].Draw(spriteBatch);
+            spriteBatch.End();
+
 
             float _xScale = Viewport.X / this.Width;
             float _yScale = Viewport.Y / this.Height;
@@ -249,8 +256,6 @@ namespace UmbrellaToolKit
             float _Position_x = ((Viewport.X / 2) - (this.Width * _scale / 2));
             float _Position_y = ((Viewport.Y / 2) - (this.Height * _scale / 2));
 
-            spriteBatch.End();
-            
             ScreemGraphicsDevice.SetRenderTarget(null);
             ScreemGraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, null);

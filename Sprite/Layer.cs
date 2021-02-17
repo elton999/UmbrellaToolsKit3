@@ -17,10 +17,10 @@ namespace UmbrellaToolKit.Sprite
         {
             base.Draw(spriteBatch);
 
-            int _row = (int)((this.Scene.Camera.Position.X - this.Scene.Camera.Origin.X) / 8);
-            int _rowWidth = (int)((this.Scene.Camera.Position.X - this.Scene.Camera.Origin.X + this.Scene.Sizes.X) / 8) + 1;
-            int _column = (int)((this.Scene.Camera.Position.Y - this.Scene.Camera.Origin.Y) / 8);
-            int _columnHeight = (int)((this.Scene.Camera.Position.Y - this.Scene.Camera.Origin.Y + this.Scene.Sizes.Y) / 8) + 1;
+            int _row = (int)((this.Scene.Camera.Position.X - this.Scene.Camera.Origin.X + this.Scene.ScreemOffset.X) / this.Scene.CellSize);
+            int _rowWidth = (int)((this.Scene.Camera.Position.X + this.Scene.ScreemOffset.X - this.Scene.Camera.Origin.X + this.Scene.Sizes.X) / this.Scene.CellSize) + 1;
+            int _column = (int)((this.Scene.Camera.Position.Y + this.Scene.ScreemOffset.Y - this.Scene.Camera.Origin.Y) / this.Scene.CellSize);
+            int _columnHeight = (int)((this.Scene.Camera.Position.Y + this.Scene.ScreemOffset.Y - this.Scene.Camera.Origin.Y + this.Scene.Sizes.Y) / this.Scene.CellSize) + 1;
 
             _row = _row < 0 ? 0 : _row;
             _column = _column < 0 ? 0 : _column;
@@ -33,8 +33,8 @@ namespace UmbrellaToolKit.Sprite
                 {
                     if (this.tiles[x][y][0] != -1)
                     {
-                        this.Body = new Rectangle(this.tiles[x][y][0]*8, this.tiles[x][y][1]*8, 8, 8);
-                        this.Position = new Vector2(y*8, x*8);
+                        this.Body = new Rectangle(this.tiles[x][y][0]* this.Scene.CellSize, this.tiles[x][y][1]* this.Scene.CellSize, this.Scene.CellSize, this.Scene.CellSize);
+                        this.Position = new Vector2(y* this.Scene.CellSize + this.Scene.ScreemOffset.X, x* this.Scene.CellSize + this.Scene.ScreemOffset.Y);
                         this.DrawSprite(spriteBatch);
                     }
                 }
