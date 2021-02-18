@@ -20,12 +20,12 @@ namespace UmbrellaToolKit.Sprite
             int _row = (int)((this.Scene.Camera.Position.X - this.Scene.Camera.Origin.X + this.Scene.ScreemOffset.X) / this.Scene.CellSize);
             int _rowWidth = (int)((this.Scene.Camera.Position.X + this.Scene.ScreemOffset.X - this.Scene.Camera.Origin.X + this.Scene.Sizes.X) / this.Scene.CellSize) + 1;
             int _column = (int)((this.Scene.Camera.Position.Y + this.Scene.ScreemOffset.Y - this.Scene.Camera.Origin.Y) / this.Scene.CellSize);
-            int _columnHeight = (int)((this.Scene.Camera.Position.Y + this.Scene.ScreemOffset.Y - this.Scene.Camera.Origin.Y + this.Scene.Sizes.Y) / this.Scene.CellSize) + 1;
+            int _columnHeight = (int)((this.Scene.Camera.Position.Y + this.Scene.ScreemOffset.Y - this.Scene.Camera.Origin.Y + this.Scene.Sizes.Y) / this.Scene.CellSize) +1;
 
             _row = _row < 0 ? 0 : _row;
             _column = _column < 0 ? 0 : _column;
-            _rowWidth = _rowWidth > this.tiles.Count() ? this.tiles.Count() : _rowWidth;
-            _columnHeight = _columnHeight > this.tiles[0].Count() ? this.tiles[0].Count() : _columnHeight;
+            _rowWidth = _rowWidth >= this.tiles[0].Count() ? this.tiles[0].Count() : _rowWidth;
+            _columnHeight = _columnHeight >= this.tiles.Count() ? this.tiles.Count() : _columnHeight;
 
             for (int x = _column; x < _columnHeight; x++)
             {

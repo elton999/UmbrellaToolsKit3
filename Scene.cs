@@ -33,8 +33,9 @@ namespace UmbrellaToolKit
         // Collision
         public List<Solid> AllSolids = new List<Solid>();
         public List<Actor> AllActors = new List<Actor>();
-        public Grid Grid = new Grid();
+        public Grid Grid;
         public int CellSize = 8;
+        public bool PixelArt = true;
 
         public void addLayers()
         {
@@ -53,7 +54,7 @@ namespace UmbrellaToolKit
         public GraphicsDevice ScreemGraphicsDevice;
         public ContentManager Content;
 
-        private Color BackgroundColor;
+        private Color BackgroundColor = Color.CornflowerBlue;
         public ScreemController Screem { get; set; }
 
         //Camera
@@ -89,12 +90,11 @@ namespace UmbrellaToolKit
 
             Content.Load<Texture2D>("Engine/tiles");
 
-            this.tileSet = Content.Load<Ogmo.TileSet>("Maps/TileSettings");
             this.tileMap = Content.Load<Ogmo.TileMap>("Maps/level_"+level);
 
             Texture2D _tilemapSprite = Content.Load<Texture2D>("Sprites/tilemap");
 
-            this.tileMap.Create(this, this.AssetManagement, this.tileSet, this.tileMap, _tilemapSprite);
+            this.tileMap.Create(this, this.AssetManagement, this.tileMap, _tilemapSprite);
             this.CreateBackBuffer();
             
             this.LevelReady = true;
@@ -232,14 +232,15 @@ namespace UmbrellaToolKit
                 if (this.BackgroundColor != Color.Transparent) graphicsDevice.Clear(this.BackgroundColor);
                 
                 this.DrawGameObjects(spriteBatch, SortLayers);
-                //if(this.Collision != null) this.Collision.Draw(spriteBatch);
 
+                #if DEBUG_COLLISION
                 if (this.Grid != null)
                     this.Grid.Draw(spriteBatch);
+                #endif
             }
 
-            spriteBatch.End();
 
+            spriteBatch.End();
 
             //UI Draw
             spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp, null, null, null);
@@ -247,31 +248,30 @@ namespace UmbrellaToolKit
                 this.UI[i].Draw(spriteBatch);
             spriteBatch.End();
 
-
+            //Scale canvas settings
             float _xScale = Viewport.X / this.Width;
             float _yScale = Viewport.Y / this.Height;
-            //float _scale = (_yScale + _xScale) / 2f;
-            float _scale = Viewport.X < Viewport.Y ? _xScale : _yScale;
+            float _BackBuffer_scale = Viewport.X < Viewport.Y ? _xScale : _yScale;
 
-            float _Position_x = ((Viewport.X / 2) - (this.Width * _scale / 2));
-            float _Position_y = ((Viewport.Y / 2) - (this.Height * _scale / 2));
+            float _BackBuffer_Position_x = ((Viewport.X / 2) - (this.Width * _BackBuffer_scale / 2));
+            float _BackBuffer_Position_y = ((Viewport.Y / 2) - (this.Height * _BackBuffer_scale / 2));
 
             ScreemGraphicsDevice.SetRenderTarget(null);
             ScreemGraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, null);
             spriteBatch.Draw(
                 (Texture2D)this._BackBuffer,
-                new Vector2(_Position_x, _Position_y),
+                new Vector2(_BackBuffer_Position_x, _BackBuffer_Position_y),
                 null,
                 Color.White,
                 0,
                 Vector2.Zero,
-                _scale,
+                _BackBuffer_scale,
                 SpriteEffects.None,
                 0
             );
             spriteBatch.End();
         }
-        #endregion
+#endregion
     }
 }

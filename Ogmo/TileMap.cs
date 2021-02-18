@@ -24,14 +24,12 @@ namespace UmbrellaToolKit.Ogmo
 
         private Scene _Scene;
         private AssetManagement _Assets;
-        private Ogmo.TileSet _TileSet;
         private Ogmo.TileMap _TileMap;
 
-        public void Create(Scene scene, AssetManagement assets, TileSet tileSet, Ogmo.TileMap tileMap, Texture2D tilemapSprite)
+        public void Create(Scene scene, AssetManagement assets, Ogmo.TileMap tileMap, Texture2D tilemapSprite)
         {
             this._Scene = scene;
             this._Assets = assets;
-            this._TileSet = tileSet;
             this._TileMap = tileMap;
 
             this._Scene.ScreemOffset = new Point(this._TileMap.offsetX, this._TileMap.offsetY);
@@ -39,6 +37,7 @@ namespace UmbrellaToolKit.Ogmo
             foreach (TileMapLayers layer in this._TileMap.layers)
             {
                 if (layer.grid2D.Count() > 0){
+                    this._Scene.Grid = new Grid();
                     this._Scene.Grid.GridCollides = layer.grid2D;
                     this._Scene.Grid.Scene = this._Scene;
                     this._Scene.Grid.Sprite = this._Scene.Content.Load<Texture2D>("Engine/tiles");
@@ -53,11 +52,14 @@ namespace UmbrellaToolKit.Ogmo
                 }else if (layer.entities.Count() > 0){
                     foreach (TileMapEntity entity in layer.entities)
                     {
-                        this._Assets.addEntityOnScene(
-                            entity.name,
-                            new Vector2(entity.x + this._Scene.ScreemOffset.X, entity.y + this._Scene.ScreemOffset.Y),
-                            new Point(entity.width, entity.height)
-                        );
+                        if (this._Assets != null)
+                        {
+                            this._Assets.addEntityOnScene(
+                                entity.name,
+                                new Vector2(entity.x + this._Scene.ScreemOffset.X, entity.y + this._Scene.ScreemOffset.Y),
+                                new Point(entity.width, entity.height)
+                            );
+                        }
                     }
                 }
             }

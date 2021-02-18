@@ -102,19 +102,22 @@ namespace UmbrellaToolKit.Collision
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            for (int x = RowGrid; x <= WidthGrid; x++)
+            if (this.Scene.AllActors.Count > 0)
             {
-                for (int y = ColumnGrid; y <= HeightGrid; y++)
+                for (int x = RowGrid; x <= WidthGrid; x++)
                 {
-                    if (this.check(this.Scene.AllActors[0].size, this.Scene.AllActors[0].Position, 
-                        new Point(this.Scene.CellSize, this.Scene.CellSize), 
-                        new Vector2(x * this.Scene.CellSize, y * this.Scene.CellSize)))
+                    for (int y = ColumnGrid; y <= HeightGrid; y++)
                     {
-                        if (this.Collides.Contains(this.GridCollides[x][y]))
+                        if (this.check(this.Scene.AllActors[0].size, this.Scene.AllActors[0].Position,
+                            new Point(this.Scene.CellSize, this.Scene.CellSize),
+                            new Vector2(x * this.Scene.CellSize, y * this.Scene.CellSize)))
                         {
-                            this.Body = new Rectangle(new Point(0,0), new Point(this.Scene.CellSize, this.Scene.CellSize));
-                            this.Position = new Vector2(x* this.Scene.CellSize, y* this.Scene.CellSize);
-                            this.DrawSprite(spriteBatch);
+                            if (this.Collides.Contains(this.GridCollides[x][y]))
+                            {
+                                this.Body = new Rectangle(new Point(0, 0), new Point(this.Scene.CellSize, this.Scene.CellSize));
+                                this.Position = new Vector2(x * this.Scene.CellSize, y * this.Scene.CellSize);
+                                this.DrawSprite(spriteBatch);
+                            }
                         }
                     }
                 }
