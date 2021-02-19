@@ -57,7 +57,8 @@ namespace UmbrellaToolKit.Ogmo
                             this._Assets.addEntityOnScene(
                                 entity.name,
                                 new Vector2(entity.x + this._Scene.ScreemOffset.X, entity.y + this._Scene.ScreemOffset.Y),
-                                new Point(entity.width, entity.height)
+                                new Point(entity.width, entity.height),
+                                this._Scene
                             );
                         }
                     }

@@ -47,8 +47,8 @@ namespace UmbrellaToolKit.Collision
 
             RowGrid = RowGrid < 0 ?  0 : RowGrid;
             ColumnGrid = ColumnGrid < 0 ? 0 : ColumnGrid;
-            WidthGrid =  WidthGrid >= this.GridCollides.Count() ? this.GridCollides.Count() - 1 :  WidthGrid;
-            HeightGrid = HeightGrid >= this.GridCollides[0].Count() ? this.GridCollides[0].Count() - 1 : HeightGrid;
+            WidthGrid =  WidthGrid >= this.GridCollides[0].Count() ? this.GridCollides[0].Count() - 1 :  WidthGrid;
+            HeightGrid = HeightGrid >= this.GridCollides.Count() ? this.GridCollides.Count() - 1 : HeightGrid;
 
             bool rt = false;
                 

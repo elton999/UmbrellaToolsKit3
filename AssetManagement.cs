@@ -12,8 +12,6 @@ namespace UmbrellaToolKit
         public List<AssetObject> AssetsList = new List<AssetObject>();
         public List<AssetObject> LevelAssetsList = new List<AssetObject>();
 
-        public Scene Scene { get; set; }
-
         public void Set<T>(string tag, string layer) where T : GameObject
         {
             AssetObject assetObject = new AssetObject { Name = tag, Layer = layer, GameObject = typeof(T) };
@@ -28,9 +26,7 @@ namespace UmbrellaToolKit
             {
                 AssetObject assetObject = assetObjects.First();
                 GameObject gameObject = (GameObject)Activator.CreateInstance(assetObject.GameObject);
-                gameObject.Content = this.Scene.Content;
-                gameObject.Scene = this.Scene;
-                gameObject.Start();
+               
                 return gameObject;
             }
 
@@ -48,7 +44,7 @@ namespace UmbrellaToolKit
         }
 
 
-        public void addEntityOnScene(string name, Vector2 position, Point size){ // ? values:Dynamic, ? nodes:Array<Vector2>, ? flipx:Bool):Void{
+        public void addEntityOnScene(string name, Vector2 position, Point size, Scene scene){ // ? values:Dynamic, ? nodes:Array<Vector2>, ? flipx:Bool):Void{
             GameObject gameObject = this.GetObject(name);
             string layer = this.GetLayer(name);
 
@@ -56,15 +52,18 @@ namespace UmbrellaToolKit
             gameObject.size = size;
 
             if (layer == "PLAYER")
-                this.Scene.Players.Add(gameObject);
+                scene.Players.Add(gameObject);
             else if (layer == "ENEMIES")
-                this.Scene.Enemies.Add(gameObject);
+                scene.Enemies.Add(gameObject);
             else if (layer == "FOREGROUND")
-                this.Scene.Foreground.Add(gameObject);
+                scene.Foreground.Add(gameObject);
             else if (layer == "MIDDLEGROUND")
-                this.Scene.Middleground.Add(gameObject);
+                scene.Middleground.Add(gameObject);
             else if (layer == "BACKGROUND")
-                this.Scene.Backgrounds.Add(gameObject);
+                scene.Backgrounds.Add(gameObject);
+
+            gameObject.Content = scene.Content;
+            gameObject.Scene = scene;
 
             gameObject.Start();
         }

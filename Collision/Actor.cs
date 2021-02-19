@@ -10,10 +10,11 @@ namespace UmbrellaToolKit.Collision
     public class Actor : GameObject
     {
         public String tag;
-        /*public void updateData()
+        public override void UpdateData(GameTime gameTime)
         {
-            this.gravity(DeltaTime);
-        }*/
+            base.UpdateData(gameTime);
+            this.gravity((float)gameTime.ElapsedGameTime.TotalSeconds);
+        }
 
         public int Right{
 		    get => (int)(this.Position.X + this.size.X);
@@ -33,8 +34,9 @@ namespace UmbrellaToolKit.Collision
 
         public Vector2 gravity2D = new Vector2(0, -350);
         public Vector2 velocity = new Vector2(0,0);
-        public float velocityDecrecent = 200;
-	    private void gravity(float DeltaTime)
+        public float velocityDecrecentY = 200;
+        public float velocityDecrecentX = 200;
+        private void gravity(float DeltaTime)
         {
 
             Vector2 gravity = new Vector2(this.velocity.X + this.gravity2D.X, this.velocity.Y + this.gravity2D.Y);
@@ -46,16 +48,16 @@ namespace UmbrellaToolKit.Collision
 
             // velocity Controller
             if (this.velocity.Y > 0)
-                this.velocity.Y -= this.velocityDecrecent * DeltaTime;
+                this.velocity.Y -= this.velocityDecrecentY * DeltaTime;
             else if (this.velocity.Y < 0)
-                this.velocity.Y += this.velocityDecrecent * DeltaTime;
+                this.velocity.Y += this.velocityDecrecentY * DeltaTime;
             else
                 this.velocity.Y = 0;
 
             if (this.velocity.X > 0)
-                this.velocity.X -= this.velocityDecrecent * DeltaTime;
+                this.velocity.X -= this.velocityDecrecentX * DeltaTime;
             else if (this.velocity.X < 0)
-                this.velocity.X += this.velocityDecrecent * DeltaTime;
+                this.velocity.X += this.velocityDecrecentX * DeltaTime;
             else
                 this.velocity.X = 0;
             // end velocity Controller

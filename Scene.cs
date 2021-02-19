@@ -82,6 +82,7 @@ namespace UmbrellaToolKit
         public Ogmo.TileMap tileMap;
         public Ogmo.TileSet tileSet;
         public AssetManagement AssetManagement;
+        public GameManagement GameManagement;
 
         public void SetLevel(int level)
         {
