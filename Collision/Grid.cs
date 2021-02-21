@@ -14,6 +14,7 @@ namespace UmbrellaToolKit.Collision
         public List<List<string>> GridCollides = new List<List<string>>();
         public Scene Scene;
         public List<string> Collides = new List<string>();
+        public List<string> CollidesRamps = new List<string>();
         public Point GridSize;
 
         public Grid()
@@ -22,13 +23,16 @@ namespace UmbrellaToolKit.Collision
             this.Transparent = 0.5f;
         }
 
-        public bool checkOverlap(Point size, Vector2 position)
+        public bool checkOverlap(Point size, Vector2 position, Actor ActorReal)
         {
             Actor actor = new Actor();
             actor.size = size;
             actor.Position = position;
             if (this.checkOverlapActor(actor))
+            {
+                ActorReal.EdgesIsCollision = actor.EdgesIsCollision;
                 return true;
+            }
             else
                 return false;
         }
@@ -40,6 +44,9 @@ namespace UmbrellaToolKit.Collision
 
         public bool checkOverlapActor(Actor actor = null)
         {
+            // setting false edges collision to false
+            actor.SetFalseAllEdgeCollision();
+
             RowGrid = this.getcell(actor.Left - this.Scene.ScreemOffset.X);
             WidthGrid = this.getcell(actor.Right - this.Scene.ScreemOffset.X);
             ColumnGrid = this.getcell(actor.Top - this.Scene.ScreemOffset.Y);
@@ -60,6 +67,27 @@ namespace UmbrellaToolKit.Collision
                     {
                         if (this.Collides.Contains(this.GridCollides[y][x]))
                             rt = true;
+                        if (this.CollidesRamps.Contains(this.GridCollides[y][x]))
+                        {
+                            // check ramps
+                            if(this.CollidesRamps[0] == this.GridCollides[y][x])
+                            {
+                                // ramp right bottom check
+                                if(actor.Bottom - (y * this.Scene.CellSize) > (this.Scene.CellSize - (actor.Right - x * this.Scene.CellSize)))
+                                {
+                                    rt = true;
+                                    actor.EdgesIsCollision[Actor.EDGES.BOTTOM_RIGHT] = true;
+                                }
+                            } else if (this.CollidesRamps[1] == this.GridCollides[y][x])
+                            {
+                                // ramp right bottom check
+                                if (actor.Bottom - (y * this.Scene.CellSize) > ((actor.Left - x * this.Scene.CellSize)))
+                                {
+                                    rt = true;
+                                    actor.EdgesIsCollision[Actor.EDGES.BOTTOM_LEFT] = true;
+                                }
+                            }
+                        }
                     }
                 }
             }
