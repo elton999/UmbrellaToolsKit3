@@ -88,7 +88,8 @@ namespace UmbrellaToolKit.Collision
         }
 
         float xRemainder = 0;
-	    public void moveX(float amount, Action onCollideFunction = null){
+	    public void moveX(float amount, Action<string?> onCollideFunction = null)
+        {
 		    xRemainder += amount;
   		    int move = (int)Math.Round(xRemainder);
 
@@ -109,13 +110,11 @@ namespace UmbrellaToolKit.Collision
 
                         this.Position.X += sign; 
 					    move -= sign;
-
-                        
 				    } 
 				    else 
 				    {
 					    if(onCollideFunction != null)
-						    onCollideFunction();
+						    onCollideFunction(null);
 					    break; 
 				    } 
 			    } 
@@ -123,7 +122,7 @@ namespace UmbrellaToolKit.Collision
 	    }
 
         float yRemainder = 0;
-        public void moveY(float amount, Action onCollideFunction = null){
+        public void moveY(float amount, Action <string?> onCollideFunction = null){
 	        yRemainder += amount;
   	        int move = (int)Math.Round(yRemainder);
 
@@ -144,7 +143,7 @@ namespace UmbrellaToolKit.Collision
 			        else 
 			        { 
 				        if(onCollideFunction != null)
-					        onCollideFunction();
+					        onCollideFunction(null);
                         break; 
 			        } 
 		        } 
@@ -190,6 +189,6 @@ namespace UmbrellaToolKit.Collision
             return false;
         }
 
-        public virtual void squish(){}
+        public virtual void squish(string tag = null){}
     }
 }

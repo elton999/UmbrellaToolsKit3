@@ -46,11 +46,12 @@ namespace UmbrellaToolKit
 
         public float Radius;
 
-        public virtual void OnCollision() { }
+        public virtual void OnCollision(string tag = null) { }
         public virtual void OnCollisionOut(string tag) { }
         public virtual void OnTriggerIn(string tag) { }
         public virtual void OnTriggerOut(string tag) { }
-        public virtual void OnMouseOver() {}
+        public virtual void OnMouseOver() { }
+        public virtual void Destroy() { }
 
         
 

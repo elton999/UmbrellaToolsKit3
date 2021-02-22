@@ -63,7 +63,7 @@ namespace UmbrellaToolKit
         public CameraManagement Camera;
 
         public bool LevelReady = false;
-        
+
         public void SetSizes(int width, int height)
         {
             this.Width = width;
@@ -84,6 +84,9 @@ namespace UmbrellaToolKit
         public AssetManagement AssetManagement;
         public GameManagement GameManagement;
 
+        public string MapLevelPath = "Maps/level_";
+        public string TileMapPath = "Sprites/tilemap";
+
         public void SetLevel(int level)
         {
             this.Camera = new CameraManagement();
@@ -91,15 +94,15 @@ namespace UmbrellaToolKit
 
             Content.Load<Texture2D>("Engine/tiles");
 
-            this.tileMap = Content.Load<Ogmo.TileMap>("Maps/level_"+level);
+            this.tileMap = Content.Load<Ogmo.TileMap>(this.MapLevelPath + level);
 
-            Texture2D _tilemapSprite = Content.Load<Texture2D>("Sprites/tilemap");
+            Texture2D _tilemapSprite = Content.Load<Texture2D>(this.TileMapPath);
 
             this.tileMap.Create(this, this.AssetManagement, this.tileMap, _tilemapSprite);
             this.CreateBackBuffer();
-            
+
             this.LevelReady = true;
-            
+
         }
 
         public void CreateBackBuffer()
@@ -110,35 +113,39 @@ namespace UmbrellaToolKit
 
         #region Update
         float timer = 0;
+        public float updateDataTime = 1 / 30f;
         private void UpdateGameObjects(GameTime gameTime, List<List<GameObject>> layers)
         {
             //UI update
             for (int i = this.UI.Count - 1; i >= 0; i--)
             {
                 this.UI[i].Update(gameTime);
-                if (gameTime.ElapsedGameTime.TotalSeconds % 4 > 2)
-                    this.UI[i].UpdateData(gameTime);
+                //if (gameTime.ElapsedGameTime.TotalSeconds % 4 > 2)
+                //    this.UI[i].UpdateData(gameTime);
             }
-            
+
             for (int i = layers.Count - 1; i >= 0; i--)
             {
                 for (int e = layers[i].Count - 1; e >= 0; e--)
                 {
                     layers[i][e].Update(gameTime);
+                }
+            }
 
-
-                    timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    float updateTime = 1f / 30;
-
-                    while (timer >= updateTime)
+            timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            while (timer >= updateDataTime)
+            {
+                for (int i = layers.Count - 1; i >= 0; i--)
+                 {
+                    for (int e = layers[i].Count - 1; e >= 0; e--)
                     {
                         layers[i][e].UpdateData(gameTime);
                         this.Camera.update(gameTime);
-                        timer -= updateTime;
                     }
+
                 }
+                timer -= updateDataTime;
             }
-           
 
         }
 
@@ -149,7 +156,7 @@ namespace UmbrellaToolKit
                 // Update gameObjects
                 this.UpdateGameObjects(gameTime, SortLayers);
                 // check if gameobjects is visible
-                this.IsVisibleGameObject(SortLayers);
+                //this.IsVisibleGameObject(SortLayers);
                 // remove gameObjects
                 this.RemoveGameObject(SortLayers);
                 
@@ -203,6 +210,7 @@ namespace UmbrellaToolKit
                 {
                     if (layers[i][e].RemoveFromScene)
                     {
+                        layers[i][e].Destroy();
                         layers[i].RemoveAt(e);
                     }
                 }
