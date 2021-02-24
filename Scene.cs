@@ -125,12 +125,8 @@ namespace UmbrellaToolKit
             }
 
             for (int i = layers.Count - 1; i >= 0; i--)
-            {
                 for (int e = layers[i].Count - 1; e >= 0; e--)
-                {
                     layers[i][e].Update(gameTime);
-                }
-            }
 
             timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             while (timer >= updateDataTime)
@@ -156,7 +152,7 @@ namespace UmbrellaToolKit
                 // Update gameObjects
                 this.UpdateGameObjects(gameTime, SortLayers);
                 // check if gameobjects is visible
-                //this.IsVisibleGameObject(SortLayers);
+                this.IsVisibleGameObject(SortLayers);
                 // remove gameObjects
                 this.RemoveGameObject(SortLayers);
                 

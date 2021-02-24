@@ -66,9 +66,9 @@ namespace UmbrellaToolKit.Collision
             Vector2 gravity = new Vector2(this.velocity.X + this.gravity2D.X, this.velocity.Y + this.gravity2D.Y);
 
             if (gravity.X != 0)
-                this.moveX(-(gravity.X * DeltaTime), this.OnCollision);
+                this.moveX((int)(-(gravity.X * DeltaTime)), this.OnCollision);
             if (gravity.Y != 0)
-                this.moveY(-(gravity.Y * DeltaTime), this.OnCollision);
+                this.moveY((int)(-(gravity.Y * DeltaTime)), this.OnCollision);
 
             // velocity Controller
             if (this.velocity.Y > 0)
