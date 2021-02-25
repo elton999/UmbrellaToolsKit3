@@ -33,6 +33,7 @@ namespace UmbrellaToolKit.Ogmo
             this._TileMap = tileMap;
 
             this._Scene.ScreemOffset = new Point(this._TileMap.offsetX, this._TileMap.offsetY);
+            this._Scene.LevelSize = new Vector2(this._TileMap.width, this._TileMap.height);
 
             foreach (TileMapLayers layer in this._TileMap.layers)
             {
@@ -40,6 +41,7 @@ namespace UmbrellaToolKit.Ogmo
                     this._Scene.Grid = new Grid();
                     this._Scene.Grid.GridCollides = layer.grid2D;
                     this._Scene.Grid.Scene = this._Scene;
+                    this._Scene.Grid.Origin = new Vector2(this._TileMap.offsetX, this._TileMap.offsetY);
                     this._Scene.Grid.Sprite = this._Scene.Content.Load<Texture2D>("Engine/tiles");
 
                 } else if(layer.dataCoords2D.Count() > 0){
@@ -47,6 +49,7 @@ namespace UmbrellaToolKit.Ogmo
                     _layerTiles.Sprite = tilemapSprite;
                     _layerTiles.tiles = layer.dataCoords2D;
                     _layerTiles.Scene = this._Scene;
+                    _layerTiles.Origin = new Vector2(this._TileMap.offsetX, this._TileMap.offsetY);
 
                     this._Scene.Backgrounds.Add(_layerTiles);
                 }else if (layer.entities.Count() > 0){

@@ -47,10 +47,10 @@ namespace UmbrellaToolKit.Collision
             // setting false edges collision to false
             actor.SetFalseAllEdgeCollision();
 
-            RowGrid = this.getcell(actor.Left - this.Scene.ScreemOffset.X);
-            WidthGrid = this.getcell(actor.Right - this.Scene.ScreemOffset.X);
-            ColumnGrid = this.getcell(actor.Top - this.Scene.ScreemOffset.Y);
-            HeightGrid = this.getcell(actor.Bottom - -this.Scene.ScreemOffset.Y);
+            RowGrid = this.getcell(actor.Left - this.Origin.X);
+            WidthGrid = this.getcell(actor.Right - this.Origin.X);
+            ColumnGrid = this.getcell(actor.Top - this.Origin.Y);
+            HeightGrid = this.getcell(actor.Bottom - -this.Origin.Y);
 
             RowGrid = RowGrid < 0 ?  0 : RowGrid;
             ColumnGrid = ColumnGrid < 0 ? 0 : ColumnGrid;
@@ -98,10 +98,10 @@ namespace UmbrellaToolKit.Collision
 
         public bool check(Point size1, Vector2 position1, Point size2, Vector2 position2)
         {
-            bool AisToTheRightOfB = position1.X >= position2.X + size2.X;
-            bool AisToTheLeftOfB = position1.X + size1.X <= position2.X;
-            bool AisAboveB = position1.Y + size1.Y <= position2.Y ;
-            bool AisBelowB = position1.Y >= position2.Y + size2.Y;
+            bool AisToTheRightOfB = position1.X - this.Origin.X >= position2.X + size2.X;
+            bool AisToTheLeftOfB = position1.X - this.Origin.X + size1.X <= position2.X;
+            bool AisAboveB = position1.Y - this.Origin.Y + size1.Y <= position2.Y ;
+            bool AisBelowB = position1.Y - this.Origin.Y >= position2.Y + size2.Y;
             
             return !(AisToTheRightOfB
                 || AisToTheLeftOfB

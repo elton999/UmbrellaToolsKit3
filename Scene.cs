@@ -87,10 +87,12 @@ namespace UmbrellaToolKit
         public string MapLevelPath = "Maps/level_";
         public string TileMapPath = "Sprites/tilemap";
 
+        public Vector2 LevelSize;
+
         public void SetLevel(int level)
         {
-            this.Camera = new CameraManagement();
-            this.Camera.Scene = this;
+
+            this.CreateCamera();
 
             Content.Load<Texture2D>("Engine/tiles");
 
@@ -103,6 +105,12 @@ namespace UmbrellaToolKit
 
             this.LevelReady = true;
 
+        }
+
+        public void CreateCamera()
+        {
+            this.Camera = new CameraManagement();
+            this.Camera.Scene = this;
         }
 
         public void CreateBackBuffer()
@@ -118,11 +126,7 @@ namespace UmbrellaToolKit
         {
             //UI update
             for (int i = this.UI.Count - 1; i >= 0; i--)
-            {
                 this.UI[i].Update(gameTime);
-                //if (gameTime.ElapsedGameTime.TotalSeconds % 4 > 2)
-                //    this.UI[i].UpdateData(gameTime);
-            }
 
             for (int i = layers.Count - 1; i >= 0; i--)
                 for (int e = layers[i].Count - 1; e >= 0; e--)
@@ -135,6 +139,7 @@ namespace UmbrellaToolKit
                  {
                     for (int e = layers[i].Count - 1; e >= 0; e--)
                     {
+                        layers[i][e].processWait(gameTime);
                         layers[i][e].UpdateData(gameTime);
                         this.Camera.update(gameTime);
                     }

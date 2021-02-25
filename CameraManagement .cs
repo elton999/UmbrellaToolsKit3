@@ -24,6 +24,8 @@ namespace UmbrellaToolKit
         public Vector2 ScreemTargetAreaLimits { get; set; }
         public Vector2 ScreemSizeLimits { get; set; }
         public float MoveSpeed { get; set; }
+        public Vector2 maxPosition;
+	    public Vector2 minPosition;
         public Scene Scene;
 
         public CameraManagement()
@@ -42,9 +44,21 @@ namespace UmbrellaToolKit
                 Vector2 ScreenCenter = new Vector2(this.Scene.Sizes.X / 2, this.Scene.Sizes.Y / 2);
                 this.Origin = ScreenCenter / 1;
 
-                this._position.X = lerp(this.Position.X, this.Target.X, this.MoveSpeed * delta);
-                this._position.Y = lerp(this.Position.Y, this.Target.Y, this.MoveSpeed * delta);
+                if (this.Target.X + this.Origin.X < this.Scene.LevelSize.X + this.Scene.ScreemOffset.X && Target.X - this.Origin.X > this.Scene.ScreemOffset.X)
+                    this.moveX(delta);
+                if (this.Target.Y + this.Origin.Y < this.Scene.LevelSize.Y + this.Scene.ScreemOffset.X && Target.Y - this.Origin.Y > this.Scene.ScreemOffset.Y)
+                    this.moveY(delta);
             }
+        }
+
+        public void moveX(float delta)
+        {
+            this._position.X = lerp(this.Position.X, this.Target.X, this.MoveSpeed * delta);
+        }
+
+        public void moveY(float delta)
+        {
+            this._position.Y = lerp(this.Position.Y, this.Target.Y, this.MoveSpeed * delta);
         }
 
         public float lerp(float min, float max, float value){

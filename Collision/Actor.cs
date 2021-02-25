@@ -161,6 +161,18 @@ namespace UmbrellaToolKit.Collision
                 || AisBelowB);
         }
 
+        public bool overlapCheckPixel(Actor actor)
+        {
+            bool AisToTheRightOfB = actor.Left > this.Right;
+            bool AisToTheLeftOfB = actor.Right < this.Left;
+            bool AisAboveB = actor.Bottom < this.Top;
+            bool AisBelowB = actor.Top > this.Bottom;
+            return !(AisToTheRightOfB
+                || AisToTheLeftOfB
+                || AisAboveB
+                || AisBelowB);
+        }
+
         private bool collideAt(List<Solid>solids, Vector2 position){
 		    bool rt = false;
 		    foreach(Solid solid in solids){
