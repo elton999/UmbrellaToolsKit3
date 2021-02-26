@@ -44,9 +44,9 @@ namespace UmbrellaToolKit
                 Vector2 ScreenCenter = new Vector2(this.Scene.Sizes.X / 2, this.Scene.Sizes.Y / 2);
                 this.Origin = ScreenCenter / 1;
 
-                if (this.Target.X + this.Origin.X < this.Scene.LevelSize.X + this.Scene.ScreemOffset.X && Target.X - this.Origin.X > this.Scene.ScreemOffset.X)
+                //if (this.Target.X + this.Origin.X < this.Scene.LevelSize.X + this.Scene.ScreemOffset.X && Target.X - this.Origin.X > this.Scene.ScreemOffset.X)
                     this.moveX(delta);
-                if (this.Target.Y + this.Origin.Y < this.Scene.LevelSize.Y + this.Scene.ScreemOffset.X && Target.Y - this.Origin.Y > this.Scene.ScreemOffset.Y)
+                //if (this.Target.Y + this.Origin.Y < this.Scene.LevelSize.Y + this.Scene.ScreemOffset.X && Target.Y - this.Origin.Y > this.Scene.ScreemOffset.Y)
                     this.moveY(delta);
             }
         }

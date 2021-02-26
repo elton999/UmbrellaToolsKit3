@@ -73,7 +73,7 @@ namespace UmbrellaToolKit.Collision
                             if(this.CollidesRamps[0] == this.GridCollides[y][x])
                             {
                                 // ramp right bottom check
-                                if(actor.Bottom - (y * this.Scene.CellSize) > (this.Scene.CellSize - (actor.Right - x * this.Scene.CellSize)))
+                                if(actor.Bottom - this.Origin.Y- (y * this.Scene.CellSize) > (this.Scene.CellSize - ((actor.Right - this.Origin.X) - x * this.Scene.CellSize)))
                                 {
                                     rt = true;
                                     actor.EdgesIsCollision[Actor.EDGES.BOTTOM_RIGHT] = true;
@@ -81,7 +81,7 @@ namespace UmbrellaToolKit.Collision
                             } else if (this.CollidesRamps[1] == this.GridCollides[y][x])
                             {
                                 // ramp right bottom check
-                                if (actor.Bottom - (y * this.Scene.CellSize) > ((actor.Left - x * this.Scene.CellSize)))
+                                if (actor.Bottom - this.Origin.Y - (y * this.Scene.CellSize) > (((actor.Left - this.Origin.X) - x * this.Scene.CellSize)))
                                 {
                                     rt = true;
                                     actor.EdgesIsCollision[Actor.EDGES.BOTTOM_LEFT] = true;

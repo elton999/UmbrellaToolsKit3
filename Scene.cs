@@ -39,6 +39,7 @@ namespace UmbrellaToolKit
 
         public void addLayers()
         {
+            this.SortLayers = new List<List<GameObject>>();
             this.SortLayers.Add(Foreground);
             this.SortLayers.Add(Players);
             this.SortLayers.Add(Enemies);
@@ -120,7 +121,7 @@ namespace UmbrellaToolKit
         #endregion
 
         #region Update
-        float timer = 0;
+        public float timer = 0;
         public float updateDataTime = 1 / 30f;
         private void UpdateGameObjects(GameTime gameTime, List<List<GameObject>> layers)
         {
