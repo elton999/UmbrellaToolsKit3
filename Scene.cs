@@ -234,6 +234,7 @@ namespace UmbrellaToolKit
             }
         }
 
+        public Color ClearColorScene = Color.Black;
         public virtual void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Vector2 Viewport)
         {
             ScreemGraphicsDevice.SetRenderTarget(this._BackBuffer);
@@ -268,7 +269,7 @@ namespace UmbrellaToolKit
             float _BackBuffer_Position_y = ((Viewport.Y / 2) - (this.Height * _BackBuffer_scale / 2));
 
             ScreemGraphicsDevice.SetRenderTarget(null);
-            ScreemGraphicsDevice.Clear(Color.Black);
+            ScreemGraphicsDevice.Clear(this.ClearColorScene);
             spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, null);
             spriteBatch.Draw(
                 (Texture2D)this._BackBuffer,

@@ -18,7 +18,7 @@ namespace UmbrellaToolKit
         public float Rotation { get; set; }
         public float Scale { get; set; }
         public float Zoom { get; set; }
-        public Vector2 Origin { get; set; }
+        public Vector2 Origin { get => new Vector2(this.Scene.Sizes.X / 2, this.Scene.Sizes.Y / 2) / 1; }
         public Vector2 Target { get; set; }
         public Vector2 ScreemSize { get; set; }
         public Vector2 ScreemTargetAreaLimits { get; set; }
@@ -41,12 +41,12 @@ namespace UmbrellaToolKit
             if (this.Target != null)
             {
                 var delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
-                Vector2 ScreenCenter = new Vector2(this.Scene.Sizes.X / 2, this.Scene.Sizes.Y / 2);
-                this.Origin = ScreenCenter / 1;
+                //Vector2 ScreenCenter = new Vector2(this.Scene.Sizes.X / 2, this.Scene.Sizes.Y / 2);
+                //this.Origin = ScreenCenter / 1;
 
-                //if (this.Target.X + this.Origin.X < this.Scene.LevelSize.X + this.Scene.ScreemOffset.X && Target.X - this.Origin.X > this.Scene.ScreemOffset.X)
+                if (this.Target.X + this.Origin.X < this.Scene.LevelSize.X + this.Scene.ScreemOffset.X && Target.X - this.Origin.X > this.Scene.ScreemOffset.X)
                     this.moveX(delta);
-                //if (this.Target.Y + this.Origin.Y < this.Scene.LevelSize.Y + this.Scene.ScreemOffset.X && Target.Y - this.Origin.Y > this.Scene.ScreemOffset.Y)
+                if (this.Target.Y + this.Origin.Y < this.Scene.LevelSize.Y + this.Scene.ScreemOffset.X && Target.Y - this.Origin.Y > this.Scene.ScreemOffset.Y)
                     this.moveY(delta);
             }
         }
