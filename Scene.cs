@@ -142,10 +142,14 @@ namespace UmbrellaToolKit
                     {
                         layers[i][e].processWait(gameTime);
                         layers[i][e].UpdateData(gameTime);
-                        this.Camera.update(gameTime);
+                        
+                        if(this.Camera != null)
+                            this.Camera.update(gameTime);
                     }
 
                 }
+                if (this.Camera != null)
+                    this.Camera.CheckActorAndSolids();
                 timer -= updateDataTime;
             }
 

@@ -41,14 +41,25 @@ namespace UmbrellaToolKit
             if (this.Target != null)
             {
                 var delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
-                //Vector2 ScreenCenter = new Vector2(this.Scene.Sizes.X / 2, this.Scene.Sizes.Y / 2);
-                //this.Origin = ScreenCenter / 1;
 
                 if (this.Target.X + this.Origin.X < this.Scene.LevelSize.X + this.Scene.ScreemOffset.X && Target.X - this.Origin.X > this.Scene.ScreemOffset.X)
                     this.moveX(delta);
                 if (this.Target.Y + this.Origin.Y < this.Scene.LevelSize.Y + this.Scene.ScreemOffset.X && Target.Y - this.Origin.Y > this.Scene.ScreemOffset.Y)
                     this.moveY(delta);
             }
+        }
+
+        public void CheckActorAndSolids()
+        {
+            Collision.Actor _actorCamera = new Collision.Actor();
+            _actorCamera.size = this.Scene.Sizes;
+            _actorCamera.Position = new Vector2(this.Position.X, this.Position.Y);
+
+            foreach (Collision.Actor actor in this.Scene.AllActors)
+                if (actor.overlapCheck(_actorCamera))
+                    actor.Isvisible();
+                else
+                    actor.IsNotvisible();
         }
 
         public void moveX(float delta)

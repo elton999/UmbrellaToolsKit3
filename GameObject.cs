@@ -46,6 +46,8 @@ namespace UmbrellaToolKit
 
         public float Radius;
 
+        public virtual void Isvisible() { }
+        public virtual void IsNotvisible() { }
         public virtual void OnCollision(string tag = null) { }
         public virtual void OnCollisionOut(string tag) { }
         public virtual void OnTriggerIn(string tag) { }
