@@ -53,9 +53,11 @@ namespace UmbrellaToolKit
         {
             Collision.Actor _actorCamera = new Collision.Actor();
             _actorCamera.size = this.Scene.Sizes;
-            _actorCamera.Position = new Vector2(this.Position.X, this.Position.Y);
+            _actorCamera.Position = new Vector2(this.Position.X - this.Origin.X, this.Position.Y - this.Origin.Y);
+            List<Collision.Actor> _actorsList = new List<Collision.Actor>();
+            _actorsList.AddRange(this.Scene.AllActors);
 
-            foreach (Collision.Actor actor in this.Scene.AllActors)
+            foreach (Collision.Actor actor in _actorsList)
                 if (actor.overlapCheck(_actorCamera))
                     actor.Isvisible();
                 else

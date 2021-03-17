@@ -53,7 +53,10 @@ namespace UmbrellaToolKit
         public virtual void OnTriggerIn(string tag) { }
         public virtual void OnTriggerOut(string tag) { }
         public virtual void OnMouseOver() { }
-        public virtual void Destroy() { }
+        public virtual void Destroy() 
+        {
+            this.RemoveFromScene = true;
+        }
 
 
         private List<Action> _allCallbacks = new List<Action>();
