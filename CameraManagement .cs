@@ -38,7 +38,11 @@ namespace UmbrellaToolKit
         
         public void update(GameTime gameTime)
         {
-            if (this.Target != null)
+
+            this.InitialPosition = this._position;
+            this.Shake(gameTime);
+
+            if (this.Target != Vector2.Zero)
             {
                 var delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -47,6 +51,7 @@ namespace UmbrellaToolKit
                 if (this.Target.Y + this.Origin.Y < this.Scene.LevelSize.Y + this.Scene.ScreemOffset.X && Target.Y - this.Origin.Y > this.Scene.ScreemOffset.Y)
                     this.moveY(delta);
             }
+
         }
 
         public void CheckActorAndSolids()
@@ -78,7 +83,33 @@ namespace UmbrellaToolKit
             return min + (max - min) * value;
 	    }
 
-    public Matrix TransformMatrix()
+
+        #region shake
+
+        public float TimeShake;
+        public static readonly Random getRandom = new Random();
+        public Vector2 InitialPosition;
+        public float ShakeMagnitude = 0.05f;
+
+        private void Shake(GameTime gameTime)
+        {
+            if (this.TimeShake > 0)
+            {
+                int randomX = getRandom.Next(-5,5);
+                int randomY = getRandom.Next(-5,5);
+
+                this.Target = new Vector2(
+                    this.InitialPosition.X + randomX * this.ShakeMagnitude,
+                    this.InitialPosition.Y + randomY * this.ShakeMagnitude
+                );
+
+                this.TimeShake -= 1;
+            }
+
+        }
+        #endregion
+
+        public Matrix TransformMatrix()
         {
             return Matrix.CreateRotationZ(this.Rotation) * 
                 Matrix.CreateTranslation(-(int)this.Position.X, -(int)this.Position.Y, 0) * 
