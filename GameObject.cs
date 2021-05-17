@@ -25,6 +25,7 @@ namespace UmbrellaToolKit
 
         public ContentManager Content;
         public Scene Scene;
+        public Dictionary<string, string> Values;
         public bool RemoveFromScene = false;
 
         public virtual void Start () { }
@@ -69,11 +70,11 @@ namespace UmbrellaToolKit
 		    this._allCallbacks.Add(callback);
 	    }
 
-        public void restart() {
-		// wait functions
-		this._allCallbacks = new List<Action>();
-		this._timers = new List<float>();
-		this._maxTime = new List<float>();
+        public virtual void restart() {
+            // wait functions
+            this._allCallbacks = new List<Action>();
+            this._timers = new List<float>();
+            this._maxTime = new List<float>();
 	    }
 
         public void processWait(GameTime gameTime)

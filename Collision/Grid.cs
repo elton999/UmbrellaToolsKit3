@@ -23,12 +23,12 @@ namespace UmbrellaToolKit.Collision
             this.Transparent = 0.5f;
         }
 
-        public bool checkOverlap(Point size, Vector2 position, Actor ActorReal)
+        public bool checkOverlap(Point size, Vector2 position, Actor ActorReal, bool checkRamps = true)
         {
             Actor actor = new Actor();
             actor.size = size;
             actor.Position = position;
-            if (this.checkOverlapActor(actor))
+            if (this.checkOverlapActor(actor, checkRamps))
             {
                 ActorReal.EdgesIsCollision = actor.EdgesIsCollision;
                 return true;
@@ -42,7 +42,7 @@ namespace UmbrellaToolKit.Collision
         int ColumnGrid;
         int HeightGrid;
 
-        public bool checkOverlapActor(Actor actor = null)
+        public bool checkOverlapActor(Actor actor = null, bool checkRamps = true)
         {
             // setting false edges collision to false
             actor.SetFalseAllEdgeCollision();
@@ -67,7 +67,7 @@ namespace UmbrellaToolKit.Collision
                     {
                         if (this.Collides.Contains(this.GridCollides[y][x]))
                             rt = true;
-                        if (this.CollidesRamps.Contains(this.GridCollides[y][x]))
+                        if (this.CollidesRamps.Contains(this.GridCollides[y][x]) && checkRamps)
                         {
                             // check ramps
                             if(this.CollidesRamps[0] == this.GridCollides[y][x])

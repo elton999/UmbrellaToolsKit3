@@ -61,6 +61,7 @@ namespace UmbrellaToolKit.Ogmo
                                 entity.name,
                                 new Vector2(entity.x + this._Scene.ScreemOffset.X, entity.y + this._Scene.ScreemOffset.Y),
                                 new Point(entity.width, entity.height),
+                                entity.values,
                                 this._Scene
                             );
                         }
@@ -100,6 +101,7 @@ namespace UmbrellaToolKit.Ogmo
         public int width;
         public int height;
         public List<Vector2> nodes;
+        public Dictionary<string, string> values;
 
     }
 }

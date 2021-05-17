@@ -102,10 +102,8 @@ namespace UmbrellaToolKit
                     this.InitialPosition.X + randomX * this.ShakeMagnitude,
                     this.InitialPosition.Y + randomY * this.ShakeMagnitude
                 );
-
                 this.TimeShake -= 1;
             }
-
         }
         #endregion
 

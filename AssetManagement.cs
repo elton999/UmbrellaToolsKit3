@@ -44,12 +44,13 @@ namespace UmbrellaToolKit
         }
 
 
-        public void addEntityOnScene(string name, Vector2 position, Point size, Scene scene){ // ? values:Dynamic, ? nodes:Array<Vector2>, ? flipx:Bool):Void{
+        public void addEntityOnScene(string name, Vector2 position, Point size, Dictionary<string, string> values, Scene scene){ // ? values:Dynamic, ? nodes:Array<Vector2>, ? flipx:Bool):Void{
             GameObject gameObject = this.GetObject(name);
             string layer = this.GetLayer(name);
 
             gameObject.Position = position;
             gameObject.size = size;
+            gameObject.Values = values;
 
             if (layer == "PLAYER")
                 scene.Players.Add(gameObject);
@@ -71,7 +72,7 @@ namespace UmbrellaToolKit
 
         public void ClearAll()
         {
-                this.LevelAssetsList.Clear();
+            this.LevelAssetsList.Clear();
         }
     }
 

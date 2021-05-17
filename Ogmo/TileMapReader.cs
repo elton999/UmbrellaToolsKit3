@@ -94,8 +94,16 @@ namespace UmbrellaToolKit.Ogmo
                     entities[e].originY = input.ReadInt32();
                     entities[e].width = input.ReadInt32();
                     entities[e].height = input.ReadInt32();
-                    entities[e].nodes = new List<Vector2>();
 
+                    entities[e].values = new Dictionary<string, string>();
+                    int _valuesLenght = input.ReadInt32();
+                    for (var n = 0; n < _valuesLenght; n++)
+                    {
+                        string _value = input.ReadString();
+                        entities[e].values.Add(_value.Split(":")[0], _value.Split(":")[1]);
+                    }
+
+                    entities[e].nodes = new List<Vector2>();
                     int _nodesLenght = input.ReadInt32();
                     for (var n = 0; n < _nodesLenght; n++)
                     {

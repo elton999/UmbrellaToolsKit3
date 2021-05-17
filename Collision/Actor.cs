@@ -10,10 +10,11 @@ namespace UmbrellaToolKit.Collision
     public class Actor : GameObject
     {
         public String tag;
+        public bool active = true;
         public override void UpdateData(GameTime gameTime)
         {
             base.UpdateData(gameTime);
-            this.gravity((float)gameTime.ElapsedGameTime.TotalSeconds);
+            this.gravity((float)gameTime.ElapsedGameTime.TotalMilliseconds * 0.001f);
         }
 
         public int Right {
