@@ -26,7 +26,11 @@ namespace UmbrellaToolKit
         public ContentManager Content;
         public Scene Scene;
         public Dictionary<string, string> Values;
+        public List<Vector2> Nodes;
         public bool RemoveFromScene = false;
+
+        public Vector2 InitialPosition;
+        public static readonly Random getRandom = new Random();
 
         public virtual void Start () { }
         public virtual void OnVisible () { }
@@ -59,7 +63,6 @@ namespace UmbrellaToolKit
             this.RemoveFromScene = true;
         }
 
-
         private List<Action> _allCallbacks = new List<Action>();
 	    public List<float> _timers = new List<float>();
 	    private List<float> _maxTime = new List<float>();
@@ -69,6 +72,26 @@ namespace UmbrellaToolKit
 		    this._maxTime.Add(time);
 		    this._allCallbacks.Add(callback);
 	    }
+
+        public float lerp(float min, float max, float value)
+        {
+            return min + (max - min) * value;
+        }
+
+        public float LinearTween(float t, float b, float c, float d)
+        {
+            return c * t / d + b;
+        }
+
+        public float EaseInQuad(float t, float b, float c, float d)
+        {
+            return c * (t /= d) * t + b;
+        }
+
+        public float EaseOutQuad(float t, float b, float c, float d)
+        {
+            return -c * (t /= d) * (t - 2) + b;
+        }
 
         public virtual void restart() {
             // wait functions

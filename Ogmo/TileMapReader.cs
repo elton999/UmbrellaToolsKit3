@@ -109,7 +109,7 @@ namespace UmbrellaToolKit.Ogmo
                     {
                         float xx = input.ReadInt32();
                         float yy = input.ReadInt32();
-                        entities[e].nodes.Add(new Vector2(xx, yy));
+                        entities[e].nodes.Add(new Vector2(TileMapLayer.offsetX + xx, TileMapLayer.offsetY + yy));
 
                     }
                 }
