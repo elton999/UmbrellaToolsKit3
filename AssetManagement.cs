@@ -9,6 +9,13 @@ namespace UmbrellaToolKit
 {
     public class AssetManagement
     {
+
+        public static AssetManagement Instance;
+        public AssetManagement()
+        {
+            if (Instance == null)
+                Instance = this;
+        }
         public List<AssetObject> AssetsList = new List<AssetObject>();
         public List<AssetObject> LevelAssetsList = new List<AssetObject>();
 
@@ -17,16 +24,16 @@ namespace UmbrellaToolKit
             AssetObject assetObject = new AssetObject { Name = tag, Layer = layer, GameObject = typeof(T) };
             this.AssetsList.Add(assetObject);
         }
-        
+
         public GameObject GetObject(string name)
         {
-            IEnumerable<AssetObject> assetObjects = this.AssetsList.Where( asset => asset.Name == name);
+            IEnumerable<AssetObject> assetObjects = this.AssetsList.Where(asset => asset.Name == name);
 
             if (assetObjects.Count() > 0)
             {
                 AssetObject assetObject = assetObjects.First();
                 GameObject gameObject = (GameObject)Activator.CreateInstance(assetObject.GameObject);
-               
+
                 return gameObject;
             }
 
@@ -44,7 +51,8 @@ namespace UmbrellaToolKit
         }
 
 
-        public void addEntityOnScene(string name, Vector2 position, Point size, Dictionary<string, string> values, List<Vector2> nodes, Scene scene){ // ? values:Dynamic, ? nodes:Array<Vector2>, ? flipx:Bool):Void{
+        public void addEntityOnScene(string name, Vector2 position, Point size, Dictionary<string, string> values, List<Vector2> nodes, Scene scene)
+        { // ? values:Dynamic, ? nodes:Array<Vector2>, ? flipx:Bool):Void{
             GameObject gameObject = this.GetObject(name);
             string layer = this.GetLayer(name);
 

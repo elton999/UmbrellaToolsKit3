@@ -82,7 +82,6 @@ namespace UmbrellaToolKit
         #region Load Level Tilemap
         public Ogmo.TileMap tileMap;
         public Ogmo.TileSet tileSet;
-        public AssetManagement AssetManagement;
         public GameManagement GameManagement;
 
         public string MapLevelPath = "Maps/level_";
@@ -101,7 +100,7 @@ namespace UmbrellaToolKit
 
             Texture2D _tilemapSprite = Content.Load<Texture2D>(this.TileMapPath);
 
-            this.tileMap.Create(this, this.AssetManagement, this.tileMap, _tilemapSprite);
+            this.tileMap.Create(this, this.tileMap, _tilemapSprite);
             this.CreateBackBuffer();
 
             this.LevelReady = true;
@@ -137,13 +136,13 @@ namespace UmbrellaToolKit
             while (timer >= updateDataTime)
             {
                 for (int i = layers.Count - 1; i >= 0; i--)
-                 {
+                {
                     for (int e = layers[i].Count - 1; e >= 0; e--)
                     {
                         layers[i][e].processWait(gameTime);
                         layers[i][e].UpdateData(gameTime);
-                        
-                        if(this.Camera != null)
+
+                        if (this.Camera != null)
                             this.Camera.update(gameTime);
                     }
 
@@ -165,7 +164,7 @@ namespace UmbrellaToolKit
                 this.IsVisibleGameObject(SortLayers);
                 // remove gameObjects
                 this.RemoveGameObject(SortLayers);
-                
+
             }
         }
 
@@ -189,7 +188,7 @@ namespace UmbrellaToolKit
                 bool overlay_y = false;
                 Vector2 CameraPosition = -this.Screem.CameraManagement.Position;
 
-                if (CameraPosition.X - (ScreemOffset.X / 2f) < _gameObjectPosition.X  && CameraPosition.X + (ScreemOffset.X / 2f) > _gameObjectPosition.X)
+                if (CameraPosition.X - (ScreemOffset.X / 2f) < _gameObjectPosition.X && CameraPosition.X + (ScreemOffset.X / 2f) > _gameObjectPosition.X)
                     overlay_x = true;
 
                 if (CameraPosition.Y - (ScreemOffset.Y / 2f) < _gameObjectPosition.Y && CameraPosition.Y + (ScreemOffset.Y / 2f) > _gameObjectPosition.Y)
@@ -201,12 +200,12 @@ namespace UmbrellaToolKit
 
             return false;
         }
-        
+
         private void RemoveGameObject(List<List<GameObject>> layers)
         {
             // UI
             IEnumerable<GameObject> _UI_Objects_to_remove = from gameObject in this.UI where gameObject.RemoveFromScene == true select gameObject;
-            
+
             IEnumerable<GameObject> _UI_Objects = from gameObject in this.UI where gameObject.RemoveFromScene == false select gameObject;
             this.UI = _UI_Objects.ToList<GameObject>();
 
@@ -233,7 +232,7 @@ namespace UmbrellaToolKit
             {
                 for (int e = layers[i].Count - 1; e >= 0; e--)
                 {
-                    if(!layers[i][e].RemoveFromScene)layers[i][e].Draw(spriteBatch);
+                    if (!layers[i][e].RemoveFromScene) layers[i][e].Draw(spriteBatch);
                 }
             }
         }
@@ -246,13 +245,13 @@ namespace UmbrellaToolKit
             if (this.LevelReady)
             {
                 if (this.BackgroundColor != Color.Transparent) graphicsDevice.Clear(this.BackgroundColor);
-                
+
                 this.DrawGameObjects(spriteBatch, SortLayers);
 
-                #if DEBUG_COLLISION
+#if DEBUG_COLLISION
                 if (this.Grid != null)
                     this.Grid.Draw(spriteBatch);
-                #endif
+#endif
             }
 
 
@@ -288,6 +287,6 @@ namespace UmbrellaToolKit
             );
             spriteBatch.End();
         }
-#endregion
+        #endregion
     }
 }

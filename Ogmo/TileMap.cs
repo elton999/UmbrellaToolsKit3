@@ -23,13 +23,11 @@ namespace UmbrellaToolKit.Ogmo
 
 
         private Scene _Scene;
-        private AssetManagement _Assets;
         private Ogmo.TileMap _TileMap;
 
-        public void Create(Scene scene, AssetManagement assets, Ogmo.TileMap tileMap, Texture2D tilemapSprite)
+        public void Create(Scene scene, Ogmo.TileMap tileMap, Texture2D tilemapSprite)
         {
             this._Scene = scene;
-            this._Assets = assets;
             this._TileMap = tileMap;
 
             this._Scene.ScreemOffset = new Point(this._TileMap.offsetX, this._TileMap.offsetY);
@@ -37,14 +35,17 @@ namespace UmbrellaToolKit.Ogmo
 
             foreach (TileMapLayers layer in this._TileMap.layers)
             {
-                if (layer.grid2D.Count() > 0){
+                if (layer.grid2D.Count() > 0)
+                {
                     this._Scene.Grid = new Grid();
                     this._Scene.Grid.GridCollides = layer.grid2D;
                     this._Scene.Grid.Scene = this._Scene;
                     this._Scene.Grid.Origin = new Vector2(this._TileMap.offsetX, this._TileMap.offsetY);
                     this._Scene.Grid.Sprite = this._Scene.Content.Load<Texture2D>("Engine/tiles");
 
-                } else if(layer.dataCoords2D.Count() > 0){
+                }
+                else if (layer.dataCoords2D.Count() > 0)
+                {
                     Sprite.Layer _layerTiles = new Sprite.Layer();
                     _layerTiles.Sprite = tilemapSprite;
                     _layerTiles.tiles = layer.dataCoords2D;
@@ -52,12 +53,14 @@ namespace UmbrellaToolKit.Ogmo
                     _layerTiles.Origin = new Vector2(this._TileMap.offsetX, this._TileMap.offsetY);
 
                     this._Scene.Backgrounds.Add(_layerTiles);
-                }else if (layer.entities.Count() > 0){
+                }
+                else if (layer.entities.Count() > 0)
+                {
                     foreach (TileMapEntity entity in layer.entities)
                     {
-                        if (this._Assets != null)
+                        if (AssetManagement.Instance != null)
                         {
-                            this._Assets.addEntityOnScene(
+                            AssetManagement.Instance.addEntityOnScene(
                                 entity.name,
                                 new Vector2(entity.x + this._Scene.ScreemOffset.X, entity.y + this._Scene.ScreemOffset.Y),
                                 new Point(entity.width, entity.height),
