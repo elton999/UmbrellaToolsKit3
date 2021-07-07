@@ -56,8 +56,10 @@ namespace UmbrellaToolKit.Ogmo
                 }
                 else if (layer.entities.Count() > 0)
                 {
+                    System.Console.WriteLine($"Loading Entities: {layer.name} ");
                     foreach (TileMapEntity entity in layer.entities)
                     {
+                        System.Console.Write(".");
                         if (AssetManagement.Instance != null)
                         {
                             AssetManagement.Instance.addEntityOnScene(

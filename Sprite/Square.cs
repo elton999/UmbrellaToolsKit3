@@ -26,7 +26,9 @@ namespace UmbrellaToolKit.Sprite
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            BeginDraw(spriteBatch);
             this.DrawSprite(spriteBatch);
+            EndDraw(spriteBatch);
         }
 
     }

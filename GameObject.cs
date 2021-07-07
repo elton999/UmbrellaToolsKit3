@@ -32,12 +32,17 @@ namespace UmbrellaToolKit
         public Vector2 InitialPosition;
         public static readonly Random getRandom = new Random();
 
-        public virtual void Start () { }
-        public virtual void OnVisible () { }
-        public virtual void OnInvisible () { }
-        public virtual void Update (GameTime gameTime) { }
+        public virtual void Start() { }
+        public virtual void OnVisible() { }
+        public virtual void OnInvisible() { }
+        public virtual void Update(GameTime gameTime) { }
         public virtual void UpdateData(GameTime gameTime) { }
-        public virtual void Draw (SpriteBatch spriteBatch) { }
+        public virtual void Draw(SpriteBatch spriteBatch)
+        {
+            BeginDraw(spriteBatch, true);
+            DrawSprite(spriteBatch);
+            EndDraw(spriteBatch);
+        }
 
 
 
@@ -47,6 +52,11 @@ namespace UmbrellaToolKit
 
         public MouseManager _Mouse;
         public ScreemController _Screem;
+
+        public SpriteSortMode SpriteSortMode = SpriteSortMode.Immediate;
+        public SamplerState SamplerState = SamplerState.PointClamp;
+        public BlendState BlendState = null;
+        public Effect Effect = null;
 
 
         public float Radius;
@@ -58,20 +68,21 @@ namespace UmbrellaToolKit
         public virtual void OnTriggerIn(string tag) { }
         public virtual void OnTriggerOut(string tag) { }
         public virtual void OnMouseOver() { }
-        public virtual void Destroy() 
+        public virtual void Destroy()
         {
             this.RemoveFromScene = true;
         }
 
         private List<Action> _allCallbacks = new List<Action>();
-	    public List<float> _timers = new List<float>();
-	    private List<float> _maxTime = new List<float>();
+        public List<float> _timers = new List<float>();
+        private List<float> _maxTime = new List<float>();
 
-	    public void wait(float time, Action callback) {
-		    this._timers.Add(0);
-		    this._maxTime.Add(time);
-		    this._allCallbacks.Add(callback);
-	    }
+        public void wait(float time, Action callback)
+        {
+            this._timers.Add(0);
+            this._maxTime.Add(time);
+            this._allCallbacks.Add(callback);
+        }
 
         public float lerp(float min, float max, float value)
         {
@@ -93,12 +104,13 @@ namespace UmbrellaToolKit
             return -c * (t /= d) * (t - 2) + b;
         }
 
-        public virtual void restart() {
+        public virtual void restart()
+        {
             // wait functions
             this._allCallbacks = new List<Action>();
             this._timers = new List<float>();
             this._maxTime = new List<float>();
-	    }
+        }
 
         public void processWait(GameTime gameTime)
         {
@@ -106,7 +118,7 @@ namespace UmbrellaToolKit
             List<float> __timers = new List<float>();
             List<float> __maxTime = new List<float>();
 
-            for (int i = 0; i < this._timers.Count; i ++)
+            for (int i = 0; i < this._timers.Count; i++)
             {
                 this._timers[i] += (float)gameTime.ElapsedGameTime.TotalSeconds;
                 if (this._timers[i] >= this._maxTime[i])
@@ -123,7 +135,7 @@ namespace UmbrellaToolKit
 
             this._allCallbacks.Clear();
             this._allCallbacks.AddRange(__allCallbacks);
-            this._timers.Clear(); 
+            this._timers.Clear();
             this._timers.AddRange(__timers);
             this._maxTime.Clear();
             this._maxTime.AddRange(__maxTime);
@@ -133,7 +145,7 @@ namespace UmbrellaToolKit
 
         public void DrawSprite(SpriteBatch spriteBatch)
         {
-            if(this.Sprite != null)
+            if (this.Sprite != null)
             {
                 if (this.Body.IsEmpty)
                 {
@@ -143,8 +155,25 @@ namespace UmbrellaToolKit
                 {
                     spriteBatch.Draw(this.Sprite, this.Position, this.Body, this.SpriteColor * this.Transparent, this.Rotation, this.Origin, this.Scale, this.spriteEffect, 0);
                 }
-               
             }
+        }
+
+        public void BeginDraw(SpriteBatch spriteBatch, bool hasCamera = true)
+        {
+            spriteBatch.Begin(
+                this.SpriteSortMode,
+                this.BlendState,
+                this.SamplerState,
+                null,
+                null,
+                this.Effect,
+                this.Scene.Camera != null && hasCamera ? this.Scene.Camera.TransformMatrix() : null
+            );
+        }
+
+        public void EndDraw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.End();
         }
     }
 }

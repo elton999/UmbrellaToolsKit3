@@ -91,7 +91,7 @@ namespace UmbrellaToolKit
 
         public void SetLevel(int level)
         {
-
+            System.Console.WriteLine($"Level: {this.MapLevelPath + level}");
             this.CreateCamera();
 
             Content.Load<Texture2D>("Engine/tiles");
@@ -104,7 +104,7 @@ namespace UmbrellaToolKit
             this.CreateBackBuffer();
 
             this.LevelReady = true;
-
+            System.Console.WriteLine("\nDone");
         }
 
         public void CreateCamera()
@@ -172,13 +172,13 @@ namespace UmbrellaToolKit
         {
             for (int i = layers.Count - 1; i >= 0; i--)
                 for (int e = layers[i].Count - 1; e >= 0; e--)
-                    if (this.CheckIsVisivle(layers[i][e]))
+                    if (this.CheckIsVisible(layers[i][e]))
                         layers[i][e].OnVisible();
                     else
                         layers[i][e].OnInvisible();
         }
 
-        private bool CheckIsVisivle(GameObject gameObject)
+        private bool CheckIsVisible(GameObject gameObject)
         {
             Vector2 _gameObjectPosition = gameObject.Position;
 
@@ -241,7 +241,6 @@ namespace UmbrellaToolKit
         public virtual void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Vector2 Viewport)
         {
             ScreemGraphicsDevice.SetRenderTarget(this._BackBuffer);
-            spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp, null, null, null, this.Camera != null ? this.Camera.TransformMatrix() : new Matrix());
             if (this.LevelReady)
             {
                 if (this.BackgroundColor != Color.Transparent) graphicsDevice.Clear(this.BackgroundColor);
@@ -254,14 +253,9 @@ namespace UmbrellaToolKit
 #endif
             }
 
-
-            spriteBatch.End();
-
             //UI Draw
-            spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp, null, null, null);
             for (int i = this.UI.Count - 1; i >= 0; i--)
                 this.UI[i].Draw(spriteBatch);
-            spriteBatch.End();
 
             //Scale canvas settings
             float _xScale = Viewport.X / this.Width;
