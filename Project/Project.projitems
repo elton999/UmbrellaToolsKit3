@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>6efba8a9-a407-4029-bdd0-651d22a87386</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Project</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Game1.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\AssetManagement.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\CameraManagement .cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\Collision\Actor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\Collision\Grid.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\Collision\Solid.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\GameManagement.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\GameObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\Localization\LocalizationDefinitions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\Localization\LocalizationReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\Ogmo\Tile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\Ogmo\TileMap.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\Ogmo\TilemapLayer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\Ogmo\TileMapReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\Ogmo\TileSet.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\Ogmo\TileSetReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\Scene.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\SceneManagement.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\ScreemController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\Sprite\AsepriteAnimation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\Sprite\AsepriteDefinitions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\Sprite\AsepriteReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\Sprite\BoxSprite.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\Sprite\Layer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\Sprite\Square.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\Storage\Load.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\UI\MenuManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UmbrellaToolsKit\UI\MouseManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Content\" />
+  </ItemGroup>
+  <ItemGroup>
+    <MonoGameContentReference Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
+    <None Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
+  </ItemGroup>
+</Project>

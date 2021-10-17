@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "directx", "directx\directx.csproj", "{9DCE1DCF-A6E7-4D39-8F9B-6B527615C38E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "opengl", "opengl\opengl.csproj", "{B1F3F0E5-4D6C-45E6-9C71-B89B2809590B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "android", "android\android.csproj", "{5A50A631-F7C4-447E-A14D-4FC3A1AAAF38}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Project", "Project\Project.shproj", "{A0CDBD0E-3A41-42B7-9425-A838BC2C7383}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "webgl", "webgl\webgl.csproj", "{E35C5513-167E-4F4B-993F-5B1B515CE8B9}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Project\Project.projitems*{5a50a631-f7c4-447e-a14d-4fc3a1aaaf38}*SharedItemsImports = 4
+		Project\Project.projitems*{9dce1dcf-a6e7-4d39-8f9b-6b527615c38e}*SharedItemsImports = 5
+		Project\Project.projitems*{a0cdbd0e-3a41-42b7-9425-a838bc2c7383}*SharedItemsImports = 13
+		Project\Project.projitems*{b1f3f0e5-4d6c-45e6-9c71-b89b2809590b}*SharedItemsImports = 5
+		Project\Project.projitems*{e35c5513-167e-4f4b-993f-5b1b515ce8b9}*SharedItemsImports = 5
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9DCE1DCF-A6E7-4D39-8F9B-6B527615C38E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DCE1DCF-A6E7-4D39-8F9B-6B527615C38E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DCE1DCF-A6E7-4D39-8F9B-6B527615C38E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DCE1DCF-A6E7-4D39-8F9B-6B527615C38E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1F3F0E5-4D6C-45E6-9C71-B89B2809590B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1F3F0E5-4D6C-45E6-9C71-B89B2809590B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1F3F0E5-4D6C-45E6-9C71-B89B2809590B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1F3F0E5-4D6C-45E6-9C71-B89B2809590B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A50A631-F7C4-447E-A14D-4FC3A1AAAF38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A50A631-F7C4-447E-A14D-4FC3A1AAAF38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A50A631-F7C4-447E-A14D-4FC3A1AAAF38}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{5A50A631-F7C4-447E-A14D-4FC3A1AAAF38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A50A631-F7C4-447E-A14D-4FC3A1AAAF38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A50A631-F7C4-447E-A14D-4FC3A1AAAF38}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{E35C5513-167E-4F4B-993F-5B1B515CE8B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E35C5513-167E-4F4B-993F-5B1B515CE8B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E35C5513-167E-4F4B-993F-5B1B515CE8B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E35C5513-167E-4F4B-993F-5B1B515CE8B9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E8E47A29-2690-49C9-8A2E-D6EFF596EB0E}
+	EndGlobalSection
+EndGlobal
