@@ -10,8 +10,8 @@
 
 #-------------------------------- References --------------------------------#
 
-/reference:..\..\MonoGame.ContentPipeline.UmbrellaToolKit\MonoGame.ContentPipeline.UmbrellaToolKit\bin\Debug\Newtonsoft.Json.dll
-/reference:..\..\MonoGame.ContentPipeline.UmbrellaToolKit\MonoGame.ContentPipeline.UmbrellaToolKit\bin\Debug\MonoGame.ContentPipeline.UmbrellaToolKit.dll
+/reference:..\..\Newtonsoft.Json.dll
+/reference:..\..\MonoGame.ContentPipeline.UmbrellaToolKit.dll
 
 #---------------------------------- Content ---------------------------------#
 
