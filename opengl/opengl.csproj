@@ -31,5 +31,9 @@
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GameProject\GameProject.csproj" />
+    <ProjectReference Include="..\UmbrellaToolsKit\UmbrellaToolsKit.csproj" />
+  </ItemGroup>
   <Import Project="..\Project\Project.projitems" Label="Shared" />
 </Project>

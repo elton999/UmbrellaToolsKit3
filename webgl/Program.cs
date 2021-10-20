@@ -17,7 +17,7 @@ namespace webgl
             button.innerHTML = "Click on game area to start it!";
             button.style.width = "100%";
             button.style.height = "100%";
-            button.style.backgroundColor = "#6495ED";
+            button.style.backgroundColor = "#000000";
             button.style.color = "#ffffff";
             button.style.fontSize = "20px";
             div.appendChild(button);
@@ -32,7 +32,7 @@ namespace webgl
                 canvas.id = "monogamecanvas";
                 div.appendChild(canvas);
 
-                game = new Project.Game1();
+                game = new GameProject.Game1();
                 game.Run();
             };
         }

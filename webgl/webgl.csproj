@@ -31,6 +31,10 @@
     <PackageReference Include="Bridge" Version="17.2.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GameProject\GameProject.csproj" />
+    <ProjectReference Include="..\UmbrellaToolsKit\UmbrellaToolsKit.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <None Update="index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

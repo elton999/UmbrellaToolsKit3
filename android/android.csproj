@@ -78,6 +78,16 @@
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
     <PackageReference Include="MonoGame.Framework.Android" Version="3.8.0.1641" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GameProject\GameProject.csproj">
+      <Project>{6bbcd3cf-3be4-42b8-8dc4-bbdf91750527}</Project>
+      <Name>GameProject</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UmbrellaToolsKit\UmbrellaToolsKit.csproj">
+      <Project>{2e43a2c0-b6cc-4115-b72b-3026b5da20de}</Project>
+      <Name>UmbrellaToolsKit</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="..\Project\Project.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>
