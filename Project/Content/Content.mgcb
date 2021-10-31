@@ -11,7 +11,7 @@
 #-------------------------------- References --------------------------------#
 
 /reference:..\..\Newtonsoft.Json.dll
-/reference:..\..\MonoGame.ContentPipeline.UmbrellaToolKit.dll
+/reference:..\..\MonoGame.ContentPipeline.UmbrellaToolsKit.dll
 
 #---------------------------------- Content ---------------------------------#
 
