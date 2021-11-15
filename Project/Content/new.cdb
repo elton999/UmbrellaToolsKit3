@@ -1,5 +1,28 @@
 {
-	"sheets": [],
+	"sheets": [
+		{
+			"name": "language",
+			"columns": [
+				{
+					"typeStr": "0",
+					"name": "code"
+				},
+				{
+					"typeStr": "1",
+					"name": "portugues",
+					"display": null
+				},
+				{
+					"typeStr": "1",
+					"name": "english",
+					"display": null
+				}
+			],
+			"lines": [],
+			"separators": [],
+			"props": {}
+		}
+	],
 	"customTypes": [],
 	"compress": false
 }
