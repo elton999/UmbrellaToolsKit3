@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
@@ -7,7 +8,7 @@ using UmbrellaToolsKit.Collision;
 
 namespace UmbrellaToolsKit
 {
-    public class Scene
+    public class Scene : IDisposable
     {
         public Scene(GraphicsDevice ScreemGraphicsDevice, ContentManager Content)
         {
@@ -301,5 +302,25 @@ namespace UmbrellaToolsKit
             spriteBatch.End();
         }
         #endregion
+
+        public void Dispose()
+        {
+            foreach (List<GameObject> layer in SortLayers)
+            {
+                foreach (GameObject gameObject in layer)
+                {
+                    gameObject.Dispose();
+                }
+            }
+
+            foreach (GameObject gameObject in UI)
+            {
+                gameObject.Dispose();
+            }
+
+            GC.SuppressFinalize(this);
+
+            LevelReady = false;
+        }
     }
 }

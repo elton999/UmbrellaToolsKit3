@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,7 +7,7 @@ using UmbrellaToolsKit.UI;
 
 namespace UmbrellaToolsKit
 {
-    public class GameObject
+    public class GameObject : IDisposable
     {
         public Vector2 Position = Vector2.Zero;
         public Vector2 Origin = Vector2.Zero;
@@ -33,6 +30,19 @@ namespace UmbrellaToolsKit
         public Vector2 InitialPosition;
         public static readonly Random getRandom = new Random();
 
+        public Vector2 _bodySize;
+        public float Density = 0f;
+        public Vector2 TextureSize;
+
+        public MouseManager _Mouse;
+        public ScreemController _Screem;
+
+        public SpriteSortMode SpriteSortMode = SpriteSortMode.Immediate;
+        public SamplerState SamplerState = SamplerState.PointClamp;
+        public BlendState BlendState = null;
+        public Effect Effect = null;
+        public float Radius;
+
         public virtual void Start() { }
         public virtual void OnVisible() { }
         public virtual void OnInvisible() { }
@@ -45,24 +55,7 @@ namespace UmbrellaToolsKit
             EndDraw(spriteBatch);
         }
 
-        public virtual void DrawBeforeScene(SpriteBatch spriteBatch){}
-
-
-
-        public Vector2 _bodySize;
-        public float Density = 0f;
-        public Vector2 TextureSize;
-
-        public MouseManager _Mouse;
-        public ScreemController _Screem;
-
-        public SpriteSortMode SpriteSortMode = SpriteSortMode.Immediate;
-        public SamplerState SamplerState = SamplerState.PointClamp;
-        public BlendState BlendState = null;
-        public Effect Effect = null;
-
-
-        public float Radius;
+        public virtual void DrawBeforeScene(SpriteBatch spriteBatch) { }
 
         public virtual void Isvisible() { }
         public virtual void IsNotvisible() { }
@@ -127,6 +120,11 @@ namespace UmbrellaToolsKit
         public void EndDraw(SpriteBatch spriteBatch)
         {
             spriteBatch.End();
+        }
+
+        public virtual void Dispose()
+        {
+            GC.SuppressFinalize(this);
         }
     }
 }
