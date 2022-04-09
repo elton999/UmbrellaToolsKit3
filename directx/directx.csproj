@@ -25,8 +25,7 @@
     <MonoGameContentReference Include="Content\Content.mgcb" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GameProject\GameProject.csproj" />
-    <ProjectReference Include="..\UmbrellaToolsKit\UmbrellaToolsKit.csproj" />
+    <ProjectReference Include="..\Libs\UmbrellaToolsKit\UmbrellaToolsKit.csproj" />
   </ItemGroup>
   <Import Project="..\Project\Project.projitems" Label="Shared" />
 </Project>

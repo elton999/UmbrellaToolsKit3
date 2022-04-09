@@ -7,7 +7,7 @@ namespace directx
         [STAThread]
         static void Main()
         {
-            using (var game = new GameProject.Game1())
+            using (var game = new Project.Game1())
                 game.Run();
         }
     }

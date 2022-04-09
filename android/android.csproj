@@ -59,7 +59,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activity1.cs" />
-    <Compile Include="Game1.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -79,12 +78,8 @@
     <PackageReference Include="MonoGame.Framework.Android" Version="3.8.0.1641" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GameProject\GameProject.csproj">
-      <Project>{6bbcd3cf-3be4-42b8-8dc4-bbdf91750527}</Project>
-      <Name>GameProject</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\UmbrellaToolsKit\UmbrellaToolsKit.csproj">
-      <Project>{2e43a2c0-b6cc-4115-b72b-3026b5da20de}</Project>
+    <ProjectReference Include="..\Libs\UmbrellaToolsKit\UmbrellaToolsKit.csproj">
+      <Project>{da92bf0c-223b-42c3-b655-3880351b0db2}</Project>
       <Name>UmbrellaToolsKit</Name>
     </ProjectReference>
   </ItemGroup>
