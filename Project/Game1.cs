@@ -50,7 +50,6 @@ namespace Project
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Gray);
             _gameManagement.Draw(_spriteBatch);
             base.Draw(gameTime);
         }

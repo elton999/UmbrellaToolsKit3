@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -7,7 +10,7 @@ using UmbrellaToolsKit.UI;
 
 namespace UmbrellaToolsKit
 {
-    public class GameObject : IDisposable
+    public class GameObject
     {
         public Vector2 Position = Vector2.Zero;
         public Vector2 Origin = Vector2.Zero;
@@ -30,19 +33,6 @@ namespace UmbrellaToolsKit
         public Vector2 InitialPosition;
         public static readonly Random getRandom = new Random();
 
-        public Vector2 _bodySize;
-        public float Density = 0f;
-        public Vector2 TextureSize;
-
-        public MouseManager _Mouse;
-        public ScreemController _Screem;
-
-        public SpriteSortMode SpriteSortMode = SpriteSortMode.Immediate;
-        public SamplerState SamplerState = SamplerState.PointClamp;
-        public BlendState BlendState = null;
-        public Effect Effect = null;
-        public float Radius;
-
         public virtual void Start() { }
         public virtual void OnVisible() { }
         public virtual void OnInvisible() { }
@@ -55,7 +45,24 @@ namespace UmbrellaToolsKit
             EndDraw(spriteBatch);
         }
 
-        public virtual void DrawBeforeScene(SpriteBatch spriteBatch) { }
+        public virtual void DrawBeforeScene(SpriteBatch spriteBatch){}
+
+
+
+        public Vector2 _bodySize;
+        public float Density = 0f;
+        public Vector2 TextureSize;
+
+        public MouseManager _Mouse;
+        public ScreemController _Screem;
+
+        public SpriteSortMode SpriteSortMode = SpriteSortMode.Immediate;
+        public SamplerState SamplerState = SamplerState.PointClamp;
+        public BlendState BlendState = null;
+        public Effect Effect = null;
+
+
+        public float Radius;
 
         public virtual void Isvisible() { }
         public virtual void IsNotvisible() { }
@@ -67,6 +74,17 @@ namespace UmbrellaToolsKit
         public virtual void Destroy()
         {
             this.RemoveFromScene = true;
+        }
+
+        private List<Action> _allCallbacks = new List<Action>();
+        public List<float> _timers = new List<float>();
+        private List<float> _maxTime = new List<float>();
+
+        public void wait(float time, Action callback)
+        {
+            this._timers.Add(0);
+            this._maxTime.Add(time);
+            this._allCallbacks.Add(callback);
         }
 
         public float lerp(float min, float max, float value)
@@ -89,19 +107,58 @@ namespace UmbrellaToolsKit
             return -c * (t /= d) * (t - 2) + b;
         }
 
-        public virtual void Restart(){}
+        public virtual void restart()
+        {
+            // wait functions
+            this._allCallbacks = new List<Action>();
+            this._timers = new List<float>();
+            this._maxTime = new List<float>();
+        }
+
+        public void processWait(GameTime gameTime)
+        {
+            List<Action> __allCallbacks = new List<Action>();
+            List<float> __timers = new List<float>();
+            List<float> __maxTime = new List<float>();
+
+            for (int i = 0; i < this._timers.Count; i++)
+            {
+                this._timers[i] += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (this._timers[i] >= this._maxTime[i])
+                {
+                    this._allCallbacks[i]();
+                }
+                else
+                {
+                    __allCallbacks.Add(this._allCallbacks[i]);
+                    __timers.Add(this._timers[i]);
+                    __maxTime.Add(this._maxTime[i]);
+                }
+            }
+
+            this._allCallbacks.Clear();
+            this._allCallbacks.AddRange(__allCallbacks);
+            this._timers.Clear();
+            this._timers.AddRange(__timers);
+            this._maxTime.Clear();
+            this._maxTime.AddRange(__maxTime);
+        }
+
+
 
         public void DrawSprite(SpriteBatch spriteBatch)
         {
-            if (this.Sprite == null) return;
-            spriteBatch.Draw(this.Sprite, 
-                this.Position, 
-                this.Body.IsEmpty ? null : this.Body, 
-                this.SpriteColor * this.Transparent, 
-                this.Rotation, 
-                this.Origin, 
-                this.Scale, 
-                this.spriteEffect, 0);
+            if (this.Sprite != null)
+            {
+                if (this.Body.IsEmpty)
+                {
+                    spriteBatch.Draw(this.Sprite, this.Position, null, this.SpriteColor * this.Transparent, this.Rotation, this.Origin, this.Scale, this.spriteEffect, 0);
+                }
+                else
+                {
+                    spriteBatch.Draw(this.Sprite, this.Position, this.Body, this.SpriteColor * this.Transparent, this.Rotation, this.Origin, this.Scale, this.spriteEffect, 0);
+                }
+            }
         }
 
         public void BeginDraw(SpriteBatch spriteBatch, bool hasCamera = true)
@@ -120,11 +177,6 @@ namespace UmbrellaToolsKit
         public void EndDraw(SpriteBatch spriteBatch)
         {
             spriteBatch.End();
-        }
-
-        public virtual void Dispose()
-        {
-            GC.SuppressFinalize(this);
         }
     }
 }

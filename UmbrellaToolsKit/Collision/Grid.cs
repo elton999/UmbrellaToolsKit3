@@ -12,7 +12,6 @@ namespace UmbrellaToolsKit.Collision
     public class Grid : GameObject
     {
         public List<List<string>> GridCollides = new List<List<string>>();
-        public Scene Scene;
         public List<string> Collides = new List<string>();
         public List<string> CollidesRamps = new List<string>();
         public Point GridSize;

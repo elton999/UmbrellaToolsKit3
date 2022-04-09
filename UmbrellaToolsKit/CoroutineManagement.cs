@@ -9,7 +9,7 @@ namespace UmbrellaToolsKit
     {
         private List<IEnumerator> _coroutines = new List<IEnumerator>();
         private IEnumerator _coroutinesUpdate;
-        private GameTime _gameTime;
+        public  GameTime GameTime;
 
         public CoroutineManagement()
         {
@@ -28,7 +28,7 @@ namespace UmbrellaToolsKit
 
         public void Update(GameTime gameTime)
         {
-            _gameTime = gameTime;
+            GameTime = gameTime;
             _coroutinesUpdate.MoveNext();
         }
 
@@ -37,7 +37,7 @@ namespace UmbrellaToolsKit
             float timer = time;
             while (timer >= 0)
             {
-                timer -= (float)_gameTime.ElapsedGameTime.TotalMilliseconds;
+                timer -= (float)GameTime.ElapsedGameTime.TotalMilliseconds;
                 yield return null;
             }
             yield break;

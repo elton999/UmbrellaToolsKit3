@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
-
 
 namespace UmbrellaToolsKit.Ogmo
 {
@@ -24,7 +20,6 @@ namespace UmbrellaToolsKit.Ogmo
             for(var i = 0; i < _layersLenght; i++)
             {
                 TileMapLayers TileMapLayer = new TileMapLayers();
-
                 TileMapLayer.name = input.ReadString();
                 TileMapLayer._eid = input.ReadString();
                 TileMapLayer.offsetX = input.ReadInt32();
@@ -110,7 +105,6 @@ namespace UmbrellaToolsKit.Ogmo
                         float xx = input.ReadInt32();
                         float yy = input.ReadInt32();
                         entities[e].nodes.Add(new Vector2(TileMapLayer.offsetX + xx, TileMapLayer.offsetY + yy));
-
                     }
                 }
                 TileMapLayer.entities = entities;

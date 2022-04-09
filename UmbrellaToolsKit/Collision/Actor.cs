@@ -126,10 +126,8 @@ namespace UmbrellaToolsKit.Collision
                     Vector2 _position = new Vector2(this.Position.X, this.Position.Y + sign);
                     if (!collideAt(this.Scene.AllSolids, _position))
                     {
-
                         this.Position.Y += sign;
                         move -= sign;
-
                     }
                     else
                     {

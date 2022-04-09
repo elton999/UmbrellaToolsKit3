@@ -9,6 +9,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MonoGame.ContentPipeline.UmbrellaToolKit\MonoGame.ContentPipeline.UmbrellaToolKit\MonoGame.ContentPipeline.UmbrellaToolKit.csproj" />
+    <ProjectReference Include="..\MonoGame.ContentPipeline.UmbrellaToolsKit\MonoGame.ContentPipeline.UmbrellaToolsKit.csproj" />
   </ItemGroup>
 </Project>

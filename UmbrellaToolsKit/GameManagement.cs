@@ -28,6 +28,7 @@ namespace UmbrellaToolsKit
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+            processWait(gameTime);
             SceneManagement.Update(gameTime);
         }
 

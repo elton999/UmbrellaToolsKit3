@@ -20,7 +20,7 @@ namespace MonoGame.ContentPipeline.UmbrellaToolsKit
 
             // layers
             output.Write((int)value.layers.Count);
-            for(var i = 0; i < value.layers.Count; i++)
+            for (var i = 0; i < value.layers.Count; i++)
             {
                 output.Write((string)value.layers[i].name);
                 output.Write((string)value.layers[i]._eid);
@@ -43,7 +43,8 @@ namespace MonoGame.ContentPipeline.UmbrellaToolsKit
                             output.Write((int)value.layers[i].data2D[x][y]);
                         }
                     }
-                } else
+                }
+                else
                     output.Write((int)0);
 
                 // grid2D
@@ -55,7 +56,10 @@ namespace MonoGame.ContentPipeline.UmbrellaToolsKit
                         output.Write((int)value.layers[i].grid2D[x].Count);
                         for (var y = 0; y < value.layers[i].grid2D[x].Count; y++)
                         {
-                            output.Write((string)value.layers[i].grid2D[x][y]);
+                            if (value.layers[i].grid2D[x][y] != null)
+                                output.Write((string)value.layers[i].grid2D[x][y]);
+                            else
+                                output.Write((string)"0");
                         }
                     }
                 }
@@ -97,7 +101,16 @@ namespace MonoGame.ContentPipeline.UmbrellaToolsKit
                         output.Write((float)value.layers[i].entities[e].originY);
                         output.Write((int)value.layers[i].entities[e].width);
                         output.Write((int)value.layers[i].entities[e].height);
-                        // output.Write((string)value.layers[i].entities[e].values);
+
+                        //values
+                        if (value.layers[i].entities[e].values != null)
+                        {
+                            output.Write((int)value.layers[i].entities[e].values.Count);
+                            foreach (string key in value.layers[i].entities[e].values.Keys)
+                                output.Write((string)key + ":" + value.layers[i].entities[e].values[key]);
+                        }
+                        else
+                            output.Write((int)0);
 
                         //nodes
                         if (value.layers[i].entities[e].nodes != null)
@@ -108,7 +121,8 @@ namespace MonoGame.ContentPipeline.UmbrellaToolsKit
                                 output.Write((int)value.layers[i].entities[e].nodes[n].x);
                                 output.Write((int)value.layers[i].entities[e].nodes[n].y);
                             }
-                        } else
+                        }
+                        else
                             output.Write((int)0);
                     }
                 }

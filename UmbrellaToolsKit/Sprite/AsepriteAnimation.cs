@@ -21,7 +21,7 @@ namespace UmbrellaToolsKit.Sprite
         public int frame;
         public int frameCurrent;
         private float frameTimerCount;
-        private List<float> maxFrame;
+        private List<float> maxFrame = new List<float>();
         private AnimationDirection direction;
         public enum AnimationDirection { FORWARD, LOOP, PING_PONG }
         private bool checkedFirstframe;
