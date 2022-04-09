@@ -8,12 +8,10 @@ namespace UmbrellaToolsKit
     public class AssetManagement
     {
         public static AssetManagement Instance;
-        public AssetManagement()
-        {
-            Instance = this;
-        }
         public List<AssetObject> AssetsList = new List<AssetObject>();
         public List<AssetObject> LevelAssetsList = new List<AssetObject>();
+        
+        public AssetManagement() => Instance = this;
 
         public void Set<T>(string tag, string layer) where T : GameObject
         {
@@ -79,14 +77,5 @@ namespace UmbrellaToolsKit
         {
             this.LevelAssetsList.Clear();
         }
-    }
-
-
-    public class AssetObject
-    {
-        public string Layer;
-        public string Name;
-        public Vector2 Position;
-        public Type GameObject;
     }
 }

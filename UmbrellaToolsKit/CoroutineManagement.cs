@@ -67,9 +67,9 @@ namespace UmbrellaToolsKit
 
             if (hasCoroutines && _coroutines[0].Current != null)
             {
-                IEnumerator curoutine = (IEnumerator)_coroutines[0].Current;
-                curoutine.MoveNext();
-                _coroutines.Insert(0, curoutine);
+                IEnumerator coroutine = (IEnumerator)_coroutines[0].Current;
+                coroutine.MoveNext();
+                _coroutines.Insert(0, coroutine);
             }
         }
     }

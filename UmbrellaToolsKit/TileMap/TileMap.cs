@@ -46,13 +46,13 @@ namespace UmbrellaToolsKit.TileMap
 
         private static void SetSceneSizes(Scene scene, Ogmo.TileMap tileMap)
         {
-            scene.ScreemOffset = new Point(tileMap.offsetX, tileMap.offsetY);
+            scene.ScreenOffset = new Point(tileMap.offsetX, tileMap.offsetY);
             scene.LevelSize = new Vector2(tileMap.width, tileMap.height);
         }
 
         private static void SetSceneSizes(Scene scene, ldtk.Level level)
         {
-            scene.ScreemOffset = new Point((int)level.WorldX, (int)level.WorldY);
+            scene.ScreenOffset = new Point((int)level.WorldX, (int)level.WorldY);
             scene.LevelSize = new Vector2((int)level.PxWid, (int)level.PxHei);
         }
 
@@ -72,7 +72,7 @@ namespace UmbrellaToolsKit.TileMap
                 var entity = layer.EntityInstances[i];
                 AssetManagement.Instance.addEntityOnScene(
                         entity.Identifier,
-                        new Vector2(entity.Px[0] + scene.ScreemOffset.X, entity.Px[1] + scene.ScreemOffset.Y),
+                        new Vector2(entity.Px[0] + scene.ScreenOffset.X, entity.Px[1] + scene.ScreenOffset.Y),
                         new Point((int)entity.Width, (int)entity.Height),
                         null,
                         null,
@@ -91,7 +91,7 @@ namespace UmbrellaToolsKit.TileMap
                 {
                     AssetManagement.Instance.addEntityOnScene(
                         entity.name,
-                        new Vector2(entity.x + scene.ScreemOffset.X, entity.y + scene.ScreemOffset.Y),
+                        new Vector2(entity.x + scene.ScreenOffset.X, entity.y + scene.ScreenOffset.Y),
                         new Point(entity.width, entity.height),
                         entity.values,
                         entity.nodes,
@@ -112,7 +112,7 @@ namespace UmbrellaToolsKit.TileMap
         private static void SetGrid(Scene scene, ldtk.LayerInstance layer)
         {
             scene.Grid = new Grid();
-            scene.Grid.Origin = new Vector2(scene.ScreemOffset.X, scene.ScreemOffset.Y);
+            scene.Grid.Origin = new Vector2(scene.ScreenOffset.X, scene.ScreenOffset.Y);
             scene.Grid.Scene = scene;
 
             for (var i = 0; i < layer.IntGridCsv.Length; i++)
@@ -137,7 +137,7 @@ namespace UmbrellaToolsKit.TileMap
         private static void SetTiles(Scene scene, Texture2D tilemapSprite, ldtk.LayerInstance layer)
         {
             Layer layerTiles = CreateLayer(scene, tilemapSprite);
-            layerTiles.Origin = new Vector2(scene.ScreemOffset.X, scene.ScreemOffset.Y);
+            layerTiles.Origin = new Vector2(scene.ScreenOffset.X, scene.ScreenOffset.Y);
             layerTiles.tiles = new List<List<List<int>>>();
 
             CreateTiles(layer, layerTiles);

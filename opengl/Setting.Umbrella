@@ -1,0 +1,8 @@
+<Umbrella>
+  <working type="bool">
+    <item>True</item>
+    <item>False</item>
+    <item>True</item>
+    <item>True</item>
+  </working>
+</Umbrella>

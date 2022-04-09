@@ -1,7 +1,5 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 
 namespace UmbrellaToolsKit
 {
@@ -12,10 +10,7 @@ namespace UmbrellaToolsKit
         public int CurrentScene = 1;
         public int MaxScenes = 1;
 
-        public virtual void Start()
-        {
-            SetScene(CurrentScene);
-        }
+        public virtual void Start() => SetScene(CurrentScene);
 
         public virtual void SetScene(int Scene)
         {

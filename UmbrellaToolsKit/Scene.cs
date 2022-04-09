@@ -9,11 +9,11 @@ namespace UmbrellaToolsKit
 {
     public class Scene
     {
-        public Scene(GraphicsDevice ScreemGraphicsDevice, ContentManager Content)
+        public Scene(GraphicsDevice screenGraphicsDevice, ContentManager content)
         {
-            this.ScreemGraphicsDevice = ScreemGraphicsDevice;
-            this.Content = Content;
-            this.addLayers();
+            ScreenGraphicsDevice = screenGraphicsDevice;
+            Content = content;
+            addLayers();
         }
 
         #region Layers
@@ -51,14 +51,14 @@ namespace UmbrellaToolsKit
         //Sizes
         private int Width = 426;
         private int Height = 240;
-        public GraphicsDevice ScreemGraphicsDevice;
+        public GraphicsDevice ScreenGraphicsDevice;
         public ContentManager Content;
 
         private Color BackgroundColor = Color.CornflowerBlue;
-        public ScreemController Screem { get; set; }
+        public ScreenController Screen { get; set; }
 
         //Camera
-        public Point ScreemOffset;
+        public Point ScreenOffset;
         private Vector2 CamPositionz;
         public CameraManagement Camera;
 
@@ -120,7 +120,7 @@ namespace UmbrellaToolsKit
             Camera.Scene = this;
         }
 
-        public void CreateBackBuffer() => _BackBuffer = new RenderTarget2D(ScreemGraphicsDevice, Width, Height);
+        public void CreateBackBuffer() => _BackBuffer = new RenderTarget2D(ScreenGraphicsDevice, Width, Height);
         #endregion
 
         #region Update
@@ -184,16 +184,16 @@ namespace UmbrellaToolsKit
         {
             Vector2 _gameObjectPosition = gameObject.Position;
 
-            if (Screem != null)
+            if (Screen != null)
             {
                 bool overlay_x = false;
                 bool overlay_y = false;
-                Vector2 CameraPosition = -Screem.CameraManagement.Position;
+                Vector2 CameraPosition = -Screen.CameraManagement.Position;
 
-                if (CameraPosition.X - (ScreemOffset.X / 2f) < _gameObjectPosition.X && CameraPosition.X + (ScreemOffset.X / 2f) > _gameObjectPosition.X)
+                if (CameraPosition.X - (ScreenOffset.X / 2f) < _gameObjectPosition.X && CameraPosition.X + (ScreenOffset.X / 2f) > _gameObjectPosition.X)
                     overlay_x = true;
 
-                if (CameraPosition.Y - (ScreemOffset.Y / 2f) < _gameObjectPosition.Y && CameraPosition.Y + (ScreemOffset.Y / 2f) > _gameObjectPosition.Y)
+                if (CameraPosition.Y - (ScreenOffset.Y / 2f) < _gameObjectPosition.Y && CameraPosition.Y + (ScreenOffset.Y / 2f) > _gameObjectPosition.Y)
                     overlay_y = true;
 
                 if (overlay_x && overlay_y)
@@ -229,7 +229,7 @@ namespace UmbrellaToolsKit
         private RenderTarget2D _BackBuffer;
         public void RestartRenderTarget()
         {
-            ScreemGraphicsDevice.SetRenderTarget(this._BackBuffer);
+            ScreenGraphicsDevice.SetRenderTarget(this._BackBuffer);
         }
 
         private void DrawGameObjects(SpriteBatch spriteBatch, List<List<GameObject>> layers)
@@ -282,8 +282,8 @@ namespace UmbrellaToolsKit
             float _BackBuffer_Position_x = ((Viewport.X / 2) - (Width * _BackBuffer_scale / 2));
             float _BackBuffer_Position_y = ((Viewport.Y / 2) - (Height * _BackBuffer_scale / 2));
 
-            ScreemGraphicsDevice.SetRenderTarget(null);
-            ScreemGraphicsDevice.Clear(ClearColorScene);
+            ScreenGraphicsDevice.SetRenderTarget(null);
+            ScreenGraphicsDevice.Clear(ClearColorScene);
             spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, null);
             spriteBatch.Draw(
                 (Texture2D)_BackBuffer,

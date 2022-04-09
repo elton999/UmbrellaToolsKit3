@@ -1,30 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace UmbrellaToolsKit
 {
-    public class ScreemController : GameObject
+    public class ScreenController : GameObject
     {
         public GraphicsDeviceManager graphics;
         public GraphicsAdapter graphicsAdapter;
         public CameraManagement CameraManagement;
         public Matrix TransformMatrix;
-        public Scene Scene;
-        private RenderTarget2D screem;
+        private RenderTarget2D screen;
 
-        public ScreemController(GraphicsDeviceManager graphics, GraphicsAdapter graphicsAdapter, GraphicsDevice graphicsDevice, int resolution = 0)
+        public ScreenController(GraphicsDeviceManager graphics, GraphicsAdapter graphicsAdapter, GraphicsDevice graphicsDevice, int resolution = 0)
         {
             this.graphics = graphics;
             this.graphicsAdapter = graphicsAdapter;
             this.SetResolutions();
             this.Resolution = resolution;
 
-            this.screem = new RenderTarget2D(graphicsDevice, (int)this.Resolutions[0].X, (int)this.Resolutions[0].Y);
+            this.screen = new RenderTarget2D(graphicsDevice, (int)this.Resolutions[0].X, (int)this.Resolutions[0].Y);
         }
 
         public List<Vector2> Resolutions = new List<Vector2>();
@@ -57,12 +52,12 @@ namespace UmbrellaToolsKit
             float _width = this.graphics.GraphicsDevice.Viewport.Width;
             float _height = this.graphics.GraphicsDevice.Viewport.Height;
 
-            this.Position = new Vector2((_width * this.Scale / 2f) - ((float)this.screem.Width / 2f),
-                (_height * this.Scale / 2f) - ((float)this.screem.Height / 2f));
+            this.Position = new Vector2((_width * this.Scale / 2f) - ((float)this.screen.Width / 2f),
+                (_height * this.Scale / 2f) - ((float)this.screen.Height / 2f));
 
             if (CameraManagement != null && Scene != null)
             {
-                this.Scale = this.getCurrentResolutionSize.X / Scene.ScreemOffset.X;
+                this.Scale = this.getCurrentResolutionSize.X / Scene.ScreenOffset.X;
                 //CameraManagement.ScreemSize = Scene.ScreemOffset;
                 CameraManagement.Scale = this.Scale;
                 CameraManagement.update(gameTime);
@@ -76,7 +71,7 @@ namespace UmbrellaToolsKit
             else TransformMatrix = Matrix.CreateRotationZ(0f) * Matrix.CreateTranslation(0, 0, 0);
 
             GraphicsDevice.Clear(Color.Transparent);
-            GraphicsDevice.SetRenderTarget(this.screem);
+            GraphicsDevice.SetRenderTarget(this.screen);
             spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp, null, null, null, TransformMatrix);
         }
 
@@ -88,7 +83,7 @@ namespace UmbrellaToolsKit
             GraphicsDevice.Clear(Color.White);
             spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, null);
             // render screem
-            this.Sprite = (Texture2D)this.screem;
+            this.Sprite = (Texture2D)this.screen;
             this.DrawSprite(spriteBatch);
             spriteBatch.End();
         }

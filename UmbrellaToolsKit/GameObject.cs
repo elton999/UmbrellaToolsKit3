@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -54,7 +51,7 @@ namespace UmbrellaToolsKit
         public Vector2 TextureSize;
 
         public MouseManager _Mouse;
-        public ScreemController _Screem;
+        public ScreenController _Screen;
 
         public SpriteSortMode SpriteSortMode = SpriteSortMode.Immediate;
         public SamplerState SamplerState = SamplerState.PointClamp;
@@ -64,7 +61,7 @@ namespace UmbrellaToolsKit
 
         public float Radius;
 
-        public virtual void Isvisible() { }
+        public virtual void IsVisible() { }
         public virtual void IsNotvisible() { }
         public virtual void OnCollision(string tag = null) { }
         public virtual void OnCollisionOut(string tag) { }

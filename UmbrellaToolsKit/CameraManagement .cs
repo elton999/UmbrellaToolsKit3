@@ -20,9 +20,9 @@ namespace UmbrellaToolsKit
         public float Zoom { get; set; }
         public Vector2 Origin { get => new Vector2(this.Scene.Sizes.X / 2, this.Scene.Sizes.Y / 2) / 1; }
         public Vector2 Target { get; set; }
-        public Vector2 ScreemSize { get; set; }
-        public Vector2 ScreemTargetAreaLimits { get; set; }
-        public Vector2 ScreemSizeLimits { get; set; }
+        public Vector2 ScreenSize { get; set; }
+        public Vector2 ScreenTargetAreaLimits { get; set; }
+        public Vector2 ScreenSizeLimits { get; set; }
         public float MoveSpeed { get; set; }
         public Vector2 maxPosition;
         public Vector2 minPosition;
@@ -62,7 +62,7 @@ namespace UmbrellaToolsKit
 
             foreach (Collision.Actor actor in _actorsList)
                 if (actor.overlapCheck(_actorCamera))
-                    actor.Isvisible();
+                    actor.IsVisible();
                 else
                     actor.IsNotvisible();
         }
@@ -73,8 +73,8 @@ namespace UmbrellaToolsKit
             this._position.X = MathHelper.Lerp(this.Position.X, this.Target.X, this.MoveSpeed * delta);
             if (this.UseLevelLimits)
             {
-                float maxValue = this.Scene.LevelSize.X + this.Scene.ScreemOffset.X - this.Origin.X;
-                float minValue = this.Scene.ScreemOffset.X + this.Origin.X;
+                float maxValue = this.Scene.LevelSize.X + this.Scene.ScreenOffset.X - this.Origin.X;
+                float minValue = this.Scene.ScreenOffset.X + this.Origin.X;
                 this._position.X = Math.Max(this._position.X, minValue);
                 this._position.X = Math.Min(this._position.X, maxValue);
             }
@@ -86,8 +86,8 @@ namespace UmbrellaToolsKit
 
             if (this.UseLevelLimits)
             {
-                float maxValue = this.Scene.LevelSize.Y + this.Scene.ScreemOffset.Y - this.Origin.Y;
-                float minValue = this.Scene.ScreemOffset.Y + this.Origin.Y;
+                float maxValue = this.Scene.LevelSize.Y + this.Scene.ScreenOffset.Y - this.Origin.Y;
+                float minValue = this.Scene.ScreenOffset.Y + this.Origin.Y;
                 this._position.Y = Math.Min(this._position.Y, maxValue);
                 this._position.Y = Math.Max(this._position.Y, minValue);
 
