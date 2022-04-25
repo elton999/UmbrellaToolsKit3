@@ -28,13 +28,9 @@ namespace UmbrellaToolsKit
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            processWait(gameTime);
             SceneManagement.Update(gameTime);
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            SceneManagement.Draw(spriteBatch);
-        }
+        public override void Draw(SpriteBatch spriteBatch) => SceneManagement.Draw(spriteBatch);
     }
 }

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -11,7 +8,6 @@ namespace UmbrellaToolsKit.Sprite
     class Layer : GameObject
     {
         public List<List<List<int>>> tiles;
-
 
         public override void Draw(SpriteBatch spriteBatch)
         {
@@ -39,6 +35,12 @@ namespace UmbrellaToolsKit.Sprite
                 }
             }
             EndDraw(spriteBatch);
+        }
+
+        public override void Dispose()
+        {
+            tiles.Clear();
+            base.Dispose();
         }
     }
 }

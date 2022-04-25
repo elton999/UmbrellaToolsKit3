@@ -7,7 +7,7 @@ using UmbrellaToolsKit.UI;
 
 namespace UmbrellaToolsKit
 {
-    public class GameObject
+    public class GameObject : IDisposable
     {
         public Vector2 Position = Vector2.Zero;
         public Vector2 Origin = Vector2.Zero;
@@ -42,9 +42,7 @@ namespace UmbrellaToolsKit
             EndDraw(spriteBatch);
         }
 
-        public virtual void DrawBeforeScene(SpriteBatch spriteBatch){}
-
-
+        public virtual void DrawBeforeScene(SpriteBatch spriteBatch) { }
 
         public Vector2 _bodySize;
         public float Density = 0f;
@@ -58,7 +56,6 @@ namespace UmbrellaToolsKit
         public BlendState BlendState = null;
         public Effect Effect = null;
 
-
         public float Radius;
 
         public virtual void IsVisible() { }
@@ -71,17 +68,6 @@ namespace UmbrellaToolsKit
         public virtual void Destroy()
         {
             this.RemoveFromScene = true;
-        }
-
-        private List<Action> _allCallbacks = new List<Action>();
-        public List<float> _timers = new List<float>();
-        private List<float> _maxTime = new List<float>();
-
-        public void wait(float time, Action callback)
-        {
-            this._timers.Add(0);
-            this._maxTime.Add(time);
-            this._allCallbacks.Add(callback);
         }
 
         public float lerp(float min, float max, float value)
@@ -104,44 +90,7 @@ namespace UmbrellaToolsKit
             return -c * (t /= d) * (t - 2) + b;
         }
 
-        public virtual void restart()
-        {
-            // wait functions
-            this._allCallbacks = new List<Action>();
-            this._timers = new List<float>();
-            this._maxTime = new List<float>();
-        }
-
-        public void processWait(GameTime gameTime)
-        {
-            List<Action> __allCallbacks = new List<Action>();
-            List<float> __timers = new List<float>();
-            List<float> __maxTime = new List<float>();
-
-            for (int i = 0; i < this._timers.Count; i++)
-            {
-                this._timers[i] += (float)gameTime.ElapsedGameTime.TotalSeconds;
-                if (this._timers[i] >= this._maxTime[i])
-                {
-                    this._allCallbacks[i]();
-                }
-                else
-                {
-                    __allCallbacks.Add(this._allCallbacks[i]);
-                    __timers.Add(this._timers[i]);
-                    __maxTime.Add(this._maxTime[i]);
-                }
-            }
-
-            this._allCallbacks.Clear();
-            this._allCallbacks.AddRange(__allCallbacks);
-            this._timers.Clear();
-            this._timers.AddRange(__timers);
-            this._maxTime.Clear();
-            this._maxTime.AddRange(__maxTime);
-        }
-
-
+        public virtual void restart() { }
 
         public void DrawSprite(SpriteBatch spriteBatch)
         {
@@ -171,9 +120,8 @@ namespace UmbrellaToolsKit
             );
         }
 
-        public void EndDraw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.End();
-        }
+        public void EndDraw(SpriteBatch spriteBatch) => spriteBatch.End();
+
+        public virtual void Dispose() => GC.SuppressFinalize(this);
     }
 }

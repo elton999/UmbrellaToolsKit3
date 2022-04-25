@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -7,7 +8,7 @@ using UmbrellaToolsKit.Collision;
 
 namespace UmbrellaToolsKit
 {
-    public class Scene
+    public class Scene : IDisposable
     {
         public Scene(GraphicsDevice screenGraphicsDevice, ContentManager content)
         {
@@ -143,7 +144,6 @@ namespace UmbrellaToolsKit
                 {
                     for (int e = layers[i].Count - 1; e >= 0; e--)
                     {
-                        layers[i][e].processWait(gameTime);
                         layers[i][e].UpdateData(gameTime);
 
                         if (Camera != null)
@@ -236,7 +236,7 @@ namespace UmbrellaToolsKit
         {
             for (int i = layers.Count - 1; i >= 0; i--)
                 for (int e = layers[i].Count - 1; e >= 0; e--)
-                    if (!layers[i][e].RemoveFromScene) 
+                    if (!layers[i][e].RemoveFromScene)
                         layers[i][e].Draw(spriteBatch);
         }
 
@@ -244,7 +244,7 @@ namespace UmbrellaToolsKit
         {
             for (int i = layers.Count - 1; i >= 0; i--)
                 for (int e = layers[i].Count - 1; e >= 0; e--)
-                    if (!layers[i][e].RemoveFromScene) 
+                    if (!layers[i][e].RemoveFromScene)
                         layers[i][e].DrawBeforeScene(spriteBatch);
         }
 
@@ -299,5 +299,24 @@ namespace UmbrellaToolsKit
             spriteBatch.End();
         }
         #endregion
+
+        public void Dispose()
+        {
+            this._BackBuffer.Dispose();
+
+            foreach (List<GameObject> layer in SortLayers)
+                foreach (GameObject gameObject in layer)
+                    gameObject.Dispose();
+
+            foreach (GameObject gameObject in UI)
+                gameObject.Dispose();
+
+            Grid.Dispose();
+
+            GC.SuppressFinalize(this);
+            GC.Collect();
+
+            LevelReady = false;
+        }
     }
 }
