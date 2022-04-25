@@ -70,53 +70,24 @@ namespace UmbrellaToolsKit
             this.RemoveFromScene = true;
         }
 
-        public float lerp(float min, float max, float value)
-        {
-            return min + (max - min) * value;
-        }
-
-        public float LinearTween(float t, float b, float c, float d)
-        {
-            return c * t / d + b;
-        }
-
-        public float EaseInQuad(float t, float b, float c, float d)
-        {
-            return c * (t /= d) * t + b;
-        }
-
-        public float EaseOutQuad(float t, float b, float c, float d)
-        {
-            return -c * (t /= d) * (t - 2) + b;
-        }
-
         public virtual void restart() { }
 
         public void DrawSprite(SpriteBatch spriteBatch)
         {
-            if (this.Sprite != null)
-            {
-                if (this.Body.IsEmpty)
-                {
-                    spriteBatch.Draw(this.Sprite, this.Position, null, this.SpriteColor * this.Transparent, this.Rotation, this.Origin, this.Scale, this.spriteEffect, 0);
-                }
-                else
-                {
-                    spriteBatch.Draw(this.Sprite, this.Position, this.Body, this.SpriteColor * this.Transparent, this.Rotation, this.Origin, this.Scale, this.spriteEffect, 0);
-                }
-            }
+            if (Sprite != null)
+                spriteBatch.Draw(Sprite, Position, Body.IsEmpty ? null : Body, SpriteColor * Transparent, Rotation, Origin, Scale, spriteEffect, 0);
         }
 
         public void BeginDraw(SpriteBatch spriteBatch, bool hasCamera = true)
         {
             spriteBatch.Begin(
-                this.SpriteSortMode,
-                this.BlendState,
-                this.SamplerState,
+                SpriteSortMode,
+                BlendState,
+                SamplerState,
                 null,
                 null,
-                this.Effect,
-                this.Scene.Camera != null && hasCamera ? this.Scene.Camera.TransformMatrix() : null
+                Effect,
+                Scene.Camera != null && hasCamera ? Scene.Camera.TransformMatrix() : null
             );
         }
 
