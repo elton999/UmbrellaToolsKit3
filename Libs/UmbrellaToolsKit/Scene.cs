@@ -61,7 +61,7 @@ namespace UmbrellaToolsKit
         //Camera
         public Point ScreenOffset;
         private Vector2 CamPositionz;
-        public CameraManagement Camera;
+        public CameraController Camera;
 
         public bool LevelReady = false;
 
@@ -117,7 +117,7 @@ namespace UmbrellaToolsKit
 
         public void CreateCamera()
         {
-            Camera = new CameraManagement();
+            Camera = new CameraController();
             Camera.Scene = this;
         }
 

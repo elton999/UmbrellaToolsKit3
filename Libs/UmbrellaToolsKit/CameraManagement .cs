@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace UmbrellaToolsKit
 {
-    public class CameraManagement
+    public class CameraController
     {
         private Vector2 _position;
         public Vector2 Position
@@ -28,7 +28,7 @@ namespace UmbrellaToolsKit
         public Vector2 minPosition;
         public Scene Scene;
 
-        public CameraManagement()
+        public CameraController()
         {
             Zoom = 1f;
             Scale = 1f;

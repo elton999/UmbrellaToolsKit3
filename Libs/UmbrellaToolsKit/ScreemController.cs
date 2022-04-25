@@ -8,7 +8,7 @@ namespace UmbrellaToolsKit
     {
         public GraphicsDeviceManager graphics;
         public GraphicsAdapter graphicsAdapter;
-        public CameraManagement CameraManagement;
+        public CameraController CameraManagement;
         public Matrix TransformMatrix;
         private RenderTarget2D screen;
 
