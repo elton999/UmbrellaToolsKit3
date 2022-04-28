@@ -5,10 +5,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using UmbrellaToolsKit.Collision;
+using UmbrellaToolsKit.Interfaces;
 
 namespace UmbrellaToolsKit
 {
-    public class Scene : IDisposable
+    public class Scene : IUpdatable, IDisposable
     {
         public Scene(GraphicsDevice screenGraphicsDevice, ContentManager content)
         {
@@ -18,17 +19,17 @@ namespace UmbrellaToolsKit
         }
 
         #region Layers
-        public List<List<GameObject>> SortLayers = new List<List<GameObject>>();
+        public List<List<IGameObject>> SortLayers = new List<List<IGameObject>>();
 
 
         // UI
-        public List<GameObject> UI = new List<GameObject>();
+        public List<IGameObject> UI = new List<IGameObject>();
         // Layers
-        public List<GameObject> Foreground = new List<GameObject>();
-        public List<GameObject> Players = new List<GameObject>();
-        public List<GameObject> Enemies = new List<GameObject>();
-        public List<GameObject> Middleground = new List<GameObject>();
-        public List<GameObject> Backgrounds = new List<GameObject>();
+        public List<IGameObject> Foreground = new List<IGameObject>();
+        public List<IGameObject> Players = new List<IGameObject>();
+        public List<IGameObject> Enemies = new List<IGameObject>();
+        public List<IGameObject> Middleground = new List<IGameObject>();
+        public List<IGameObject> Backgrounds = new List<IGameObject>();
 
         // Collision
         public List<Solid> AllSolids = new List<Solid>();
@@ -39,7 +40,7 @@ namespace UmbrellaToolsKit
 
         public void addLayers()
         {
-            SortLayers = new List<List<GameObject>>();
+            SortLayers = new List<List<IGameObject>>();
             SortLayers.Add(Foreground);
             SortLayers.Add(Players);
             SortLayers.Add(Enemies);
@@ -60,7 +61,6 @@ namespace UmbrellaToolsKit
 
         //Camera
         public Point ScreenOffset;
-        private Vector2 CamPositionz;
         public CameraController Camera;
 
         public bool LevelReady = false;
@@ -127,7 +127,7 @@ namespace UmbrellaToolsKit
         #region Update
         public float timer = 0;
         public float updateDataTime = 1 / 30f;
-        private void UpdateGameObjects(GameTime gameTime, List<List<GameObject>> layers)
+        private void UpdateGameObjects(GameTime gameTime, List<List<IGameObject>> layers)
         {
             //UI update
             for (int i = UI.Count - 1; i >= 0; i--)
@@ -170,7 +170,7 @@ namespace UmbrellaToolsKit
             }
         }
 
-        public void IsVisibleGameObject(List<List<GameObject>> layers)
+        public void IsVisibleGameObject(List<List<IGameObject>> layers)
         {
             for (int i = layers.Count - 1; i >= 0; i--)
                 for (int e = layers[i].Count - 1; e >= 0; e--)
@@ -180,7 +180,7 @@ namespace UmbrellaToolsKit
                         layers[i][e].OnInvisible();
         }
 
-        private bool CheckIsVisible(GameObject gameObject)
+        private bool CheckIsVisible(IGameObject gameObject)
         {
             Vector2 _gameObjectPosition = gameObject.Position;
 
@@ -203,13 +203,13 @@ namespace UmbrellaToolsKit
             return false;
         }
 
-        private void RemoveGameObject(List<List<GameObject>> layers)
+        private void RemoveGameObject(List<List<IGameObject>> layers)
         {
             // UI
-            IEnumerable<GameObject> _UI_Objects_to_remove = from gameObject in UI where gameObject.RemoveFromScene == true select gameObject;
+            IEnumerable<IGameObject> _UI_Objects_to_remove = from gameObject in UI where gameObject.RemoveFromScene == true select gameObject;
 
-            IEnumerable<GameObject> _UI_Objects = from gameObject in UI where gameObject.RemoveFromScene == false select gameObject;
-            UI = _UI_Objects.ToList<GameObject>();
+            IEnumerable<IGameObject> _UI_Objects = from gameObject in UI where gameObject.RemoveFromScene == false select gameObject;
+            UI = _UI_Objects.ToList<IGameObject>();
 
             for (int i = layers.Count - 1; i >= 0; i--)
             {
@@ -232,7 +232,7 @@ namespace UmbrellaToolsKit
             ScreenGraphicsDevice.SetRenderTarget(this._BackBuffer);
         }
 
-        private void DrawGameObjects(SpriteBatch spriteBatch, List<List<GameObject>> layers)
+        private void DrawGameObjects(SpriteBatch spriteBatch, List<List<IGameObject>> layers)
         {
             for (int i = layers.Count - 1; i >= 0; i--)
                 for (int e = layers[i].Count - 1; e >= 0; e--)
@@ -240,7 +240,7 @@ namespace UmbrellaToolsKit
                         layers[i][e].Draw(spriteBatch);
         }
 
-        private void DrawGameObjectsBeforeScene(SpriteBatch spriteBatch, List<List<GameObject>> layers)
+        private void DrawGameObjectsBeforeScene(SpriteBatch spriteBatch, List<List<IGameObject>> layers)
         {
             for (int i = layers.Count - 1; i >= 0; i--)
                 for (int e = layers[i].Count - 1; e >= 0; e--)
@@ -249,7 +249,7 @@ namespace UmbrellaToolsKit
         }
 
         public Color ClearColorScene = Color.Black;
-        public virtual void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Vector2 Viewport)
+        public void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Vector2 Viewport)
         {
             if (LevelReady)
             {
@@ -302,14 +302,23 @@ namespace UmbrellaToolsKit
 
         public void Dispose()
         {
-            this._BackBuffer.Dispose();
+            LevelReady = false;
+            _BackBuffer.Dispose();
+            _BackBuffer = null;
 
-            foreach (List<GameObject> layer in SortLayers)
-                foreach (GameObject gameObject in layer)
+            foreach (List<IGameObject> layer in SortLayers)
+            {
+                foreach (IGameObject gameObject in layer)
                     gameObject.Dispose();
+                layer.Clear();
+            }
 
-            foreach (GameObject gameObject in UI)
+            foreach (IGameObject gameObject in UI)
                 gameObject.Dispose();
+            UI.Clear();
+
+            AllSolids.Clear();
+            AllActors.Clear();
 
             Grid.Dispose();
 

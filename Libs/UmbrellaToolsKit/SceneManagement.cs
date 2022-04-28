@@ -1,9 +1,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using UmbrellaToolsKit.Interfaces;
 
 namespace UmbrellaToolsKit
 {
-    public class SceneManagement
+    public class SceneManagement : IUpdatable, Interfaces.IDrawable
     {
         public GameManagement GameManagement;
         public Scene MainScene;
@@ -14,24 +15,23 @@ namespace UmbrellaToolsKit
 
         public virtual void SetScene(int Scene)
         {
-            this.MainScene = new Scene(
+            MainScene = new Scene(
                 GameManagement.Game.GraphicsDevice,
                 GameManagement.Game.Content
             );
-            this.MainScene.GameManagement = this.GameManagement;
-            //this.MainScene.SetLevel(Scene);
-            this.MainScene.LevelReady = true;
+            MainScene.GameManagement = GameManagement;
+            MainScene.LevelReady = true;
         }
 
-        public virtual void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
-            if (this.MainScene != null && this.MainScene.LevelReady)
+            if (this.MainScene != null && MainScene.LevelReady)
                 this.MainScene.Update(gameTime);
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
-            if (this.MainScene != null && this.MainScene.LevelReady)
+            if (MainScene != null && MainScene.LevelReady)
                 this.MainScene.Draw(spriteBatch,
                 GameManagement.Game.GraphicsDevice,
                 new Vector2(

@@ -2,10 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using UmbrellaToolsKit.Interfaces;
 
 namespace UmbrellaToolsKit
 {
-    public class GameManagement : GameObject
+    public class GameManagement : IUpdatable, Interfaces.IDrawable
     {
         public Dictionary<String, dynamic> Values = new Dictionary<string, dynamic>();
 
@@ -18,19 +19,15 @@ namespace UmbrellaToolsKit
         public SceneManagement SceneManagement;
         public Game Game;
 
-        public override void Start()
+        public void Start()
         {
             this.CurrentStatus = Status.PLAYING;
             this.SceneManagement = new SceneManagement();
             this.SceneManagement.GameManagement = this;
         }
 
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-            SceneManagement.Update(gameTime);
-        }
+        public void Update(GameTime gameTime) => SceneManagement.Update(gameTime);
 
-        public override void Draw(SpriteBatch spriteBatch) => SceneManagement.Draw(spriteBatch);
+        public void Draw(SpriteBatch spriteBatch) => SceneManagement.Draw(spriteBatch);
     }
 }

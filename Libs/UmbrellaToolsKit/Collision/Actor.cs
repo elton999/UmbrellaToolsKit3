@@ -15,22 +15,22 @@ namespace UmbrellaToolsKit.Collision
 
         public int Right
         {
-            get => (int)(this.Position.X + this.size.X);
+            get => (int)(Position.X + size.X);
         }
 
         public int Left
         {
-            get => (int)(this.Position.X);
+            get => (int)(Position.X);
         }
 
         public int Top
         {
-            get => (int)(this.Position.Y);
+            get => (int)(Position.Y);
         }
 
         public int Bottom
         {
-            get => (int)(this.Position.Y + this.size.Y);
+            get => (int)(Position.Y + size.Y);
         }
 
         public enum EDGES { TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT };
@@ -43,18 +43,18 @@ namespace UmbrellaToolsKit.Collision
 
         public void SetFalseAllEdgeCollision()
         {
-            this.EdgesIsCollision[EDGES.TOP_LEFT] = false;
-            this.EdgesIsCollision[EDGES.TOP_RIGHT] = false;
-            this.EdgesIsCollision[EDGES.BOTTOM_LEFT] = false;
-            this.EdgesIsCollision[EDGES.BOTTOM_RIGHT] = false;
+            EdgesIsCollision[EDGES.TOP_LEFT] = false;
+            EdgesIsCollision[EDGES.TOP_RIGHT] = false;
+            EdgesIsCollision[EDGES.BOTTOM_LEFT] = false;
+            EdgesIsCollision[EDGES.BOTTOM_RIGHT] = false;
         }
 
         public bool AnyCollisionRamps()
         {
-            return this.EdgesIsCollision[EDGES.TOP_LEFT] ||
-                this.EdgesIsCollision[EDGES.TOP_RIGHT] ||
-                this.EdgesIsCollision[EDGES.BOTTOM_LEFT] ||
-                this.EdgesIsCollision[EDGES.BOTTOM_RIGHT];
+            return EdgesIsCollision[EDGES.TOP_LEFT] ||
+                EdgesIsCollision[EDGES.TOP_RIGHT] ||
+                EdgesIsCollision[EDGES.BOTTOM_LEFT] ||
+                EdgesIsCollision[EDGES.BOTTOM_RIGHT];
         }
 
         public Vector2 gravity2D = new Vector2(0, 8);
@@ -62,19 +62,19 @@ namespace UmbrellaToolsKit.Collision
         public float gravityScale = 1;
         public float velocityDecrecentY = 200;
         public float velocityDecrecentX = 200;
-        private void gravity(float DeltaTime)
+        private void gravity(float deltaTime)
         {
             float maxVelocity = 0.5f;
-            this.velocity = Vector2.Add(velocity, Vector2.Multiply(Vector2.Multiply(gravity2D, this.gravityScale), DeltaTime));
-            float v = (float)Math.Sqrt(Math.Pow(velocity.X, 2) + Math.Pow(velocity.Y, 2));
+            velocity += ((gravity2D * gravityScale) * deltaTime);
+            float v = velocity.Length();
             if (v > maxVelocity)
             {
                 float vs = maxVelocity / v;
-                this.velocity.X = this.velocity.X * vs;
-                this.velocity.Y = this.velocity.Y * vs;
+                velocity.X = velocity.X * vs;
+                velocity.Y = velocity.Y * vs;
             }
-            moveX(this.velocity.X * DeltaTime);
-            moveY(this.velocity.Y * DeltaTime);
+            moveX(velocity.X * deltaTime);
+            moveY(velocity.Y * deltaTime);
         }
 
         float xRemainder = 0;

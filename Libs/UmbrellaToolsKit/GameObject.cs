@@ -4,12 +4,20 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using UmbrellaToolsKit.UI;
+using UmbrellaToolsKit.Interfaces;
 
 namespace UmbrellaToolsKit
 {
-    public class GameObject : IDisposable
+    public class GameObject : IGameObject
     {
-        public Vector2 Position = Vector2.Zero;
+        private IComponent _components;
+        private bool _removeFromScene = false;
+        private Vector2 _position = Vector2.Zero;
+
+        public IComponent Components { get => _components; set => _components = value; }
+        public bool RemoveFromScene { get => _removeFromScene; set => _removeFromScene = value; }
+        public Vector2 Position { get => _position; set => _position = value; }
+
         public Vector2 Origin = Vector2.Zero;
         public Point size;
         public float Scale = 1;
@@ -25,24 +33,8 @@ namespace UmbrellaToolsKit
         public Scene Scene;
         public Dictionary<string, string> Values;
         public List<Vector2> Nodes;
-        public bool RemoveFromScene = false;
 
         public Vector2 InitialPosition;
-        public static readonly Random getRandom = new Random();
-
-        public virtual void Start() { }
-        public virtual void OnVisible() { }
-        public virtual void OnInvisible() { }
-        public virtual void Update(GameTime gameTime) { }
-        public virtual void UpdateData(GameTime gameTime) { }
-        public virtual void Draw(SpriteBatch spriteBatch)
-        {
-            BeginDraw(spriteBatch, true);
-            DrawSprite(spriteBatch);
-            EndDraw(spriteBatch);
-        }
-
-        public virtual void DrawBeforeScene(SpriteBatch spriteBatch) { }
 
         public Vector2 _bodySize;
         public float Density = 0f;
@@ -57,6 +49,20 @@ namespace UmbrellaToolsKit
         public Effect Effect = null;
 
         public float Radius;
+
+        public virtual void Start() { }
+        public virtual void OnVisible() { }
+        public virtual void OnInvisible() { }
+        public virtual void Update(GameTime gameTime) { }
+        public virtual void UpdateData(GameTime gameTime) { }
+        public virtual void Draw(SpriteBatch spriteBatch)
+        {
+            BeginDraw(spriteBatch, true);
+            DrawSprite(spriteBatch);
+            EndDraw(spriteBatch);
+        }
+
+        public virtual void DrawBeforeScene(SpriteBatch spriteBatch) { }
 
         public virtual void IsVisible() { }
         public virtual void IsNotvisible() { }
