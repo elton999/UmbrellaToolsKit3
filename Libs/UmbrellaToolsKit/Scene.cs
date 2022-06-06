@@ -21,7 +21,6 @@ namespace UmbrellaToolsKit
         #region Layers
         public List<List<IGameObject>> SortLayers = new List<List<IGameObject>>();
 
-
         // UI
         public List<IGameObject> UI = new List<IGameObject>();
         // Layers
@@ -249,6 +248,7 @@ namespace UmbrellaToolsKit
         }
 
         public Color ClearColorScene = Color.Black;
+
         public void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Vector2 Viewport)
         {
             if (LevelReady)

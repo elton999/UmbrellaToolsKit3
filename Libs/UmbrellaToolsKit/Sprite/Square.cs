@@ -1,10 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UmbrellaToolsKit.Sprite
 {
@@ -21,7 +16,6 @@ namespace UmbrellaToolsKit.Sprite
                 data[i] = this.SquareColor;
             this.Sprite.SetData(data);
         }
-
 
         public override void Draw(SpriteBatch spriteBatch)
         {

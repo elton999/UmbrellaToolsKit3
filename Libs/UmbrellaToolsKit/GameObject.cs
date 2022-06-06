@@ -40,7 +40,6 @@ namespace UmbrellaToolsKit
         public float Density = 0f;
         public Vector2 TextureSize;
 
-        public MouseManager _Mouse;
         public ScreenController _Screen;
 
         public SpriteSortMode SpriteSortMode = SpriteSortMode.Immediate;
@@ -71,10 +70,7 @@ namespace UmbrellaToolsKit
         public virtual void OnTriggerIn(string tag) { }
         public virtual void OnTriggerOut(string tag) { }
         public virtual void OnMouseOver() { }
-        public virtual void Destroy()
-        {
-            this.RemoveFromScene = true;
-        }
+        public virtual void Destroy() => RemoveFromScene = true;
 
         public virtual void restart() { }
 

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,8 +16,8 @@ namespace UmbrellaToolsKit.Collision
 
         public Grid()
         {
-            this.Collides.Add("1");
-            this.Transparent = 0.5f;
+            Collides.Add("1");
+            Transparent = 0.5f;
         }
 
         public bool checkOverlap(Point size, Vector2 position, Actor ActorReal, bool checkRamps = true)
@@ -27,13 +25,13 @@ namespace UmbrellaToolsKit.Collision
             Actor actor = new Actor();
             actor.size = size;
             actor.Position = position;
-            if (this.checkOverlapActor(actor, checkRamps))
+
+            if (checkOverlapActor(actor, checkRamps))
             {
                 ActorReal.EdgesIsCollision = actor.EdgesIsCollision;
                 return true;
             }
-            else
-                return false;
+            return false;
         }
 
         int RowGrid;
@@ -46,41 +44,43 @@ namespace UmbrellaToolsKit.Collision
             // setting false edges collision to false
             actor.SetFalseAllEdgeCollision();
 
-            RowGrid = this.getcell(actor.Left - this.Origin.X);
-            WidthGrid = this.getcell(actor.Right - this.Origin.X);
-            ColumnGrid = this.getcell(actor.Top - this.Origin.Y);
-            HeightGrid = this.getcell(actor.Bottom - -this.Origin.Y);
+            RowGrid = getcell(actor.Left - Origin.X);
+            WidthGrid = getcell(actor.Right - Origin.X);
+            ColumnGrid = getcell(actor.Top - Origin.Y);
+            HeightGrid = getcell(actor.Bottom - -Origin.Y);
 
-            RowGrid = RowGrid < 0 ?  0 : RowGrid;
+            RowGrid = RowGrid < 0 ? 0 : RowGrid;
             ColumnGrid = ColumnGrid < 0 ? 0 : ColumnGrid;
-            WidthGrid =  WidthGrid >= this.GridCollides[0].Count() ? this.GridCollides[0].Count() - 1 :  WidthGrid;
-            HeightGrid = HeightGrid >= this.GridCollides.Count() ? this.GridCollides.Count() - 1 : HeightGrid;
+            WidthGrid = WidthGrid >= GridCollides[0].Count() ? GridCollides[0].Count() - 1 : WidthGrid;
+            HeightGrid = HeightGrid >= GridCollides.Count() ? GridCollides.Count() - 1 : HeightGrid;
 
             bool rt = false;
-                
+
             for (int x = RowGrid; x <= WidthGrid; x++)
             {
                 for (int y = ColumnGrid; y <= HeightGrid; y++)
                 {
-                    if (this.check(actor.size, actor.Position, new Point(this.Scene.CellSize, this.Scene.CellSize), new Vector2(x*this.Scene.CellSize, y* this.Scene.CellSize)))
+                    if (check(actor.size, actor.Position, new Point(Scene.CellSize, Scene.CellSize), new Vector2(x * Scene.CellSize, y * Scene.CellSize)))
                     {
-                        if (this.Collides.Contains(this.GridCollides[y][x]))
+                        if (Collides.Contains(GridCollides[y][x]))
                             rt = true;
-                        if (this.CollidesRamps.Contains(this.GridCollides[y][x]) && checkRamps)
+                        if (CollidesRamps.Contains(GridCollides[y][x]) && checkRamps)
                         {
                             // check ramps
-                            if(this.CollidesRamps[0] == this.GridCollides[y][x])
+                            if (CollidesRamps[0] == GridCollides[y][x])
                             {
                                 // ramp right bottom check
-                                if(actor.Bottom - this.Origin.Y- (y * this.Scene.CellSize) > (this.Scene.CellSize - ((actor.Right - this.Origin.X) - x * this.Scene.CellSize)))
+                                if (actor.Bottom - Origin.Y - (y * Scene.CellSize) > (Scene.CellSize - ((actor.Right - Origin.X) - x * Scene.CellSize)))
                                 {
                                     rt = true;
                                     actor.EdgesIsCollision[Actor.EDGES.BOTTOM_RIGHT] = true;
                                 }
-                            } else if (this.CollidesRamps[1] == this.GridCollides[y][x])
+                            }
+
+                            if (CollidesRamps[1] == GridCollides[y][x])
                             {
                                 // ramp right bottom check
-                                if (actor.Bottom - this.Origin.Y - (y * this.Scene.CellSize) > (((actor.Left - this.Origin.X) - x * this.Scene.CellSize)))
+                                if (actor.Bottom - Origin.Y - (y * Scene.CellSize) > (((actor.Left - Origin.X) - x * Scene.CellSize)))
                                 {
                                     rt = true;
                                     actor.EdgesIsCollision[Actor.EDGES.BOTTOM_LEFT] = true;
@@ -94,14 +94,13 @@ namespace UmbrellaToolsKit.Collision
             return rt;
         }
 
-
         public bool check(Point size1, Vector2 position1, Point size2, Vector2 position2)
         {
-            bool AisToTheRightOfB = position1.X - this.Origin.X >= position2.X + size2.X;
-            bool AisToTheLeftOfB = position1.X - this.Origin.X + size1.X <= position2.X;
-            bool AisAboveB = position1.Y - this.Origin.Y + size1.Y <= position2.Y ;
-            bool AisBelowB = position1.Y - this.Origin.Y >= position2.Y + size2.Y;
-            
+            bool AisToTheRightOfB = position1.X - Origin.X >= position2.X + size2.X;
+            bool AisToTheLeftOfB = position1.X - Origin.X + size1.X <= position2.X;
+            bool AisAboveB = position1.Y - Origin.Y + size1.Y <= position2.Y;
+            bool AisBelowB = position1.Y - Origin.Y >= position2.Y + size2.Y;
+
             return !(AisToTheRightOfB
                 || AisToTheLeftOfB
                 || AisAboveB
@@ -112,38 +111,42 @@ namespace UmbrellaToolsKit.Collision
         {
             List<Actor> rt = new List<Actor>();
             int i = 0;
-            while (i < this.Scene.AllActors.Count)
+            while (i < Scene.AllActors.Count)
             {
-                if (this.Scene.AllActors[i].isRidingGrid(this))
-                    rt.Add(this.Scene.AllActors[i]);
+                if (Scene.AllActors[i].isRidingGrid(this))
+                    rt.Add(Scene.AllActors[i]);
                 i++;
             }
             return rt;
         }
 
-        public int getcell(float position)
+        public int getcell(float position) => (int)(position / Scene.CellSize);
+
+        public override void Dispose()
         {
-            int cell = (int)(position / this.Scene.CellSize);
-            return cell;
+            GridCollides.Clear();
+            Collides.Clear();
+            CollidesRamps.Clear();
+            base.Dispose();
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (this.Scene.AllActors.Count > 0)
+            if (Scene.AllActors.Count > 0)
             {
                 for (int x = RowGrid; x <= WidthGrid; x++)
                 {
                     for (int y = ColumnGrid; y <= HeightGrid; y++)
                     {
-                        if (this.check(this.Scene.AllActors[0].size, this.Scene.AllActors[0].Position,
-                            new Point(this.Scene.CellSize, this.Scene.CellSize),
-                            new Vector2(x * this.Scene.CellSize, y * this.Scene.CellSize)))
+                        if (check(Scene.AllActors[0].size, Scene.AllActors[0].Position,
+                            new Point(Scene.CellSize, Scene.CellSize),
+                            new Vector2(x * Scene.CellSize, y * Scene.CellSize)))
                         {
                             if (this.Collides.Contains(this.GridCollides[x][y]))
                             {
-                                this.Body = new Rectangle(new Point(0, 0), new Point(this.Scene.CellSize, this.Scene.CellSize));
-                                this.Position = new Vector2(x * this.Scene.CellSize, y * this.Scene.CellSize);
-                                this.DrawSprite(spriteBatch);
+                                Body = new Rectangle(new Point(0, 0), new Point(Scene.CellSize, Scene.CellSize));
+                                Position = new Vector2(x * Scene.CellSize, y * Scene.CellSize);
+                                DrawSprite(spriteBatch);
                             }
                         }
                     }

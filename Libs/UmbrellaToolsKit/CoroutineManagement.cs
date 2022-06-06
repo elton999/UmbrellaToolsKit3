@@ -9,7 +9,7 @@ namespace UmbrellaToolsKit
     {
         private List<IEnumerator> _coroutines = new List<IEnumerator>();
         private IEnumerator _coroutinesUpdate;
-        public  GameTime GameTime;
+        public GameTime GameTime;
 
         public CoroutineManagement()
         {
@@ -48,14 +48,12 @@ namespace UmbrellaToolsKit
             while (true)
             {
                 if (_coroutines.Count > 0)
-                {
-                    ExecuteCoroutine();
-                }
+                    _executeCoroutine();
                 yield return null;
             }
         }
 
-        private void ExecuteCoroutine()
+        private void _executeCoroutine()
         {
             bool hasCoroutines = _coroutines[0].MoveNext();
 

@@ -10,7 +10,7 @@ namespace UmbrellaToolsKit.Collision
         public override void UpdateData(GameTime gameTime)
         {
             base.UpdateData(gameTime);
-            this.gravity((float)gameTime.ElapsedGameTime.TotalMilliseconds);
+            this.Gravity((float)gameTime.ElapsedGameTime.TotalMilliseconds);
         }
 
         public int Right
@@ -41,6 +41,11 @@ namespace UmbrellaToolsKit.Collision
             { EDGES.BOTTOM_RIGHT, false },
         };
 
+        public Vector2 Gravity2D = new Vector2(0, 8);
+        public Vector2 velocity = new Vector2(0, 0);
+        public float GravityScale = 1;
+        public float MaxVelocity = 0.5f;
+
         public void SetFalseAllEdgeCollision()
         {
             EdgesIsCollision[EDGES.TOP_LEFT] = false;
@@ -57,19 +62,13 @@ namespace UmbrellaToolsKit.Collision
                 EdgesIsCollision[EDGES.BOTTOM_RIGHT];
         }
 
-        public Vector2 gravity2D = new Vector2(0, 8);
-        public Vector2 velocity = new Vector2(0, 0);
-        public float gravityScale = 1;
-        public float velocityDecrecentY = 200;
-        public float velocityDecrecentX = 200;
-        private void gravity(float deltaTime)
+        private void Gravity(float deltaTime)
         {
-            float maxVelocity = 0.5f;
-            velocity += ((gravity2D * gravityScale) * deltaTime);
+            velocity += ((Gravity2D * GravityScale) * deltaTime);
             float v = velocity.Length();
-            if (v > maxVelocity)
+            if (v > MaxVelocity)
             {
-                float vs = maxVelocity / v;
+                float vs = MaxVelocity / v;
                 velocity.X = velocity.X * vs;
                 velocity.Y = velocity.Y * vs;
             }
@@ -89,16 +88,16 @@ namespace UmbrellaToolsKit.Collision
                 int sign = Math.Sign((double)move);
                 while (move != 0)
                 {
-                    Vector2 _position = new Vector2(this.Position.X + sign, this.Position.Y);
+                    Vector2 _position = new Vector2(Position.X + sign, Position.Y);
                     if (!collideAt(this.Scene.AllSolids, _position) || AnyCollisionRamps())
                     {
-                        if (this.EdgesIsCollision[EDGES.BOTTOM_RIGHT] && (sign > 0 || gravity2D.Y == 0))
-                            this.Position.Y -= sign;
+                        if (this.EdgesIsCollision[EDGES.BOTTOM_RIGHT] && (sign > 0 || Gravity2D.Y == 0))
+                            Position = Position + Vector2.UnitY * -sign;
 
-                        if (this.EdgesIsCollision[EDGES.BOTTOM_LEFT] && (sign < 0 || gravity2D.Y == 0))
-                            this.Position.Y += sign;
+                        if (this.EdgesIsCollision[EDGES.BOTTOM_LEFT] && (sign < 0 || Gravity2D.Y == 0))
+                            Position = Position + Vector2.UnitY * sign;
 
-                        this.Position.X += sign;
+                        Position = Position + Vector2.UnitX * sign;
                         move -= sign;
                     }
                     else
@@ -123,10 +122,10 @@ namespace UmbrellaToolsKit.Collision
                 int sign = Math.Sign((double)move);
                 while (move != 0)
                 {
-                    Vector2 _position = new Vector2(this.Position.X, this.Position.Y + sign);
+                    Vector2 _position = new Vector2(Position.X, Position.Y + sign);
                     if (!collideAt(this.Scene.AllSolids, _position))
                     {
-                        this.Position.Y += sign;
+                        Position = Position + Vector2.UnitY * sign;
                         move -= sign;
                     }
                     else
