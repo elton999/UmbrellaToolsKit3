@@ -5,7 +5,7 @@ namespace UmbrellaToolsKit
 {
     public class AssetObject
     {
-        public string Layer;
+        public Layers Layer;
         public string Name;
         public Vector2 Position;
         public Type GameObject;

@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace UmbrellaToolsKit.Sprite
 {
-    class Layer : GameObject
+    class GameObjectLayer : GameObject
     {
         public List<List<List<int>>> tiles;
 

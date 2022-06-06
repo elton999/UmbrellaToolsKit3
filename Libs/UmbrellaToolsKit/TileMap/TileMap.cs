@@ -129,14 +129,14 @@ namespace UmbrellaToolsKit.TileMap
 
         private static void SetTiles(Scene scene, Ogmo.TileMap tileMap, Texture2D tilemapSprite, Ogmo.TileMapLayers layer)
         {
-            Layer layerTiles = CreateLayer(scene, tilemapSprite);
+            GameObjectLayer layerTiles = CreateLayer(scene, tilemapSprite);
             layerTiles.Origin = new Vector2(tileMap.offsetX, tileMap.offsetY);
             layerTiles.tiles = layer.dataCoords2D;
         }
 
         private static void SetTiles(Scene scene, Texture2D tilemapSprite, ldtk.LayerInstance layer)
         {
-            Layer layerTiles = CreateLayer(scene, tilemapSprite);
+            GameObjectLayer layerTiles = CreateLayer(scene, tilemapSprite);
             layerTiles.Origin = new Vector2(scene.ScreenOffset.X, scene.ScreenOffset.Y);
             layerTiles.tiles = new List<List<List<int>>>();
 
@@ -152,7 +152,7 @@ namespace UmbrellaToolsKit.TileMap
             }
         }
 
-        private static void CreateTiles(ldtk.LayerInstance layer, Layer layerTiles)
+        private static void CreateTiles(ldtk.LayerInstance layer, GameObjectLayer layerTiles)
         {
             for (var x = 0; x < layer.CHei; x++)
             {
@@ -165,9 +165,9 @@ namespace UmbrellaToolsKit.TileMap
             }
         }
 
-        private static Layer CreateLayer(Scene scene, Texture2D tilemapSprite)
+        private static GameObjectLayer CreateLayer(Scene scene, Texture2D tilemapSprite)
         {
-            var layerTiles = new Sprite.Layer();
+            var layerTiles = new Sprite.GameObjectLayer();
             layerTiles.Sprite = tilemapSprite;
             layerTiles.Scene = scene;
 

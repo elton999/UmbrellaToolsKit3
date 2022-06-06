@@ -13,7 +13,7 @@ namespace UmbrellaToolsKit
 
         public AssetManagement() => Instance = this;
 
-        public void Set<T>(string tag, string layer) where T : GameObject
+        public void Set<T>(string tag, Layers layer) where T : GameObject
         {
             AssetObject assetObject = new AssetObject { Name = tag, Layer = layer, GameObject = typeof(T) };
             this.AssetsList.Add(assetObject);
@@ -34,36 +34,24 @@ namespace UmbrellaToolsKit
             return new GameObject();
         }
 
-        public string GetLayer(string name)
+        public Layers GetLayer(string name)
         {
             IEnumerable<AssetObject> assetObjects = this.AssetsList.Where(asset => asset.Name == name);
             if (assetObjects.Count() > 0)
-            {
                 return assetObjects.ToList()[0].Layer;
-            }
-            return "";
+            throw new ArgumentOutOfRangeException();
         }
 
         public void addEntityOnScene(string name, Vector2 position, Point size, Dictionary<string, string> values, List<Vector2> nodes, Scene scene)
         { // ? values:Dynamic, ? nodes:Array<Vector2>, ? flipx:Bool):Void{
-            GameObject gameObject = this.GetObject(name);
-            string layer = this.GetLayer(name);
+            GameObject gameObject = GetObject(name);
+            var layer = GetLayer(name);
 
             gameObject.Position = position;
             gameObject.size = size;
             gameObject.Values = values;
             gameObject.Nodes = nodes;
-
-            if (layer == "PLAYER")
-                scene.Players.Add(gameObject);
-            else if (layer == "ENEMIES")
-                scene.Enemies.Add(gameObject);
-            else if (layer == "FOREGROUND")
-                scene.Foreground.Add(gameObject);
-            else if (layer == "MIDDLEGROUND")
-                scene.Middleground.Add(gameObject);
-            else if (layer == "BACKGROUND")
-                scene.Backgrounds.Add(gameObject);
+            SetLayerToGameObject(scene, gameObject, layer);
 
             gameObject.Content = scene.Content;
             gameObject.Scene = scene;
@@ -71,9 +59,29 @@ namespace UmbrellaToolsKit
             gameObject.Start();
         }
 
-        public void ClearAll()
+        public static void SetLayerToGameObject(Scene scene, GameObject gameObject, Layers layer)
         {
-            this.LevelAssetsList.Clear();
+            switch (layer)
+            {
+                case Layers.PLAYER:
+                    scene.Players.Add(gameObject);
+                    break;
+                case Layers.ENEMIES:
+                    scene.Enemies.Add(gameObject);
+                    break;
+                case Layers.FOREGROUND:
+                    scene.Foreground.Add(gameObject);
+                    break;
+                case Layers.MIDDLEGROUND:
+                    scene.Middleground.Add(gameObject);
+                    break;
+                case Layers.BACKGROUND:
+                    scene.Backgrounds.Add(gameObject);
+                    break;
+            }
         }
+
+        public void ClearAll() => LevelAssetsList.Clear();
+
     }
 }
