@@ -10,28 +10,13 @@ namespace UmbrellaToolsKit.Collision
         public override void UpdateData(GameTime gameTime)
         {
             base.UpdateData(gameTime);
-            this.Gravity((float)gameTime.ElapsedGameTime.TotalMilliseconds);
+            Gravity((float)gameTime.ElapsedGameTime.TotalMilliseconds);
         }
 
-        public int Right
-        {
-            get => (int)(Position.X + size.X);
-        }
-
-        public int Left
-        {
-            get => (int)(Position.X);
-        }
-
-        public int Top
-        {
-            get => (int)(Position.Y);
-        }
-
-        public int Bottom
-        {
-            get => (int)(Position.Y + size.Y);
-        }
+        public int Right { get => (int)(Position.X + size.X); }
+        public int Left { get => (int)(Position.X); }
+        public int Top { get => (int)(Position.Y); }
+        public int Bottom { get => (int)(Position.Y + size.Y); }
 
         public enum EDGES { TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT };
         public Dictionary<EDGES, bool> EdgesIsCollision = new Dictionary<EDGES, bool> {
@@ -42,7 +27,7 @@ namespace UmbrellaToolsKit.Collision
         };
 
         public Vector2 Gravity2D = new Vector2(0, 8);
-        public Vector2 velocity = new Vector2(0, 0);
+        public Vector2 Velocity = new Vector2(0, 0);
         public float GravityScale = 1;
         public float MaxVelocity = 0.5f;
 
@@ -62,18 +47,18 @@ namespace UmbrellaToolsKit.Collision
                 EdgesIsCollision[EDGES.BOTTOM_RIGHT];
         }
 
-        private void Gravity(float deltaTime)
+        public void Gravity(float deltaTime)
         {
-            velocity += ((Gravity2D * GravityScale) * deltaTime);
-            float v = velocity.Length();
+            Velocity += ((Gravity2D * GravityScale) * deltaTime);
+            float v = Velocity.Length();
             if (v > MaxVelocity)
             {
                 float vs = MaxVelocity / v;
-                velocity.X = velocity.X * vs;
-                velocity.Y = velocity.Y * vs;
+                Velocity.X = Velocity.X * vs;
+                Velocity.Y = Velocity.Y * vs;
             }
-            moveX(velocity.X * deltaTime);
-            moveY(velocity.Y * deltaTime);
+            moveX(Velocity.X * deltaTime);
+            moveY(Velocity.Y * deltaTime);
         }
 
         float xRemainder = 0;
@@ -89,12 +74,12 @@ namespace UmbrellaToolsKit.Collision
                 while (move != 0)
                 {
                     Vector2 _position = new Vector2(Position.X + sign, Position.Y);
-                    if (!collideAt(this.Scene.AllSolids, _position) || AnyCollisionRamps())
+                    if (!collideAt(Scene.AllSolids, _position) || AnyCollisionRamps())
                     {
-                        if (this.EdgesIsCollision[EDGES.BOTTOM_RIGHT] && (sign > 0 || Gravity2D.Y == 0))
+                        if (EdgesIsCollision[EDGES.BOTTOM_RIGHT] && (sign > 0 || Gravity2D.Y == 0))
                             Position = Position + Vector2.UnitY * -sign;
 
-                        if (this.EdgesIsCollision[EDGES.BOTTOM_LEFT] && (sign < 0 || Gravity2D.Y == 0))
+                        if (EdgesIsCollision[EDGES.BOTTOM_LEFT] && (sign < 0 || Gravity2D.Y == 0))
                             Position = Position + Vector2.UnitY * sign;
 
                         Position = Position + Vector2.UnitX * sign;
@@ -122,8 +107,8 @@ namespace UmbrellaToolsKit.Collision
                 int sign = Math.Sign((double)move);
                 while (move != 0)
                 {
-                    Vector2 _position = new Vector2(Position.X, Position.Y + sign);
-                    if (!collideAt(this.Scene.AllSolids, _position))
+                    var position = Position + Vector2.UnitY * sign;
+                    if (!collideAt(Scene.AllSolids, position))
                     {
                         Position = Position + Vector2.UnitY * sign;
                         move -= sign;
@@ -140,10 +125,10 @@ namespace UmbrellaToolsKit.Collision
 
         public bool overlapCheck(Actor actor)
         {
-            bool AisToTheRightOfB = actor.Left >= this.Right;
-            bool AisToTheLeftOfB = actor.Right <= this.Left;
-            bool AisAboveB = actor.Bottom <= this.Top;
-            bool AisBelowB = actor.Top >= this.Bottom;
+            bool AisToTheRightOfB = actor.Left >= Right;
+            bool AisToTheLeftOfB = actor.Right <= Left;
+            bool AisAboveB = actor.Bottom <= Top;
+            bool AisBelowB = actor.Top >= Bottom;
             return !(AisToTheRightOfB
                 || AisToTheLeftOfB
                 || AisAboveB
@@ -152,10 +137,10 @@ namespace UmbrellaToolsKit.Collision
 
         public bool overlapCheckPixel(Actor actor)
         {
-            bool AisToTheRightOfB = actor.Left > this.Right;
-            bool AisToTheLeftOfB = actor.Right < this.Left;
-            bool AisAboveB = actor.Bottom < this.Top;
-            bool AisBelowB = actor.Top > this.Bottom;
+            bool AisToTheRightOfB = actor.Left > Right;
+            bool AisToTheLeftOfB = actor.Right < Left;
+            bool AisAboveB = actor.Bottom < Top;
+            bool AisBelowB = actor.Top > Bottom;
             return !(AisToTheRightOfB
                 || AisToTheLeftOfB
                 || AisAboveB
@@ -167,13 +152,13 @@ namespace UmbrellaToolsKit.Collision
             bool rt = false;
             foreach (Solid solid in solids)
             {
-                if (solid.check(this.size, position))
+                if (solid.check(size, position))
                 {
-                    solid.OnCollision(this.tag);
+                    solid.OnCollision(tag);
                     rt = true;
                 }
             }
-            if (this.Scene.Grid.checkOverlap(this.size, position, this))
+            if (Scene.Grid.checkOverlap(size, position, this))
                 rt = true;
 
             return rt;
@@ -181,7 +166,7 @@ namespace UmbrellaToolsKit.Collision
 
         public virtual bool isRiding(Solid solid)
         {
-            if (solid.check(this.size, new Vector2(this.Position.X, this.Position.Y + 1)))
+            if (solid.check(size, new Vector2(Position.X, Position.Y + 1)))
                 return true;
 
             return false;
@@ -189,7 +174,7 @@ namespace UmbrellaToolsKit.Collision
 
         public virtual bool isRidingGrid(Grid grid)
         {
-            if (grid.checkOverlap(this.size, new Vector2(this.Position.X, this.Position.Y + 1), this))
+            if (grid.checkOverlap(size, new Vector2(Position.X, Position.Y + 1), this))
                 return true;
 
             return false;

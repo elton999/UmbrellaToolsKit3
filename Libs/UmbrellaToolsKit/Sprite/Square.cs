@@ -10,11 +10,11 @@ namespace UmbrellaToolsKit.Sprite
         {
             base.Start();
 
-            this.Sprite = new Texture2D(this.Scene.ScreenGraphicsDevice, this.size.X, this.size.Y);
-            Color[] data = new Color[this.size.X * this.size.Y];
+            Sprite = new Texture2D(Scene.ScreenGraphicsDevice, size.X, size.Y);
+            Color[] data = new Color[size.X * size.Y];
             for (int i = 0; i < data.Length; ++i)
-                data[i] = this.SquareColor;
-            this.Sprite.SetData(data);
+                data[i] = SquareColor;
+            Sprite.SetData(data);
         }
 
         public override void Draw(SpriteBatch spriteBatch)

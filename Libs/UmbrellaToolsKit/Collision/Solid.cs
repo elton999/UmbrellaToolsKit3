@@ -17,22 +17,22 @@ namespace UmbrellaToolsKit.Collision
 
         public int Right
         {
-            get => (int)(this.Position.X + this.size.X);
+            get => (int)(Position.X + size.X);
         }
 
         public int Left
         {
-            get => (int)(this.Position.X);
+            get => (int)(Position.X);
         }
 
         public int Top
         {
-            get => (int)(this.Position.Y);
+            get => (int)(Position.Y);
         }
 
         public int Bottom
         {
-            get => (int)(this.Position.Y + this.size.Y);
+            get => (int)(Position.Y + size.Y);
         }
 
 
@@ -47,48 +47,40 @@ namespace UmbrellaToolsKit.Collision
 
             if (moveX != 0 || moveY != 0)
             {
-                this.Collidable = false;
+                Collidable = false;
 
-                List<Actor> riding = this.GetAllRidingActors();
+                List<Actor> riding = GetAllRidingActors();
 
                 if (moveX != 0)
                 {
                     xRemainder -= moveX;
-                    this.Position = new Vector2(this.Position.X + moveX, this.Position.Y);
+                    Position = Position + Vector2.UnitX * moveX;
 
                     if (moveX > 0)
                     {
                         int i = 0;
-                        for (i = 0; i < this.Scene.AllActors.Count; i++)
+                        for (i = 0; i < Scene.AllActors.Count; i++)
                         {
-                            if (overlapCheck(this.Scene.AllActors[i]))
-                            {
-                                // Push top
-                                this.Scene.AllActors[i].moveX(this.Right - this.Scene.AllActors[i].Left, this.Scene.AllActors[i].squish);
-                            }
-                            else if (riding.Contains(this.Scene.AllActors[i]))
-                            {
-                                // Carry right
-                                this.Scene.AllActors[i].moveX(moveX, null);
-                            }
+                            // Push top
+                            if (overlapCheck(Scene.AllActors[i]))
+                                Scene.AllActors[i].moveX(Right - Scene.AllActors[i].Left, Scene.AllActors[i].squish);
+                            // Carry right
+                            else if (riding.Contains(Scene.AllActors[i]))
+                                Scene.AllActors[i].moveX(moveX, null);
                         }
 
                     }
                     else
                     {
                         int i = 0;
-                        for (i = 0; i < this.Scene.AllActors.Count; i++)
+                        for (i = 0; i < Scene.AllActors.Count; i++)
                         {
-                            if (overlapCheck(this.Scene.AllActors[i]))
-                            {
-                                // Push left
-                                this.Scene.AllActors[i].moveX(this.Left - this.Scene.AllActors[i].Right, this.Scene.AllActors[i].squish);
-                            }
-                            else if (riding.Contains(this.Scene.AllActors[i]))
-                            {
-                                // Carry left
-                                this.Scene.AllActors[i].moveX(moveX, null);
-                            }
+                            // Push left
+                            if (overlapCheck(Scene.AllActors[i]))
+                                Scene.AllActors[i].moveX(Left - Scene.AllActors[i].Right, Scene.AllActors[i].squish);
+                            // Carry left
+                            else if (riding.Contains(Scene.AllActors[i]))
+                                Scene.AllActors[i].moveX(moveX, null);
                         }
                     }
                 }
@@ -97,42 +89,42 @@ namespace UmbrellaToolsKit.Collision
                 {
 
                     yRemainder -= moveY;
-                    this.Position = new Vector2(this.Position.X, this.Position.Y + moveY);
+                    Position = Position + moveY * Vector2.UnitY;
 
                     if (moveY > 0)
                     {
                         int i = 0;
-                        for (i = 0; i < this.Scene.AllActors.Count; i++)
+                        for (i = 0; i < Scene.AllActors.Count; i++)
                         {
-                            if (overlapCheck(this.Scene.AllActors[i]))
-                                this.Scene.AllActors[i].moveY(this.Bottom - this.Scene.AllActors[i].Top, this.Scene.AllActors[i].squish);
-                            else if (riding.Contains(this.Scene.AllActors[i]))
-                                this.Scene.AllActors[i].moveY(moveY, null);
+                            if (overlapCheck(Scene.AllActors[i]))
+                                Scene.AllActors[i].moveY(Bottom - Scene.AllActors[i].Top, Scene.AllActors[i].squish);
+                            else if (riding.Contains(Scene.AllActors[i]))
+                                Scene.AllActors[i].moveY(moveY, null);
                             i++;
                         }
                     }
                     else
                     {
                         int i = 0;
-                        for (i = 0; i < this.Scene.AllActors.Count; i++)
+                        for (i = 0; i < Scene.AllActors.Count; i++)
                         {
-                            if (overlapCheck(this.Scene.AllActors[i]))
-                                this.Scene.AllActors[i].moveY(this.Top - this.Scene.AllActors[i].Bottom, this.Scene.AllActors[i].squish);
-                            else if (riding.Contains(this.Scene.AllActors[i]))
-                                this.Scene.AllActors[i].moveY(moveY, null);
+                            if (overlapCheck(Scene.AllActors[i]))
+                                Scene.AllActors[i].moveY(Top - Scene.AllActors[i].Bottom, Scene.AllActors[i].squish);
+                            else if (riding.Contains(Scene.AllActors[i]))
+                                Scene.AllActors[i].moveY(moveY, null);
                         }
                     }
                 }
-                this.Collidable = true;
+                Collidable = true;
             }
         }
 
         public bool overlapCheck(Actor actor)
         {
-            bool AisToTheRightOfB = actor.Left >= this.Right;
-            bool AisToTheLeftOfB = actor.Right <= this.Left;
-            bool AisAboveB = actor.Bottom <= this.Top;
-            bool AisBelowB = actor.Top >= this.Bottom;
+            bool AisToTheRightOfB = actor.Left >= Right;
+            bool AisToTheLeftOfB = actor.Right <= Left;
+            bool AisAboveB = actor.Bottom <= Top;
+            bool AisBelowB = actor.Top >= Bottom;
             return !(AisToTheRightOfB
                 || AisToTheLeftOfB
                 || AisAboveB
@@ -141,10 +133,10 @@ namespace UmbrellaToolsKit.Collision
 
         public bool check(Point size, Vector2 position)
         {
-            bool AisToTheRightOfB = position.X >= this.Right;
-            bool AisToTheLeftOfB = position.X + size.X <= this.Left;
-            bool AisAboveB = position.Y + size.Y <= this.Top;
-            bool AisBelowB = position.Y >= this.Bottom;
+            bool AisToTheRightOfB = position.X >= Right;
+            bool AisToTheLeftOfB = position.X + size.X <= Left;
+            bool AisAboveB = position.Y + size.Y <= Top;
+            bool AisBelowB = position.Y >= Bottom;
             return !(AisToTheRightOfB
                 || AisToTheLeftOfB
                 || AisAboveB
@@ -156,10 +148,10 @@ namespace UmbrellaToolsKit.Collision
         {
             List<Actor> rt = new List<Actor>();
             int i = 0;
-            while (i < this.Scene.AllActors.Count)
+            while (i < Scene.AllActors.Count)
             {
-                if (this.Scene.AllActors[i].isRiding(this))
-                    rt.Add(this.Scene.AllActors[i]);
+                if (Scene.AllActors[i].isRiding(this))
+                    rt.Add(Scene.AllActors[i]);
                 i++;
             }
             return rt;

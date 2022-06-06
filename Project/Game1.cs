@@ -27,8 +27,6 @@ namespace Project
             _gameManagement.Game = this;
             _gameManagement.Start();
 
-            _assetManagement = new AssetManagement();
-
             // TODO: Add your initialization logic here
             base.Initialize();
         }
@@ -36,6 +34,8 @@ namespace Project
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            _assetManagement = new AssetManagement();
         }
 
         protected override void Update(GameTime gameTime)
@@ -51,6 +51,7 @@ namespace Project
         protected override void Draw(GameTime gameTime)
         {
             _gameManagement.Draw(_spriteBatch);
+
             base.Draw(gameTime);
         }
     }
