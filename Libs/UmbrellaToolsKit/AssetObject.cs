@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace UmbrellaToolsKit
 {
-    public class AssetObject
+    public struct AssetObject
     {
         public Layers Layer;
         public string Name;

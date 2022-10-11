@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
 
 namespace UmbrellaToolsKit.Localization
 {
@@ -15,35 +11,35 @@ namespace UmbrellaToolsKit.Localization
 
         public LocalizationDefinitions()
         {
-            this.Tags = new List<string>();
-            this.Languages = new List<string>();
-            this.Translation = new List<string>();
+            Tags = new List<string>();
+            Languages = new List<string>();
+            Translation = new List<string>();
         }
 
         public LocalizationDefinitions(List<string> tags, List<string> languages, List<string> translations)
         {
-            this.Tags = tags;
-            this.Languages = languages;
-            this.Translation = translations;
+            Tags = tags;
+            Languages = languages;
+            Translation = translations;
         }
 
 
         public string Get(string lang, string tag)
         {
-            int tag_i = this.Tags.Select((item, index) => new
+            int tag_i = Tags.Select((item, index) => new
             {
                 ItemName = item,
-                Postion = index
-            }).Where(t => t.ItemName == tag).First().Postion;
+                Position = index
+            }).Where(t => t.ItemName == tag).First().Position;
 
-            int lang_i = this.Languages.Select((item, index) => new
+            int lang_i = Languages.Select((item, index) => new
             {
                 ItemName = item,
                 Position = index
             }).Where(l => l.ItemName == lang).First().Position;
 
-            if (tag_i < this.Tags.Count && tag_i >= 0)
-                return this.Translation[(lang_i * this.Tags.Count) + tag_i];
+            if (tag_i < Tags.Count && tag_i >= 0)
+                return Translation[(lang_i * Tags.Count) + tag_i];
 
             return tag;
         }

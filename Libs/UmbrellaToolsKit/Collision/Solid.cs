@@ -9,7 +9,6 @@ namespace UmbrellaToolsKit.Collision
 {
     public class Solid : GameObject
     {
-
         public bool Collidable = true;
 
         private float xRemainder = 0;
@@ -44,79 +43,78 @@ namespace UmbrellaToolsKit.Collision
             int moveX = (int)Math.Round(xRemainder);
             int moveY = (int)Math.Round(yRemainder);
 
+            if (moveX == 0 && moveY == 0)
+                return;
 
-            if (moveX != 0 || moveY != 0)
+            Collidable = false;
+
+            List<Actor> riding = GetAllRidingActors();
+
+            if (moveX != 0)
             {
-                Collidable = false;
+                xRemainder -= moveX;
+                Position = Position + Vector2.UnitX * moveX;
 
-                List<Actor> riding = GetAllRidingActors();
-
-                if (moveX != 0)
+                if (moveX > 0)
                 {
-                    xRemainder -= moveX;
-                    Position = Position + Vector2.UnitX * moveX;
-
-                    if (moveX > 0)
+                    int i = 0;
+                    for (i = 0; i < Scene.AllActors.Count; i++)
                     {
-                        int i = 0;
-                        for (i = 0; i < Scene.AllActors.Count; i++)
-                        {
-                            // Push top
-                            if (overlapCheck(Scene.AllActors[i]))
-                                Scene.AllActors[i].moveX(Right - Scene.AllActors[i].Left, Scene.AllActors[i].squish);
-                            // Carry right
-                            else if (riding.Contains(Scene.AllActors[i]))
-                                Scene.AllActors[i].moveX(moveX, null);
-                        }
-
+                        // Push top
+                        if (overlapCheck(Scene.AllActors[i]))
+                            Scene.AllActors[i].moveX(Right - Scene.AllActors[i].Left, Scene.AllActors[i].squish);
+                        // Carry right
+                        else if (riding.Contains(Scene.AllActors[i]))
+                            Scene.AllActors[i].moveX(moveX, null);
                     }
-                    else
+
+                }
+                else
+                {
+                    int i = 0;
+                    for (i = 0; i < Scene.AllActors.Count; i++)
                     {
-                        int i = 0;
-                        for (i = 0; i < Scene.AllActors.Count; i++)
-                        {
-                            // Push left
-                            if (overlapCheck(Scene.AllActors[i]))
-                                Scene.AllActors[i].moveX(Left - Scene.AllActors[i].Right, Scene.AllActors[i].squish);
-                            // Carry left
-                            else if (riding.Contains(Scene.AllActors[i]))
-                                Scene.AllActors[i].moveX(moveX, null);
-                        }
+                        // Push left
+                        if (overlapCheck(Scene.AllActors[i]))
+                            Scene.AllActors[i].moveX(Left - Scene.AllActors[i].Right, Scene.AllActors[i].squish);
+                        // Carry left
+                        else if (riding.Contains(Scene.AllActors[i]))
+                            Scene.AllActors[i].moveX(moveX, null);
                     }
                 }
-
-                if (moveY != 0)
-                {
-
-                    yRemainder -= moveY;
-                    Position = Position + moveY * Vector2.UnitY;
-
-                    if (moveY > 0)
-                    {
-                        int i = 0;
-                        for (i = 0; i < Scene.AllActors.Count; i++)
-                        {
-                            if (overlapCheck(Scene.AllActors[i]))
-                                Scene.AllActors[i].moveY(Bottom - Scene.AllActors[i].Top, Scene.AllActors[i].squish);
-                            else if (riding.Contains(Scene.AllActors[i]))
-                                Scene.AllActors[i].moveY(moveY, null);
-                            i++;
-                        }
-                    }
-                    else
-                    {
-                        int i = 0;
-                        for (i = 0; i < Scene.AllActors.Count; i++)
-                        {
-                            if (overlapCheck(Scene.AllActors[i]))
-                                Scene.AllActors[i].moveY(Top - Scene.AllActors[i].Bottom, Scene.AllActors[i].squish);
-                            else if (riding.Contains(Scene.AllActors[i]))
-                                Scene.AllActors[i].moveY(moveY, null);
-                        }
-                    }
-                }
-                Collidable = true;
             }
+
+            if (moveY != 0)
+            {
+
+                yRemainder -= moveY;
+                Position = Position + moveY * Vector2.UnitY;
+
+                if (moveY > 0)
+                {
+                    int i = 0;
+                    for (i = 0; i < Scene.AllActors.Count; i++)
+                    {
+                        if (overlapCheck(Scene.AllActors[i]))
+                            Scene.AllActors[i].moveY(Bottom - Scene.AllActors[i].Top, Scene.AllActors[i].squish);
+                        else if (riding.Contains(Scene.AllActors[i]))
+                            Scene.AllActors[i].moveY(moveY, null);
+                        i++;
+                    }
+                }
+                else
+                {
+                    int i = 0;
+                    for (i = 0; i < Scene.AllActors.Count; i++)
+                    {
+                        if (overlapCheck(Scene.AllActors[i]))
+                            Scene.AllActors[i].moveY(Top - Scene.AllActors[i].Bottom, Scene.AllActors[i].squish);
+                        else if (riding.Contains(Scene.AllActors[i]))
+                            Scene.AllActors[i].moveY(moveY, null);
+                    }
+                }
+            }
+            Collidable = true;
         }
 
         public bool overlapCheck(Actor actor)

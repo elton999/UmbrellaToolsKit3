@@ -67,30 +67,30 @@ namespace UmbrellaToolsKit.Collision
             xRemainder += amount;
             int move = (int)Math.Round(xRemainder);
 
-            if (move != 0)
+            if (move == 0)
+                return;
+
+            xRemainder -= move;
+            int sign = Math.Sign((double)move);
+            while (move != 0)
             {
-                xRemainder -= move;
-                int sign = Math.Sign((double)move);
-                while (move != 0)
+                Vector2 _position = new Vector2(Position.X + sign, Position.Y);
+                if (!collideAt(Scene.AllSolids, _position) || AnyCollisionRamps())
                 {
-                    Vector2 _position = new Vector2(Position.X + sign, Position.Y);
-                    if (!collideAt(Scene.AllSolids, _position) || AnyCollisionRamps())
-                    {
-                        if (EdgesIsCollision[EDGES.BOTTOM_RIGHT] && (sign > 0 || Gravity2D.Y == 0))
-                            Position = Position + Vector2.UnitY * -sign;
+                    if (EdgesIsCollision[EDGES.BOTTOM_RIGHT] && (sign > 0 || Gravity2D.Y == 0))
+                        Position = Position + Vector2.UnitY * -sign;
 
-                        if (EdgesIsCollision[EDGES.BOTTOM_LEFT] && (sign < 0 || Gravity2D.Y == 0))
-                            Position = Position + Vector2.UnitY * sign;
+                    if (EdgesIsCollision[EDGES.BOTTOM_LEFT] && (sign < 0 || Gravity2D.Y == 0))
+                        Position = Position + Vector2.UnitY * sign;
 
-                        Position = Position + Vector2.UnitX * sign;
-                        move -= sign;
-                    }
-                    else
-                    {
-                        if (onCollideFunction != null)
-                            onCollideFunction(null);
-                        break;
-                    }
+                    Position = Position + Vector2.UnitX * sign;
+                    move -= sign;
+                }
+                else
+                {
+                    if (onCollideFunction != null)
+                        onCollideFunction(null);
+                    break;
                 }
             }
         }
@@ -101,24 +101,24 @@ namespace UmbrellaToolsKit.Collision
             yRemainder += amount;
             int move = (int)Math.Round(yRemainder);
 
-            if (move != 0)
+            if (move == 0)
+                return;
+
+            yRemainder -= move;
+            int sign = Math.Sign((double)move);
+            while (move != 0)
             {
-                yRemainder -= move;
-                int sign = Math.Sign((double)move);
-                while (move != 0)
+                var position = Position + Vector2.UnitY * sign;
+                if (!collideAt(Scene.AllSolids, position))
                 {
-                    var position = Position + Vector2.UnitY * sign;
-                    if (!collideAt(Scene.AllSolids, position))
-                    {
-                        Position = Position + Vector2.UnitY * sign;
-                        move -= sign;
-                    }
-                    else
-                    {
-                        if (onCollideFunction != null)
-                            onCollideFunction(null);
-                        break;
-                    }
+                    Position = Position + Vector2.UnitY * sign;
+                    move -= sign;
+                }
+                else
+                {
+                    if (onCollideFunction != null)
+                        onCollideFunction(null);
+                    break;
                 }
             }
         }
@@ -159,7 +159,7 @@ namespace UmbrellaToolsKit.Collision
                 }
             }
             if (Scene.Grid.checkOverlap(size, position, this))
-                rt = true;
+                return true;
 
             return rt;
         }

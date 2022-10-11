@@ -36,30 +36,39 @@ namespace UmbrellaToolsKit
 
         public Layers GetLayer(string name)
         {
-            IEnumerable<AssetObject> assetObjects = this.AssetsList.Where(asset => asset.Name == name);
+            IEnumerable<AssetObject> assetObjects = AssetsList.Where(asset => asset.Name == name);
             if (assetObjects.Count() > 0)
                 return assetObjects.ToList()[0].Layer;
-            throw new ArgumentOutOfRangeException();
+            return Layers.BACKGROUND;
         }
 
-        public void addEntityOnScene(string name, Vector2 position, Point size, Dictionary<string, string> values, List<Vector2> nodes, Scene scene)
+        public GameObject addEntityOnScene(string name, string tag, Vector2 position, Point size, dynamic values, List<Vector2> nodes, Scene scene)
         { // ? values:Dynamic, ? nodes:Array<Vector2>, ? flipx:Bool):Void{
-            GameObject gameObject = GetObject(name);
-            var layer = GetLayer(name);
+            GameObject gameObject = SetGameObjectInfos(name, tag, position, size, values, nodes, scene);
 
+            Layers layer = this.GetLayer(name);
+            SetLayer(scene, gameObject, layer);
+
+            gameObject.Start();
+            return gameObject;
+        }
+
+        public GameObject SetGameObjectInfos(string name, string tag, Vector2 position, Point size, dynamic values, List<Vector2> nodes, Scene scene)
+        {
+            GameObject gameObject = this.GetObject(name);
+
+            gameObject.tag = tag;
             gameObject.Position = position;
             gameObject.size = size;
             gameObject.Values = values;
             gameObject.Nodes = nodes;
-            SetLayerToGameObject(scene, gameObject, layer);
-
             gameObject.Content = scene.Content;
             gameObject.Scene = scene;
 
-            gameObject.Start();
+            return gameObject;
         }
 
-        public static void SetLayerToGameObject(Scene scene, GameObject gameObject, Layers layer)
+        public static void SetLayer(Scene scene, GameObject gameObject, Layers layer)
         {
             switch (layer)
             {
@@ -82,6 +91,5 @@ namespace UmbrellaToolsKit
         }
 
         public void ClearAll() => LevelAssetsList.Clear();
-
     }
 }

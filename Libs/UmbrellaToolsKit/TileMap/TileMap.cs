@@ -56,12 +56,12 @@ namespace UmbrellaToolsKit.TileMap
             scene.LevelSize = new Vector2((int)level.PxWid, (int)level.PxHei);
         }
 
-        private static ldtk.Level GetLevelByName(ldtk.LdtkJson tileMap, string levelName)
+        public static ldtk.Level GetLevelByName(ldtk.LdtkJson tileMap, string levelName)
         {
             return (from levels in tileMap.Levels where levels.Identifier.Equals(levelName) select levels).First();
         }
 
-        private static void SetEntities(Scene scene, ldtk.LayerInstance layer)
+        public static void SetEntities(Scene scene, ldtk.LayerInstance layer)
         {
             Console.WriteLine($"Loading Entities: {layer.Identifier} ");
 
@@ -70,18 +70,19 @@ namespace UmbrellaToolsKit.TileMap
                 Console.Write(".");
                 // TODO: values and nodes
                 var entity = layer.EntityInstances[i];
-                AssetManagement.Instance.addEntityOnScene(
+                var gameObject = AssetManagement.Instance.addEntityOnScene(
                         entity.Identifier,
+                        entity.Iid,
                         new Vector2(entity.Px[0] + scene.ScreenOffset.X, entity.Px[1] + scene.ScreenOffset.Y),
                         new Point((int)entity.Width, (int)entity.Height),
-                        null,
+                        entity.FieldInstances,
                         null,
                         scene
                     );
             }
         }
 
-        private static void SetEntities(Scene scene, Ogmo.TileMapLayers layer)
+        public static void SetEntities(Scene scene, Ogmo.TileMapLayers layer)
         {
             Console.WriteLine($"Loading Entities: {layer.name} ");
             foreach (Ogmo.TileMapEntity entity in layer.entities)
@@ -91,6 +92,7 @@ namespace UmbrellaToolsKit.TileMap
                 {
                     AssetManagement.Instance.addEntityOnScene(
                         entity.name,
+                        "gameobject",
                         new Vector2(entity.x + scene.ScreenOffset.X, entity.y + scene.ScreenOffset.Y),
                         new Point(entity.width, entity.height),
                         entity.values,
@@ -147,8 +149,12 @@ namespace UmbrellaToolsKit.TileMap
                 var tile = layer.AutoLayerTiles[i];
                 int x = (int)tile.Px[0] / 8;
                 int y = (int)tile.Px[1] / 8;
-                layerTiles.tiles[y][x][0] = (int)tile.Src[0] / 8;
-                layerTiles.tiles[y][x].Add((int)(tile.Src[1] / 8));
+
+                layerTiles.tiles[y][x][0] = (int)tile.Src[0];
+                if (layerTiles.tiles[y][x].Count == 1)
+                    layerTiles.tiles[y][x].Add((int)tile.Src[1]);
+                else
+                    layerTiles.tiles[y][x][1] = (int)tile.Src[1];
             }
         }
 

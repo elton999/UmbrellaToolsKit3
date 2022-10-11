@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ namespace UmbrellaToolsKit.Storage
     {
         private XmlTextReader reader;
         private string curlFile = @"Setting.Umbrella";
-        
+
         public XmlDocument doc = new XmlDocument();
 
         public Load()
@@ -20,8 +19,9 @@ namespace UmbrellaToolsKit.Storage
                 File.AppendAllText(this.curlFile, "umbrella");
                 doc.AppendChild(doc.CreateElement("Umbrella"));
                 this.Save();
-            } else
-                doc.Load(this.curlFile);
+                return;
+            }
+            doc.Load(this.curlFile);
         }
 
         public void Save() => doc.Save(this.curlFile);

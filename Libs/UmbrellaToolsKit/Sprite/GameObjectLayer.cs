@@ -12,24 +12,24 @@ namespace UmbrellaToolsKit.Sprite
         public override void Draw(SpriteBatch spriteBatch)
         {
             BeginDraw(spriteBatch);
-            int _row = (int)(((this.Scene.Camera.Position.X - this.Origin.X) - this.Scene.Camera.Origin.X) / this.Scene.CellSize);
-            int _rowWidth = (int)(((this.Scene.Camera.Position.X - this.Origin.X) - this.Scene.Camera.Origin.X + this.Scene.Sizes.X) / this.Scene.CellSize) + 1;
-            int _column = (int)((this.Scene.Camera.Position.Y - this.Origin.Y - this.Scene.Camera.Origin.Y) / this.Scene.CellSize);
-            int _columnHeight = (int)((this.Scene.Camera.Position.Y - this.Origin.Y - this.Scene.Camera.Origin.Y + this.Scene.Sizes.Y) / this.Scene.CellSize) + 1;
+            int row = (int)(((Scene.Camera.Position.X - Origin.X) - Scene.Camera.Origin.X) / Scene.CellSize);
+            int rowWidth = (int)(((Scene.Camera.Position.X - Origin.X) - Scene.Camera.Origin.X + Scene.Sizes.X) / Scene.CellSize) + 1;
+            int column = (int)((Scene.Camera.Position.Y - Origin.Y - Scene.Camera.Origin.Y) / Scene.CellSize);
+            int columnHeight = (int)((Scene.Camera.Position.Y - Origin.Y - Scene.Camera.Origin.Y + Scene.Sizes.Y) / Scene.CellSize) + 1;
 
-            _row = _row < 0 ? 0 : _row;
-            _column = _column < 0 ? 0 : _column;
-            _rowWidth = _rowWidth >= this.tiles[0].Count() ? this.tiles[0].Count() : _rowWidth;
-            _columnHeight = _columnHeight >= this.tiles.Count() ? this.tiles.Count() : _columnHeight;
+            row = row < 0 ? 0 : row;
+            column = column < 0 ? 0 : column;
+            rowWidth = rowWidth >= tiles[0].Count() ? tiles[0].Count() : rowWidth;
+            columnHeight = columnHeight >= tiles.Count() ? tiles.Count() : columnHeight;
 
-            for (int x = _column; x < _columnHeight; x++)
+            for (int x = column; x < columnHeight; x++)
             {
-                for (int y = _row; y < _rowWidth; y++)
+                for (int y = row; y < rowWidth; y++)
                 {
-                    if (this.tiles[x][y][0] != -1)
+                    if (tiles[x][y][0] != -1)
                     {
-                        this.Body = new Rectangle(this.tiles[x][y][0] * this.Scene.CellSize, this.tiles[x][y][1] * this.Scene.CellSize, this.Scene.CellSize, this.Scene.CellSize);
-                        this.Position = new Vector2((y * this.Scene.CellSize) + (this.Origin.X * 2), x * this.Scene.CellSize + (this.Origin.Y * 2));
+                        Body = new Rectangle(tiles[x][y][0] * Scene.CellSize, tiles[x][y][1] * Scene.CellSize, Scene.CellSize, Scene.CellSize);
+                        Position = new Vector2(y * Scene.CellSize + Origin.X * 2, x * Scene.CellSize + Origin.Y * 2);
                         DrawSprite(spriteBatch);
                     }
                 }
