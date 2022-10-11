@@ -11,20 +11,11 @@ namespace UmbrellaToolsKit
         private IEnumerator _coroutinesUpdate;
         public GameTime GameTime;
 
-        public CoroutineManagement()
-        {
-            _coroutinesUpdate = coroutinesUpdate();
-        }
+        public CoroutineManagement() => _coroutinesUpdate = coroutinesUpdate();
 
-        public void StarCoroutine(IEnumerator coroutine)
-        {
-            _coroutines.Add(coroutine);
-        }
+        public void StarCoroutine(IEnumerator coroutine) => _coroutines.Add(coroutine);
 
-        public void ClearCoroutines()
-        {
-            _coroutines.Clear();
-        }
+        public void ClearCoroutines() => _coroutines.Clear();
 
         public void Update(GameTime gameTime)
         {
