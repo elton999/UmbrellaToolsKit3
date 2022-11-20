@@ -23,7 +23,7 @@ namespace Project
 
         protected override void Initialize()
         {
-            _gameManagement = new GameManagement();
+            _gameManagement = new GameManagement(this);
             _gameManagement.Game = this;
             _gameManagement.Start();
 

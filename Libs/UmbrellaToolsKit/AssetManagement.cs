@@ -16,12 +16,12 @@ namespace UmbrellaToolsKit
         public void Set<T>(string tag, Layers layer) where T : GameObject
         {
             AssetObject assetObject = new AssetObject { Name = tag, Layer = layer, GameObject = typeof(T) };
-            this.AssetsList.Add(assetObject);
+            AssetsList.Add(assetObject);
         }
 
         public GameObject GetObject(string name)
         {
-            IEnumerable<AssetObject> assetObjects = this.AssetsList.Where(asset => asset.Name == name);
+            IEnumerable<AssetObject> assetObjects = AssetsList.Where(asset => asset.Name == name);
 
             if (assetObjects.Count() > 0)
             {

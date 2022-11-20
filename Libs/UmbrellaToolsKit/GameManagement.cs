@@ -19,11 +19,15 @@ namespace UmbrellaToolsKit
         public SceneManagement SceneManagement;
         public Game Game;
 
+        public GameManagement(Game game) => Game = game;
+
         public void Start()
         {
-            this.CurrentStatus = Status.PLAYING;
-            this.SceneManagement = new SceneManagement();
-            this.SceneManagement.GameManagement = this;
+            CurrentStatus = Status.PLAYING;
+            SceneManagement = new SceneManagement();
+            SceneManagement.GameManagement = this;
+            SceneManagement.Start();
+            SceneManagement.MainScene.CreateBackBuffer();
         }
 
         public void Update(GameTime gameTime) => SceneManagement.Update(gameTime);
