@@ -31,7 +31,7 @@ namespace UmbrellaToolsKit
 
         public ContentManager Content;
         public Scene Scene;
-        public Dictionary<string, string> Values;
+        public dynamic Values;
         public List<Vector2> Nodes;
 
         public Vector2 InitialPosition;

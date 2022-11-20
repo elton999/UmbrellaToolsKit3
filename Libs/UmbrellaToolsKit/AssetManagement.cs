@@ -46,7 +46,7 @@ namespace UmbrellaToolsKit
         { // ? values:Dynamic, ? nodes:Array<Vector2>, ? flipx:Bool):Void{
             GameObject gameObject = SetGameObjectInfos(name, tag, position, size, values, nodes, scene);
 
-            Layers layer = this.GetLayer(name);
+            Layers layer = GetLayer(name);
             SetLayer(scene, gameObject, layer);
 
             gameObject.Start();
@@ -55,7 +55,7 @@ namespace UmbrellaToolsKit
 
         public GameObject SetGameObjectInfos(string name, string tag, Vector2 position, Point size, dynamic values, List<Vector2> nodes, Scene scene)
         {
-            GameObject gameObject = this.GetObject(name);
+            GameObject gameObject = GetObject(name);
 
             gameObject.tag = tag;
             gameObject.Position = position;

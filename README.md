@@ -1,9 +1,9 @@
 # UmbrellaToolsKit
 ## About
-UmbrellaToolsKit is a game framework based on Monogame for personal uses, however you can feel free to use it.
+UmbrellaToolsKit is a game framework made with [MonoGame](https://www.monogame.net) for personal uses, however you can feel free to use it.
 
 ## Get Started
-### Scenes and gameObjects
+### Content pipeline
 
 ## Sprites
 ### Render an image
@@ -22,7 +22,7 @@ namespace Project
 }
 ```
 ### Aseprite
-Aseprite is a pixel art animation software. You can import its files using the steps below:
+[Aseprite](https://www.aseprite.org) is a pixel art animation software. You can import its files using the steps below:
 
 ```csharp
 using UmbrellaToolsKit;
@@ -65,3 +65,5 @@ public class Player : GameObject
 ## Particles System
 
 ## Storage
+
+# How to build
