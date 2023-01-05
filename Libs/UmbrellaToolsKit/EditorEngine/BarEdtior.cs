@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
@@ -9,24 +10,41 @@ namespace UmbrellaToolsKit.EditorEngine
 {
     public class BarEdtior
     {
+        public static event Action OnOpenMainEditor;
+        public static event Action OnOpenDialogueEditor;
+
+        public static event Action OnSwichEditorWindow;
+
         public void Draw(GameTime gameTime)
         {
+            double frameRate = 1d / gameTime.ElapsedGameTime.TotalSeconds;
+            string projectName = Assembly.GetCallingAssembly().GetName().Name;
+
             if (ImGui.BeginMainMenuBar())
             {
                 if (ImGui.BeginMenu("Window"))
                 {
-                    if (ImGui.MenuItem("Open..", "Ctrl+O")) { /* Do stuff */ }
-                    if (ImGui.MenuItem("Save", "Ctrl+S")) { /* Do stuff */ }
-                    if (ImGui.MenuItem("Close", "Ctrl+W")) { /* Do stuff */  }
+                    if (ImGui.MenuItem("Main Editor"))
+                    {
+                        OnSwichEditorWindow?.Invoke();
+                        OnOpenMainEditor?.Invoke();
+                    }
+
+                    if (ImGui.MenuItem("Dialogue Editor"))
+                    {
+                        OnSwichEditorWindow?.Invoke();
+                        OnOpenDialogueEditor?.Invoke();
+                    }
+
                     ImGui.EndMenu();
                 }
                 ImGui.BeginTable("##positionBar", 4);
                 ImGui.TableNextColumn();
                 ImGui.TableNextColumn();
                 ImGui.TableNextColumn();
-                ImGui.Text("project name");
+                ImGui.Text(projectName);
                 ImGui.TableNextColumn();
-                ImGui.Text("FPS: 60");
+                ImGui.Text($"FPS: {frameRate}");
                 ImGui.EndTable();
             }
             ImGui.SetWindowFontScale(1.2f);
