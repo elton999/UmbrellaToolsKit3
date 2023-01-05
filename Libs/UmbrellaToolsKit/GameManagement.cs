@@ -1,12 +1,13 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 using UmbrellaToolsKit.Interfaces;
+using UmbrellaToolsKit.EditorEngine;
 
 namespace UmbrellaToolsKit
 {
-    public class GameManagement : IUpdatable, Interfaces.IDrawable
+    public class GameManagement : IUpdatable
     {
         public Dictionary<String, dynamic> Values = new Dictionary<string, dynamic>();
 
@@ -19,7 +20,13 @@ namespace UmbrellaToolsKit
         public SceneManagement SceneManagement;
         public Game Game;
 
-        public GameManagement(Game game) => Game = game;
+        private EditorMain _edtior;
+
+        public GameManagement(Game game)
+        {
+            Game = game;
+            _edtior = new EditorMain(Game);
+        }
 
         public void Start()
         {
@@ -32,6 +39,10 @@ namespace UmbrellaToolsKit
 
         public void Update(GameTime gameTime) => SceneManagement.Update(gameTime);
 
-        public void Draw(SpriteBatch spriteBatch) => SceneManagement.Draw(spriteBatch);
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            SceneManagement.Draw(spriteBatch);
+            _edtior.Draw(gameTime);
+        }
     }
 }

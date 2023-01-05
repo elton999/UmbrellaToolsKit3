@@ -50,7 +50,7 @@ namespace Project
 
         protected override void Draw(GameTime gameTime)
         {
-            _gameManagement.Draw(_spriteBatch);
+            _gameManagement.Draw(_spriteBatch, gameTime);
 
             base.Draw(gameTime);
         }
