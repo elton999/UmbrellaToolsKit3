@@ -226,6 +226,7 @@ namespace UmbrellaToolsKit
 
         #region Draw
         private RenderTarget2D _BackBuffer;
+        public Texture2D SceneRendered { get => (Texture2D)_BackBuffer; }
         public void RestartRenderTarget()
         {
             ScreenGraphicsDevice.SetRenderTarget(this._BackBuffer);
@@ -284,6 +285,11 @@ namespace UmbrellaToolsKit
 
             ScreenGraphicsDevice.SetRenderTarget(null);
             ScreenGraphicsDevice.Clear(ClearColorScene);
+            DrawBuffer(spriteBatch, _BackBuffer_scale, _BackBuffer_Position_x, _BackBuffer_Position_y);
+        }
+
+        public void DrawBuffer(SpriteBatch spriteBatch, float _BackBuffer_scale, float _BackBuffer_Position_x, float _BackBuffer_Position_y)
+        {
             spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, null);
             spriteBatch.Draw(
                 (Texture2D)_BackBuffer,

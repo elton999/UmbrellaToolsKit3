@@ -9,6 +9,7 @@ namespace UmbrellaToolsKit.Interfaces
         bool RemoveFromScene { get; set; }
         Vector2 Position { get; set; }
         IComponent Components { get; set; }
+        string Tag { get; set; }    
 
         void OnVisible();
         void OnInvisible();

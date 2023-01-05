@@ -44,7 +44,7 @@ namespace UmbrellaToolsKit.EditorEngine
                 ImGui.TableNextColumn();
                 ImGui.Text(projectName);
                 ImGui.TableNextColumn();
-                ImGui.Text($"FPS: {frameRate}");
+                ImGui.Text($"FPS: {(int)frameRate}");
                 ImGui.EndTable();
             }
             ImGui.SetWindowFontScale(1.2f);

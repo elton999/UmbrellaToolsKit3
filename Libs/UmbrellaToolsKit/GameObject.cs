@@ -27,7 +27,9 @@ namespace UmbrellaToolsKit
         public SpriteEffects spriteEffect = SpriteEffects.None;
         public Texture2D Sprite;
         public float Transparent = 1f;
+
         public string tag = "gameObject";
+        public string Tag { get=> tag; set => tag = value; }
 
         public ContentManager Content;
         public Scene Scene;

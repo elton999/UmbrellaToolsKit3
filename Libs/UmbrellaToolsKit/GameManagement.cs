@@ -18,6 +18,7 @@ namespace UmbrellaToolsKit
         public GameplayStatus CurrentGameplayStatus;
 
         public SceneManagement SceneManagement;
+        public SpriteBatch SpriteBatch;
         public Game Game;
 
         private EditorMain _edtior;
@@ -25,7 +26,7 @@ namespace UmbrellaToolsKit
         public GameManagement(Game game)
         {
             Game = game;
-            _edtior = new EditorMain(Game);
+            _edtior = new EditorMain(Game, this);
         }
 
         public void Start()
@@ -41,6 +42,7 @@ namespace UmbrellaToolsKit
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
+            SpriteBatch = spriteBatch;
             SceneManagement.Draw(spriteBatch);
             _edtior.Draw(gameTime);
         }

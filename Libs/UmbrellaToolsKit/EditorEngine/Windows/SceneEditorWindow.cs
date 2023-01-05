@@ -3,6 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using ImGuiNET;
+using UmbrellaToolsKit.Interfaces;
 
 namespace UmbrellaToolsKit.EditorEngine.Windows
 {
@@ -17,9 +18,17 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             _gameManagement = gameManagement;
         }
 
-        public void SetAsMainWindow() => EditorArea.OnDrawWindow += Draw;
+        public void SetAsMainWindow()
+        {
+            EditorMain.OnDrawOverLayer += RenderEditorView;
+            EditorArea.OnDrawWindow += Draw;
+        }
 
-        public void RemoveAsMainWindow() => EditorArea.OnDrawWindow -= Draw;
+        public void RemoveAsMainWindow() 
+        {
+            EditorMain.OnDrawOverLayer -= RenderEditorView;
+            EditorArea.OnDrawWindow -= Draw;
+        }
 
         public void Draw(GameTime gameTime)
         {
@@ -62,13 +71,42 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ShowConsole(bottom);
         }
 
+        private System.Numerics.Vector2 _windowPosition;
+        private System.Numerics.Vector2 _windowSize;
+
         private void ShowEditorView(uint iddock)
         {
             ImGui.SetNextWindowDockID(iddock, ImGuiCond.Once);
-            ImGui.Begin("Game (Edit Mode) (Paused)");
-            ImGui.SetWindowFontScale(1.2f);
+            ImGui.Begin("Game (Edit Mode) (Playing)");
+                ImGui.SetWindowFontScale(1.2f);
+
+                _windowPosition = ImGui.GetWindowPos();
+                _windowSize = ImGui.GetWindowSize();
+                _windowPosition += new System.Numerics.Vector2(0, 40f);
+
             ImGui.End();
         }
+
+        public void RenderEditorView()
+        {
+            var sceneRendered = _gameManagement.SceneManagement.MainScene.SceneRendered;
+            var backBufferSize = new Vector2(sceneRendered.Width, sceneRendered.Height);
+
+            float xScale = _windowSize.X / backBufferSize.X;
+            float yScale = _windowSize.Y / backBufferSize.Y;
+            float backBuffer_scale = _windowSize.X > _windowSize.Y ? xScale : yScale;
+
+            float backBuffer_Position_x = _windowPosition.X;
+            float backBuffer_Position_y = _windowPosition.Y;
+
+            _gameManagement.SceneManagement.MainScene.DrawBuffer(
+                _gameManagement.SpriteBatch,
+                backBuffer_scale,
+                backBuffer_Position_x,
+                backBuffer_Position_y
+            );
+        }
+
 
         private void ShowConsole(uint bottom)
         {
@@ -83,12 +121,26 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.SetNextWindowDockID(left, ImGuiCond.Once);
             ImGui.Begin("Layers");
             ImGui.SetWindowFontScale(1.2f);
-            if (ImGui.TreeNode("Forenground")) { }
-            if (ImGui.TreeNode("Player")) { }
-            if (ImGui.TreeNode("Enimies")) { }
-            if (ImGui.TreeNode("Middleground")) { }
-            if (ImGui.TreeNode("Background")) { }
+            if (ImGui.TreeNode("Forenground")) 
+                ShowGameObjectFromLayer(_gameManagement.SceneManagement.MainScene.Foreground);
+            if (ImGui.TreeNode("Player"))
+                ShowGameObjectFromLayer(_gameManagement.SceneManagement.MainScene.Players);
+            if (ImGui.TreeNode("Enimies"))
+                ShowGameObjectFromLayer(_gameManagement.SceneManagement.MainScene.Enemies);
+            if (ImGui.TreeNode("Middleground"))
+                ShowGameObjectFromLayer(_gameManagement.SceneManagement.MainScene.Middleground);
+            if (ImGui.TreeNode("Background"))
+                ShowGameObjectFromLayer(_gameManagement.SceneManagement.MainScene.Backgrounds);
             ImGui.End();
+        }
+
+        private void ShowGameObjectFromLayer(List<IGameObject> layer)
+        {
+            if(layer.Count == 0)
+                ImGui.Text("---- Is empty ----");
+            foreach (var gameObject in layer)
+                ImGui.Selectable(gameObject.Tag);
+            ImGui.TreePop();
         }
 
         private void ShowGameObjectProprietes(uint right)

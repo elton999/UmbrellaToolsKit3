@@ -1,6 +1,8 @@
 ﻿using ImGuiNET;
 using MonoGame.ImGui.Standard;
 using Microsoft.Xna.Framework;
+using System;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace UmbrellaToolsKit.EditorEngine
 {
@@ -11,10 +13,13 @@ namespace UmbrellaToolsKit.EditorEngine
         private EditorArea _editorArea;
 
         private GameManagement _gameManagement;
+        private Game _game;
 
         //windows
         private Windows.SceneEditorWindow _sceneEditor;
-        private Game _game;
+        private bool _showEditor = false;
+
+        public static event Action OnDrawOverLayer;
 
         public EditorMain(Game game, GameManagement gameManagement)
         {
@@ -30,6 +35,8 @@ namespace UmbrellaToolsKit.EditorEngine
 
         public void Draw(GameTime gameTime)
         {
+            if (!_showEditor) return;
+
             _imGUIRenderer.BeginLayout(gameTime);
 
             var ImGuiIO = ImGui.GetIO();
@@ -38,6 +45,8 @@ namespace UmbrellaToolsKit.EditorEngine
             _mainBarEditor.Draw(gameTime);
             _editorArea.Draw(gameTime);
             _imGUIRenderer.EndLayout();
+
+             OnDrawOverLayer?.Invoke();
         }
     }
 }

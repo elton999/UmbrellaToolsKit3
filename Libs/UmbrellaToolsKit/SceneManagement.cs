@@ -25,14 +25,14 @@ namespace UmbrellaToolsKit
 
         public void Update(GameTime gameTime)
         {
-            if (this.MainScene != null && MainScene.LevelReady)
-                this.MainScene.Update(gameTime);
+            if (MainScene != null && MainScene.LevelReady)
+                MainScene.Update(gameTime);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             if (MainScene != null && MainScene.LevelReady)
-                this.MainScene.Draw(spriteBatch,
+                MainScene.Draw(spriteBatch,
                 GameManagement.Game.GraphicsDevice,
                 new Vector2(
                     GameManagement.Game.GraphicsDevice.Viewport.Width,
