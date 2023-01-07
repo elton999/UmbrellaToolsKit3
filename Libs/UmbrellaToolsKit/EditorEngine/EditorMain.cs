@@ -3,7 +3,7 @@ using MonoGame.ImGui.Standard;
 using Microsoft.Xna.Framework;
 using System;
 using Microsoft.Xna.Framework.Input;
-using System.Linq;
+using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
 
 namespace UmbrellaToolsKit.EditorEngine
 {
@@ -17,7 +17,8 @@ namespace UmbrellaToolsKit.EditorEngine
         private Game _game;
 
         //windows
-        private Windows.SceneEditorWindow _sceneEditor;
+        private IWindowEditable _sceneEditor;
+        private IWindowEditable _dialogueEditor;
         private bool _showEditor = false;
         private bool _showEditorKeyUp = true;
 
@@ -33,6 +34,7 @@ namespace UmbrellaToolsKit.EditorEngine
             _editorArea = new EditorArea();
 
             _sceneEditor = new Windows.SceneEditorWindow(_gameManagement);
+            _dialogueEditor = new Windows.DialogueEditorWindow(_gameManagement);
         }
 
         public void Draw(GameTime gameTime)

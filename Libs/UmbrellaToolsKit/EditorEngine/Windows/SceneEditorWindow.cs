@@ -4,12 +4,15 @@ using System.Collections.Generic;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
 using UmbrellaToolsKit.Interfaces;
+using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
 
 namespace UmbrellaToolsKit.EditorEngine.Windows
 {
-    public class SceneEditorWindow
+    public class SceneEditorWindow : IWindowEditable
     {
         private GameManagement _gameManagement;
+        public GameManagement GameManagement { get => _gameManagement; }
+
         public IGameObject GameObjectSelected;
         public List<string> Logs = new List<string>();
 
@@ -24,16 +27,16 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         public void SetAsMainWindow()
         {
             EditorMain.OnDrawOverLayer += RenderEditorView;
-            EditorArea.OnDrawWindow += Draw;
+            EditorArea.OnDrawWindow += ShowWindow;
         }
 
         public void RemoveAsMainWindow() 
         {
             EditorMain.OnDrawOverLayer -= RenderEditorView;
-            EditorArea.OnDrawWindow -= Draw;
+            EditorArea.OnDrawWindow -= ShowWindow;
         }
 
-        public void Draw(GameTime gameTime)
+        public void ShowWindow(GameTime gameTime)
         {
             uint iddock = ImGui.GetID("MainDocking");
             uint left = ImGui.GetID("MainLeft");
