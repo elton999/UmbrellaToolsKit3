@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Text;
+using System.Reflection;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 using ImGuiNET;
+using Microsoft.Xna.Framework;
 using UmbrellaToolsKit.Interfaces;
 
 namespace UmbrellaToolsKit.EditorEngine.Windows
@@ -10,12 +10,15 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
     public class SceneEditorWindow
     {
         private GameManagement _gameManagement;
+        public IGameObject GameObjectSelected;
+        public List<string> Logs = new List<string>();
 
         public SceneEditorWindow(GameManagement gameManagement)
         {
             BarEdtior.OnSwichEditorWindow += RemoveAsMainWindow;
             BarEdtior.OnOpenMainEditor += SetAsMainWindow;
             _gameManagement = gameManagement;
+            Log.OnLog += Logs.Add;
         }
 
         public void SetAsMainWindow()
@@ -113,6 +116,13 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.SetNextWindowDockID(bottom, ImGuiCond.Once);
             ImGui.Begin("Console");
             ImGui.SetWindowFontScale(1.2f);
+            
+            if (ImGui.Button("Clear"))
+                Logs.Clear();
+
+            foreach(string line in Logs)
+                ImGui.TextUnformatted(line);
+
             ImGui.End();
         }
 
@@ -125,7 +135,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                 ShowGameObjectFromLayer(_gameManagement.SceneManagement.MainScene.Foreground);
             if (ImGui.TreeNode("Player"))
                 ShowGameObjectFromLayer(_gameManagement.SceneManagement.MainScene.Players);
-            if (ImGui.TreeNode("Enimies"))
+            if (ImGui.TreeNode("Enemies"))
                 ShowGameObjectFromLayer(_gameManagement.SceneManagement.MainScene.Enemies);
             if (ImGui.TreeNode("Middleground"))
                 ShowGameObjectFromLayer(_gameManagement.SceneManagement.MainScene.Middleground);
@@ -139,8 +149,9 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             if(layer.Count == 0)
                 ImGui.Text("---- Is empty ----");
             foreach (var gameObject in layer)
-                ImGui.Selectable(gameObject.Tag);
-            ImGui.TreePop();
+                if (ImGui.Selectable(gameObject.Tag))
+                    GameObjectSelected = gameObject;
+            ImGui.Unindent();
         }
 
         private void ShowGameObjectProprietes(uint right)
@@ -148,24 +159,36 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.SetNextWindowDockID(right, ImGuiCond.Once);
             ImGui.Begin("Game Object props");
             ImGui.SetWindowFontScale(1.2f);
-            if (ImGui.TreeNode("Position"))
+            if (GameObjectSelected != null)
             {
-                ImGui.TableNextColumn();
-                System.Numerics.Vector3 vetor = new System.Numerics.Vector3(0, 0, 0);
-                if (ImGui.BeginTable("##position", 3))
+                Type type = GameObjectSelected.GetType();
+                foreach (FieldInfo fInfo in type.GetFields())
                 {
-                    ImGui.TableNextColumn();
-                    ImGui.PushStyleColor(ImGuiCol.FrameBg, new System.Numerics.Vector4(1, 0, 0, 0.5f));
-                    ImGui.InputFloat("x", ref vetor.X);
-                    ImGui.TableNextColumn();
-                    ImGui.PushStyleColor(ImGuiCol.FrameBg, new System.Numerics.Vector4(0, 1, 0, 0.5f));
-                    ImGui.InputFloat("y", ref vetor.Y);
-                    ImGui.TableNextColumn();
-                    ImGui.PushStyleColor(ImGuiCol.FrameBg, new System.Numerics.Vector4(0, 0, 1, 0.5f));
-                    ImGui.InputFloat("z", ref vetor.Z);
-                    ImGui.EndTable();
+                    foreach (var attr in fInfo.CustomAttributes)
+                    {
+                        if (attr.AttributeType != typeof(ShowEditorAttribute))
+                            continue;
+
+                        switch (fInfo.FieldType.ToString())
+                        {
+                            case "Microsoft.Xna.Framework.Vector2":
+                                var vector2 = (Vector2)fInfo.GetValue(GameObjectSelected);
+                                Fields.Field.DrawVector(fInfo.Name, ref vector2);
+                                fInfo.SetValue(GameObjectSelected, vector2);
+                                break;
+                            case "Microsoft.Xna.Framework.Vector3":
+                                var vector3 = (Vector3)fInfo.GetValue(GameObjectSelected);
+                                Fields.Field.DrawVector(fInfo.Name, ref vector3);
+                                fInfo.SetValue(GameObjectSelected, vector3);
+                                break;
+                            case "System.Single":
+                                var floatValue = (float)fInfo.GetValue(GameObjectSelected);
+                                Fields.Field.DrawFloat(fInfo.Name, ref floatValue);
+                                fInfo.SetValue(GameObjectSelected, floatValue);
+                                break;
+                        }
+                    }
                 }
-                ImGui.Unindent();
             }
             ImGui.End();
         }

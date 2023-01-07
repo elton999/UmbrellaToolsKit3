@@ -2,7 +2,8 @@
 using MonoGame.ImGui.Standard;
 using Microsoft.Xna.Framework;
 using System;
-using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using System.Linq;
 
 namespace UmbrellaToolsKit.EditorEngine
 {
@@ -18,6 +19,7 @@ namespace UmbrellaToolsKit.EditorEngine
         //windows
         private Windows.SceneEditorWindow _sceneEditor;
         private bool _showEditor = false;
+        private bool _showEditorKeyUp = true;
 
         public static event Action OnDrawOverLayer;
 
@@ -35,6 +37,15 @@ namespace UmbrellaToolsKit.EditorEngine
 
         public void Draw(GameTime gameTime)
         {
+            if (Keyboard.GetState().IsKeyDown(Keys.F12) && !_showEditorKeyUp)
+            {
+                _showEditor = !_showEditor;
+                _showEditorKeyUp = true;
+            }
+
+            if (Keyboard.GetState().IsKeyUp(Keys.F12))
+                _showEditorKeyUp = false;
+            
             if (!_showEditor) return;
 
             _imGUIRenderer.BeginLayout(gameTime);
