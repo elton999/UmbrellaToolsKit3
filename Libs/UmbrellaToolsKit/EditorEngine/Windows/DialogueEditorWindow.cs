@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
+using MonoGame.ImGui.Standard.Extensions;
 using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
 
 namespace UmbrellaToolsKit.EditorEngine.Windows
@@ -50,6 +51,23 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.SetNextWindowDockID(rightID, ImGuiCond.Once);
             ImGui.Begin("Dialogue Editor");
             ImGui.SetWindowFontScale(1.2f);
+
+            var drawList = ImGui.GetWindowDrawList();
+
+            var windowPosition = ImGui.GetWindowPos();
+            var windowSize = ImGui.GetWindowSize();
+
+            Primativas.Square.Draw(
+                drawList, 
+                windowPosition.ToXnaVector2(), 
+                windowSize.ToXnaVector2(), 
+                Color.DarkGray
+            );
+
+            var nodePosition = new Vector2(30, 30);
+            nodePosition += windowPosition.ToXnaVector2();
+            Nodes.BasicNode.Draw(drawList, "Name node", nodePosition);
+
             ImGui.End();
         }
     }
