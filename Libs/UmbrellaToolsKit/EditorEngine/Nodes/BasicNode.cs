@@ -1,17 +1,24 @@
 ﻿using ImGuiNET;
-using System;
-using Microsoft.Xna.Framework;
 using MonoGame.ImGui.Standard.Extensions;
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
+using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
+using System;
+using UmbrellaToolsKit.EditorEngine.Windows;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes
 {
-    public class BasicNode
+    public class BasicNode : INodeInPutle, INodeOutPutle
     {
-        public string Name = "Node";
+        private bool _isConnecting = false;
+
+        public string Name { get; set; }
+
         public Vector2 Position = new Vector2(500, 100);
-        public Vector2 MainSquareSize { get => (new Vector2(200, 50)) + Vector2.UnitY * (Items.Count * ItemPedding); }
+        public Vector2 MainSquareSize { get => (new Vector2(200, 50)); } //+ Vector2.UnitY * (NodesConnection.Count * ItemPedding); }
+        public Vector2 SelectedNodeSize { get => MainSquareSize + Vector2.One * 4; }
+        public Vector2 SelectedNodePosition { get => Position - Vector2.One * 2f; }
         public Vector2 TitleSize = new Vector2(200, 30);
 
         public Vector2 OutPosition { get => Position + TitleSize - (Vector2.UnitY * TitleSize.Y / 2f); }
@@ -20,7 +27,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 
         public Color TitleColor = Color.Blue;
 
-        public List<string> Items;
+        public List<INodeInPutle> NodesConnection { get; set; }
         public float ItemPedding = 30f;
 
         public bool IsMouseClick = true;
@@ -28,22 +35,31 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public Vector2 NodePositionOnClick;
 
         public bool IsMouseOver = false;
-
-        public BasicNode OutNode = null;
+        public bool IsConnecting { get => _isConnecting; }
 
         public BasicNode(string name, Vector2 position)
         {
             Name = name;
-            Items = new List<string>();
-            Items.Add("Option 1");
-            Items.Add("Option 2");
-
+            NodesConnection = new List<INodeInPutle>();
             Position = position;
+        }
+
+        public void AddNodeConnection(INodeInPutle node)
+        {
+            if(!NodesConnection.Contains(node))
+            {
+                NodesConnection.Add(node);
+                _isConnecting = false;
+                IsMouseOver = false;
+                IsMouseClick = true;
+            }
         }
 
         public void Update()
         {
             CheckMouseOver();
+            CheckMouseOverOutPut();
+
             if (IsMouseOver)
                 Move();
         }
@@ -51,10 +67,25 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public void CheckMouseOver()
         {
             var rectangle = new Rectangle(Position.ToPoint(), new Point(200,30));
-            if (rectangle.Contains(new Rectangle(Mouse.GetState().Position, new Point(1, 1))))
+            if (rectangle.Contains(new Rectangle(Mouse.GetState().Position, new Point(1, 1))) && !_isConnecting) 
                 IsMouseOver = true;
             else
                 IsMouseOver = IsMouseClick && IsMouseOver;
+        }
+
+        public void CheckMouseOverOutPut()
+        {
+            var outputVector = Mouse.GetState().Position.ToVector2();
+            if ((outputVector - OutPosition).Length() >= 5.5f)
+                return;
+
+            _isConnecting = true;
+
+            if (Mouse.GetState().LeftButton == ButtonState.Released)
+                return;
+           
+            IsMouseOver = true;
+            DialogueEditorWindow.StartConnnetingNodes(this);
         }
 
         public void Move()
@@ -78,12 +109,10 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 
         public void Draw(ImDrawListPtr imDraw)
         {
-            if(IsMouseOver)
-            {
-                var selectNodePosition = Position - Vector2.One * 2f;
-                var selectNodeSize = new Vector2(204, 54);
-                Primativas.Square.Draw(imDraw, selectNodePosition, selectNodeSize, Color.White);
-            }
+            DrawConnections(imDraw);
+
+            if (IsMouseOver)
+                Primativas.Square.Draw(imDraw, SelectedNodePosition, SelectedNodeSize, Color.White);
 
             var titleTextPos = Position + Vector2.One * 8f;
             Primativas.Square.Draw(imDraw, Position, MainSquareSize, Color.Black);
@@ -91,8 +120,14 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             Primativas.Square.Draw(imDraw, Position, TitleSize, TitleColor);
             imDraw.AddText(titleTextPos.ToNumericVector2(), Color.White.PackedValue, Name);
 
+            imDraw.AddCircleFilled(OutPosition.ToNumericVector2(), 5f, Color.Yellow.PackedValue);
+            imDraw.AddCircleFilled(InPosition.ToNumericVector2(), 5f, Color.Yellow.PackedValue);
+        }
+
+        /*private void ShowItems(ImDrawListPtr imDraw)
+        {
             int index = 0;
-            foreach(var item in Items)
+            foreach (var item in Items)
             {
                 var itemPosition = Position + (ItemPedding / 2f * Vector2.UnitY);
                 itemPosition += TitleSize * Vector2.UnitY;
@@ -102,21 +137,12 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
                 imDraw.AddText(itemPosition.ToNumericVector2(), Color.White.PackedValue, item);
                 index++;
             }
+        }*/
 
-            imDraw.AddCircleFilled(OutPosition.ToNumericVector2(), 5f, Color.Yellow.PackedValue);
-            imDraw.AddCircleFilled(InPosition.ToNumericVector2(), 5f, Color.Yellow.PackedValue);
-
-            DrawLineConnect(imDraw);
-        }
-
-        public void DrawLineConnect(ImDrawListPtr imDraw)
+        public void DrawConnections(ImDrawListPtr imDraw)
         {
-            if (OutNode == null) return;
-
-            float lenght = (OutPosition - OutNode.InPosition).Length();
-            var p2 = OutPosition + BezierFactor * lenght;
-            var p3 = OutNode.InPosition - BezierFactor * lenght;
-            imDraw.AddBezierCubic(OutPosition.ToNumericVector2(), p2.ToNumericVector2(), p3.ToNumericVector2(), OutNode.InPosition.ToNumericVector2(), Color.Yellow.PackedValue, 2f);
+            foreach(var outputNode in NodesConnection)
+                Primativas.Line.Draw(imDraw, OutPosition, outputNode.InPosition);
         }
     }
 }

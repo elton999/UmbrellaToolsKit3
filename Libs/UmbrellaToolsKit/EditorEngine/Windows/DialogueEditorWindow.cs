@@ -14,6 +14,10 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         public GameManagement GameManagement { get => _gameManagement; }
 
         public List<Nodes.BasicNode> Nodes;
+        public Nodes.Interfaces.INodeOutPutle NodeStartConnection;
+        public bool IsConnecting = false;
+
+        public static event Action<Nodes.Interfaces.INodeOutPutle> OnStartConnecting;
 
         public DialogueEditorWindow(GameManagement gameManagement)
         {
@@ -21,13 +25,18 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
             Nodes = new List<Nodes.BasicNode>();
             Nodes.Add(new Nodes.BasicNode("basic node", new Vector2(500, 200)));
-            Nodes.Add(new Nodes.BasicNode("basic node2", new Vector2(700, 200)));
-
-            Nodes[0].OutNode = Nodes[1];
+            Nodes.Add(new Nodes.BasicNode("basic node2", new Vector2(800, 200)));
+            Nodes.Add(new Nodes.BasicNode("basic node3", new Vector2(800, 500)));
+            Nodes.Add(new Nodes.BasicNode("basic node4", new Vector2(800, 700)));
+            Nodes.Add(new Nodes.BasicNode("basic node5", new Vector2(1000, 700)));
 
             BarEdtior.OnSwichEditorWindow += RemoveAsMainWindow;
             BarEdtior.OnOpenDialogueEditor += SetAsMainWindow;
+
+            OnStartConnecting += StartLineConnection;
         }
+
+        public static void StartConnnetingNodes(Nodes.Interfaces.INodeOutPutle node) => OnStartConnecting?.Invoke(node);
 
         public void SetAsMainWindow() => EditorArea.OnDrawWindow += ShowWindow;
 
@@ -70,16 +79,49 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                 drawList, 
                 windowPosition.ToXnaVector2(), 
                 windowSize.ToXnaVector2(), 
-                Color.DarkSlateGray
+                Color.DarkGray
             );
 
             foreach(var node in Nodes)
             {
-                node.Update();
+                if (!IsConnecting)
+                    node.Update();
+
+                if (IsConnecting)
+                    TraceLineConnection(drawList);
+
                 node.Draw(drawList);
             }
 
             ImGui.End();
+        }
+
+         public void TraceLineConnection(ImDrawListPtr drawList)
+         {
+            Primativas.Line.Draw(
+                drawList,
+                NodeStartConnection.OutPosition,
+                Mouse.GetState().Position.ToVector2()
+            );
+
+            IsConnecting = Mouse.GetState().LeftButton == ButtonState.Pressed;
+            
+            foreach(var node in Nodes)
+            {
+                float distance = (node.InPosition - Mouse.GetState().Position.ToVector2()).Length();
+                if (distance <= 5f)
+                {
+                    NodeStartConnection.AddNodeConnection(node);
+                    IsConnecting = false;
+                    return ;
+                }
+            }
+         }
+
+        public void StartLineConnection(Nodes.Interfaces.INodeOutPutle node)
+        {
+            NodeStartConnection = node;
+            IsConnecting = true;
         }
     }
 }
