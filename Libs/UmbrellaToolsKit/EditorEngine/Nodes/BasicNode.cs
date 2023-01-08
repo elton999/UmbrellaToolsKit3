@@ -16,6 +16,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 
         public Vector2 OutPosition { get => Position + TitleSize - (Vector2.UnitY * TitleSize.Y / 2f); }
         public Vector2 InPosition { get => OutPosition - MainSquareSize * Vector2.UnitX; }
+        public Vector2 BezierFactor { get => new Vector2(0.5f, 0.1f); }
 
         public Color TitleColor = Color.Blue;
 
@@ -52,10 +53,8 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             var rectangle = new Rectangle(Position.ToPoint(), new Point(200,30));
             if (rectangle.Contains(new Rectangle(Mouse.GetState().Position, new Point(1, 1))))
                 IsMouseOver = true;
-            else if(IsMouseClick && IsMouseOver)
-                IsMouseOver = true;
             else
-                IsMouseOver = false;
+                IsMouseOver = IsMouseClick && IsMouseOver;
         }
 
         public void Move()
@@ -114,7 +113,10 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         {
             if (OutNode == null) return;
 
-            imDraw.AddLine(OutPosition.ToNumericVector2(), OutNode.InPosition.ToNumericVector2(), Color.Yellow.PackedValue, 2f);
+            float lenght = (OutPosition - OutNode.InPosition).Length();
+            var p2 = OutPosition + BezierFactor * lenght;
+            var p3 = OutNode.InPosition - BezierFactor * lenght;
+            imDraw.AddBezierCubic(OutPosition.ToNumericVector2(), p2.ToNumericVector2(), p3.ToNumericVector2(), OutNode.InPosition.ToNumericVector2(), Color.Yellow.PackedValue, 2f);
         }
     }
 }

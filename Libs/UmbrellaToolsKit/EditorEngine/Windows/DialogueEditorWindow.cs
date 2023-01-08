@@ -70,7 +70,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                 drawList, 
                 windowPosition.ToXnaVector2(), 
                 windowSize.ToXnaVector2(), 
-                Color.DarkGray
+                Color.DarkSlateGray
             );
 
             foreach(var node in Nodes)
