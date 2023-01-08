@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.ImGui.Standard.Extensions;
 using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
 
@@ -12,9 +13,17 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         private GameManagement _gameManagement;
         public GameManagement GameManagement { get => _gameManagement; }
 
+        public List<Nodes.BasicNode> Nodes;
+
         public DialogueEditorWindow(GameManagement gameManagement)
         {
             _gameManagement = gameManagement;
+
+            Nodes = new List<Nodes.BasicNode>();
+            Nodes.Add(new Nodes.BasicNode("basic node", new Vector2(500, 200)));
+            Nodes.Add(new Nodes.BasicNode("basic node2", new Vector2(700, 200)));
+
+            Nodes[0].OutNode = Nodes[1];
 
             BarEdtior.OnSwichEditorWindow += RemoveAsMainWindow;
             BarEdtior.OnOpenDialogueEditor += SetAsMainWindow;
@@ -64,9 +73,11 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                 Color.DarkGray
             );
 
-            var nodePosition = new Vector2(30, 30);
-            nodePosition += windowPosition.ToXnaVector2();
-            Nodes.BasicNode.Draw(drawList, "Name node", nodePosition);
+            foreach(var node in Nodes)
+            {
+                node.Update();
+                node.Draw(drawList);
+            }
 
             ImGui.End();
         }
