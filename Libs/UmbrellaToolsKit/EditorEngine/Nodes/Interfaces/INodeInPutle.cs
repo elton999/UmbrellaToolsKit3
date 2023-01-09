@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes.Interfaces
 {
@@ -6,5 +7,9 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.Interfaces
     {
         string Name { get; set; }
         Vector2 InPosition { get; }
+        List<INodeOutPutle> NodesConnectionOut { get; set; }
+        bool IsOverConnectorIn { get; }
+
+        void AddNodeConnection(INodeOutPutle node);
     }
 }

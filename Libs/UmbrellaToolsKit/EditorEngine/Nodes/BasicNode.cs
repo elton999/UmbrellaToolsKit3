@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Input;
 using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
 using System;
 using UmbrellaToolsKit.EditorEngine.Windows;
+using System.Linq;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes
 {
@@ -27,7 +28,8 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 
         public Color TitleColor = Color.Blue;
 
-        public List<INodeInPutle> NodesConnection { get; set; }
+        public List<INodeInPutle> NodesConnectionIn { get; set; }
+        public List<INodeOutPutle> NodesConnectionOut { get; set; }
         public float ItemPedding = 30f;
 
         public bool IsMouseClick = true;
@@ -37,22 +39,36 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public bool IsMouseOver = false;
         public bool IsConnecting { get => _isConnecting; }
 
+        public bool IsOverConnectorIn { get => isMouseOverPosition(InPosition); }
+        public bool IsOverConnectorOutPut { get => isMouseOverPosition(OutPosition); }
+
         public BasicNode(string name, Vector2 position)
         {
             Name = name;
-            NodesConnection = new List<INodeInPutle>();
+            NodesConnectionIn = new List<INodeInPutle>();
+            NodesConnectionOut= new List<INodeOutPutle>();
             Position = position;
         }
 
         public void AddNodeConnection(INodeInPutle node)
         {
-            if(!NodesConnection.Contains(node))
-            {
-                NodesConnection.Add(node);
-                _isConnecting = false;
-                IsMouseOver = false;
-                IsMouseClick = true;
-            }
+            if (NodesConnectionIn.Contains(node)) return;
+
+            NodesConnectionIn.Add(node);
+            node.AddNodeConnection(this);
+            CancelConnection();
+        }
+
+        public void AddNodeConnection(INodeOutPutle node)
+        {
+            if (NodesConnectionOut.Contains(node)) return;
+            NodesConnectionOut.Add(node);
+        }
+
+        public void CancelConnection()
+        {
+            _isConnecting = IsMouseOver = false;
+            IsMouseClick = true;
         }
 
         public void Update()
@@ -75,14 +91,14 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 
         public void CheckMouseOverOutPut()
         {
-            var outputVector = Mouse.GetState().Position.ToVector2();
-            if ((outputVector - OutPosition).Length() >= 5.5f)
-                return;
+            if (IsOverConnectorOutPut && Mouse.GetState().RightButton == ButtonState.Pressed)
+                Desconnecting();
+
+            _isConnecting = false;
+            if (!IsOverConnectorOutPut) return;
 
             _isConnecting = true;
-
-            if (Mouse.GetState().LeftButton == ButtonState.Released)
-                return;
+            if (Mouse.GetState().LeftButton == ButtonState.Released) return;
            
             IsMouseOver = true;
             DialogueEditorWindow.StartConnnetingNodes(this);
@@ -139,10 +155,18 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             }
         }*/
 
+        public void Desconnecting()
+        {
+            NodesConnectionOut.Clear();
+            NodesConnectionIn.Clear();
+        }
+
         public void DrawConnections(ImDrawListPtr imDraw)
         {
-            foreach(var outputNode in NodesConnection)
+            foreach(var outputNode in NodesConnectionIn)
                 Primativas.Line.Draw(imDraw, OutPosition, outputNode.InPosition);
         }
+
+        private bool isMouseOverPosition(Vector2 position) => (Mouse.GetState().Position.ToVector2() - position).Length() <= 5.0f;
     }
 }

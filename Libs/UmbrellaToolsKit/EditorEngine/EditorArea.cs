@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
-using MonoGame.ImGui.Standard;
 
 namespace UmbrellaToolsKit.EditorEngine
 {

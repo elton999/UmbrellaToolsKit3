@@ -105,6 +105,9 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             );
 
             IsConnecting = Mouse.GetState().LeftButton == ButtonState.Pressed;
+
+            if(!IsConnecting)
+                NodeStartConnection.CancelConnection();
             
             foreach(var node in Nodes)
             {
@@ -113,7 +116,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                 {
                     NodeStartConnection.AddNodeConnection(node);
                     IsConnecting = false;
-                    return ;
+                    return;
                 }
             }
          }

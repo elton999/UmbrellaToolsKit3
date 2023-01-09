@@ -6,9 +6,13 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.Interfaces
     public interface INodeOutPutle
     {
         Vector2 OutPosition { get; }
-        List<INodeInPutle> NodesConnection { get; set; }
+        List<INodeInPutle> NodesConnectionIn { get; set; }
+        
         bool IsConnecting { get; }
+        bool IsOverConnectorOutPut { get; }
 
         void AddNodeConnection(INodeInPutle node);
+        void Desconnecting();
+        void CancelConnection();
     }
 }

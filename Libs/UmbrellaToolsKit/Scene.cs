@@ -39,12 +39,14 @@ namespace UmbrellaToolsKit
 
         public void addLayers()
         {
-            SortLayers = new List<List<IGameObject>>();
-            SortLayers.Add(Foreground);
-            SortLayers.Add(Players);
-            SortLayers.Add(Enemies);
-            SortLayers.Add(Middleground);
-            SortLayers.Add(Backgrounds);
+            SortLayers = new List<List<IGameObject>>
+            {
+                Foreground,
+                Players,
+                Enemies,
+                Middleground,
+                Backgrounds
+            };
         }
         #endregion
 
