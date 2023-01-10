@@ -3,10 +3,8 @@ using MonoGame.ImGui.Standard.Extensions;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
-using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
-using System;
 using UmbrellaToolsKit.EditorEngine.Windows;
-using System.Linq;
+using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes
 {
@@ -32,11 +30,11 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public List<INodeOutPutle> NodesConnectionOut { get; set; }
         public float ItemPedding = 30f;
 
-        public bool IsMouseClick = true;
+        public bool IsMouseLeftButtonPressing = true;
         public Vector2 MousePosition;
         public Vector2 NodePositionOnClick;
 
-        public bool IsMouseOver = false;
+        public bool CanMoveNode = false;
         public bool IsConnecting { get => _isConnecting; }
 
         public bool IsOverConnectorIn { get => isMouseOverPosition(InPosition); }
@@ -65,34 +63,39 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             NodesConnectionOut.Add(node);
         }
 
+        public void Desconnecting()
+        {
+            NodesConnectionOut.Clear();
+            NodesConnectionIn.Clear();
+        }
+
         public void CancelConnection()
         {
-            _isConnecting = IsMouseOver = false;
-            IsMouseClick = true;
+            _isConnecting = CanMoveNode = false;
+            IsMouseLeftButtonPressing = true;
         }
 
         public void Update()
         {
-            CheckMouseOver();
-            CheckMouseOverOutPut();
-
-            if (IsMouseOver)
-                Move();
+            HandlerMoveNode();
+            HandlerConnectionNodes();
         }
 
-        public void CheckMouseOver()
+        public void HandlerMoveNode()
         {
-            var rectangle = new Rectangle(Position.ToPoint(), new Point(200,30));
-            if (rectangle.Contains(new Rectangle(Mouse.GetState().Position, new Point(1, 1))) && !_isConnecting) 
-                IsMouseOver = true;
-            else
-                IsMouseOver = IsMouseClick && IsMouseOver;
+            var rectangle = new Rectangle(Position.ToPoint(), MainSquareSize.ToPoint());
+            var mousePosition = Mouse.GetState().Position;
+            var mousePoint = new Rectangle(mousePosition, new Point(1));
+
+            if (rectangle.Contains(mousePoint) && !_isConnecting) CanMoveNode = true;
+            else CanMoveNode = IsMouseLeftButtonPressing && CanMoveNode;
+
+            if (CanMoveNode) MoveNode();
         }
 
-        public void CheckMouseOverOutPut()
+        public void HandlerConnectionNodes()
         {
-            if (IsOverConnectorOutPut && Mouse.GetState().RightButton == ButtonState.Pressed)
-                Desconnecting();
+            HandlerDesconnectionNodes();
 
             _isConnecting = false;
             if (!IsOverConnectorOutPut) return;
@@ -100,25 +103,32 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             _isConnecting = true;
             if (Mouse.GetState().LeftButton == ButtonState.Released) return;
            
-            IsMouseOver = true;
+            CanMoveNode = true;
             DialogueEditorWindow.StartConnnetingNodes(this);
         }
 
-        public void Move()
+        public void HandlerDesconnectionNodes()
         {
-            if (Mouse.GetState().LeftButton == ButtonState.Pressed && !IsMouseClick)
+            if (IsOverConnectorOutPut && Mouse.GetState().RightButton == ButtonState.Pressed)
+                Desconnecting();
+        }
+
+        public void MoveNode()
+        {
+            if (Mouse.GetState().LeftButton == ButtonState.Pressed && !IsMouseLeftButtonPressing)
             {
-                IsMouseClick = true;
+                IsMouseLeftButtonPressing = true;
                 MousePosition = Mouse.GetState().Position.ToVector2();
                 NodePositionOnClick = Position;
             }
 
             if (Mouse.GetState().LeftButton == ButtonState.Released)
-                IsMouseClick = false;
+                IsMouseLeftButtonPressing = false;
 
-            if (IsMouseClick)
+            if (IsMouseLeftButtonPressing)
             {
-                var direction = Mouse.GetState().Position.ToVector2() - MousePosition;
+                var currentMousePosition = Mouse.GetState().Position.ToVector2();
+                var direction = currentMousePosition - MousePosition;
                 Position = NodePositionOnClick + direction;
             }
         }
@@ -127,7 +137,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         {
             DrawConnections(imDraw);
 
-            if (IsMouseOver)
+            if (CanMoveNode)
                 Primativas.Square.Draw(imDraw, SelectedNodePosition, SelectedNodeSize, Color.White);
 
             var titleTextPos = Position + Vector2.One * 8f;
@@ -140,33 +150,12 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             imDraw.AddCircleFilled(InPosition.ToNumericVector2(), 5f, Color.Yellow.PackedValue);
         }
 
-        /*private void ShowItems(ImDrawListPtr imDraw)
-        {
-            int index = 0;
-            foreach (var item in Items)
-            {
-                var itemPosition = Position + (ItemPedding / 2f * Vector2.UnitY);
-                itemPosition += TitleSize * Vector2.UnitY;
-                itemPosition += Vector2.UnitY * ItemPedding * index;
-                itemPosition += Vector2.UnitX * 8f;
-
-                imDraw.AddText(itemPosition.ToNumericVector2(), Color.White.PackedValue, item);
-                index++;
-            }
-        }*/
-
-        public void Desconnecting()
-        {
-            NodesConnectionOut.Clear();
-            NodesConnectionIn.Clear();
-        }
-
         public void DrawConnections(ImDrawListPtr imDraw)
         {
             foreach(var outputNode in NodesConnectionIn)
                 Primativas.Line.Draw(imDraw, OutPosition, outputNode.InPosition);
         }
-
+        
         private bool isMouseOverPosition(Vector2 position) => (Mouse.GetState().Position.ToVector2() - position).Length() <= 5.0f;
     }
 }
