@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.ImGui.Standard.Extensions;
 using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
+using UmbrellaToolsKit.Input;
 
 namespace UmbrellaToolsKit.EditorEngine.Windows
 {
@@ -104,7 +105,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                 Mouse.GetState().Position.ToVector2()
             );
 
-            IsConnecting = Mouse.GetState().LeftButton == ButtonState.Pressed;
+            IsConnecting = MouseHandler.ButtonLeftPressed;
 
             if(!IsConnecting)
                 NodeStartConnection.CancelConnection();

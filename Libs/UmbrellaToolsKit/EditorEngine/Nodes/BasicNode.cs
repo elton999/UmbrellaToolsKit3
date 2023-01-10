@@ -3,6 +3,7 @@ using MonoGame.ImGui.Standard.Extensions;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
+using UmbrellaToolsKit.Input;
 using UmbrellaToolsKit.EditorEngine.Windows;
 using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
 
@@ -101,7 +102,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             if (!IsOverConnectorOutPut) return;
 
             _isConnecting = true;
-            if (Mouse.GetState().LeftButton == ButtonState.Released) return;
+            if (MouseHandler.ButtonLeftReleased) return;
            
             CanMoveNode = true;
             DialogueEditorWindow.StartConnnetingNodes(this);
@@ -109,20 +110,20 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 
         public void HandlerDesconnectionNodes()
         {
-            if (IsOverConnectorOutPut && Mouse.GetState().RightButton == ButtonState.Pressed)
+            if (IsOverConnectorOutPut && MouseHandler.ButtonRightPressed)
                 Desconnecting();
         }
 
         public void MoveNode()
         {
-            if (Mouse.GetState().LeftButton == ButtonState.Pressed && !IsMouseLeftButtonPressing)
+            if (MouseHandler.ButtonLeftPressed && !IsMouseLeftButtonPressing)
             {
                 IsMouseLeftButtonPressing = true;
                 MousePosition = Mouse.GetState().Position.ToVector2();
                 NodePositionOnClick = Position;
             }
 
-            if (Mouse.GetState().LeftButton == ButtonState.Released)
+            if (MouseHandler.ButtonLeftReleased)
                 IsMouseLeftButtonPressing = false;
 
             if (IsMouseLeftButtonPressing)
