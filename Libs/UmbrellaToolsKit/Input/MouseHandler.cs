@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace UmbrellaToolsKit.Input
 {
@@ -57,11 +58,13 @@ namespace UmbrellaToolsKit.Input
         }
 
         public static bool ButtonLeftPressing => ButtonLeftPressed && GetStatus._buttonLeftLastState == ButtonState.Pressed;
-        public static bool buttonRightPressing => ButtonRightPressed && GetStatus._buttonRightLastState == ButtonState.Pressed;
+        public static bool ButtonRightPressing => ButtonRightPressed && GetStatus._buttonRightLastState == ButtonState.Pressed;
 
         public static bool ButtonLeftOneClick => ButtonLeftPressed && GetStatus._buttonLeftLastState == ButtonState.Released;
-        public static bool ButtonRightOneClick => ButtonRightPressed  && GetStatus._buttonRightLastState == ButtonState.Released;
+        public static bool ButtonRightOneClick => ButtonRightPressed && GetStatus._buttonRightLastState == ButtonState.Released;
 
+        public static Vector2 Position => Mouse.GetState().Position.ToVector2();
+        
         internal void setInputData()
         {
             _buttonLeftLastState = Mouse.GetState().LeftButton;

@@ -14,7 +14,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         private GameManagement _gameManagement;
         public GameManagement GameManagement { get => _gameManagement; }
 
-        public List<Nodes.BasicNode> Nodes;
+        public List<Nodes.NodeInPutAndOutPut> Nodes;
         public Nodes.Interfaces.INodeOutPutle NodeStartConnection;
         public bool IsConnecting = false;
 
@@ -24,12 +24,12 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         {
             _gameManagement = gameManagement;
 
-            Nodes = new List<Nodes.BasicNode>();
-            Nodes.Add(new Nodes.BasicNode("basic node", new Vector2(500, 200)));
-            Nodes.Add(new Nodes.BasicNode("basic node2", new Vector2(800, 200)));
-            Nodes.Add(new Nodes.BasicNode("basic node3", new Vector2(800, 500)));
-            Nodes.Add(new Nodes.BasicNode("basic node4", new Vector2(800, 700)));
-            Nodes.Add(new Nodes.BasicNode("basic node5", new Vector2(1000, 700)));
+            Nodes = new List<Nodes.NodeInPutAndOutPut>();
+            Nodes.Add(new Nodes.NodeInPutAndOutPut("basic node", new Vector2(500, 200)));
+            Nodes.Add(new Nodes.NodeInPutAndOutPut("basic node2", new Vector2(800, 200)));
+            Nodes.Add(new Nodes.NodeInPutAndOutPut("basic node3", new Vector2(800, 500)));
+            Nodes.Add(new Nodes.NodeInPutAndOutPut("basic node4", new Vector2(800, 700)));
+            Nodes.Add(new Nodes.NodeInPutAndOutPut("basic node5", new Vector2(1000, 700)));
 
             BarEdtior.OnSwichEditorWindow += RemoveAsMainWindow;
             BarEdtior.OnOpenDialogueEditor += SetAsMainWindow;
@@ -102,7 +102,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             Primativas.Line.Draw(
                 drawList,
                 NodeStartConnection.OutPosition,
-                Mouse.GetState().Position.ToVector2()
+                MouseHandler.Position
             );
 
             IsConnecting = MouseHandler.ButtonLeftPressed;
@@ -112,7 +112,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             
             foreach(var node in Nodes)
             {
-                float distance = (node.InPosition - Mouse.GetState().Position.ToVector2()).Length();
+                float distance = (node.InPosition - MouseHandler.Position).Length();
                 if (distance <= 5f)
                 {
                     NodeStartConnection.AddNodeConnection(node);

@@ -42,7 +42,6 @@ namespace UmbrellaToolsKit
 
         public void Update(GameTime gameTime)
         {
-            OnGameUpdateData?.Invoke();
             SceneManagement.Update(gameTime);
         }
 
@@ -51,6 +50,7 @@ namespace UmbrellaToolsKit
             SpriteBatch = spriteBatch;
             SceneManagement.Draw(spriteBatch);
             _edtior.Draw(gameTime);
+            OnGameUpdateData?.Invoke();
         }
     }
 }
