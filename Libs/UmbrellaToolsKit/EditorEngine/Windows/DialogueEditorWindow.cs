@@ -4,6 +4,7 @@ using ImGuiNET;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.ImGui.Standard.Extensions;
+using UmbrellaToolsKit.EditorEngine.Nodes;
 using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
 using UmbrellaToolsKit.Input;
 
@@ -13,6 +14,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
     {
         private GameManagement _gameManagement;
         public GameManagement GameManagement { get => _gameManagement; }
+
+        public Nodes.BasicNode SelectedNode;
 
         public List<Nodes.NodeInPutAndOutPut> Nodes;
         public Nodes.Interfaces.INodeOutPutle NodeStartConnection;
@@ -25,16 +28,12 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             _gameManagement = gameManagement;
 
             Nodes = new List<Nodes.NodeInPutAndOutPut>();
-            Nodes.Add(new Nodes.NodeInPutAndOutPut("basic node", new Vector2(500, 200)));
-            Nodes.Add(new Nodes.NodeInPutAndOutPut("basic node2", new Vector2(800, 200)));
-            Nodes.Add(new Nodes.NodeInPutAndOutPut("basic node3", new Vector2(800, 500)));
-            Nodes.Add(new Nodes.NodeInPutAndOutPut("basic node4", new Vector2(800, 700)));
-            Nodes.Add(new Nodes.NodeInPutAndOutPut("basic node5", new Vector2(1000, 700)));
 
             BarEdtior.OnSwichEditorWindow += RemoveAsMainWindow;
             BarEdtior.OnOpenDialogueEditor += SetAsMainWindow;
 
             OnStartConnecting += StartLineConnection;
+            BasicNode.OnSelectNode += SelectNode;
         }
 
         public static void StartConnnetingNodes(Nodes.Interfaces.INodeOutPutle node) => OnStartConnecting?.Invoke(node);
@@ -65,6 +64,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.SetNextWindowDockID(leftID, ImGuiCond.Once);
             ImGui.Begin("Item props");
             ImGui.SetWindowFontScale(1.2f);
+            if (ImGui.Button("Add Node")) AddNode();
+            if(SelectedNode != null) ShowNodeInfo();
             ImGui.End();
 
             ImGui.SetNextWindowDockID(rightID, ImGuiCond.Once);
@@ -97,8 +98,24 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.End();
         }
 
-         public void TraceLineConnection(ImDrawListPtr drawList)
-         {
+        public void ShowNodeInfo()
+        {
+            string nameNodeValue = SelectedNode.Name;
+            Fields.Field.DrawString("Node Name", ref nameNodeValue);
+            Fields.Field.DrawLongText("Node text", ref nameNodeValue);
+            SelectedNode.Name = nameNodeValue;
+        }
+
+        private void SelectNode(BasicNode node) => SelectedNode = node;
+
+        private void AddNode()
+        {
+            var node = new NodeInPutAndOutPut("new node", Vector2.One * 500f);
+            Nodes.Add(node);
+        }
+
+        private void TraceLineConnection(ImDrawListPtr drawList)
+        {
             Primativas.Line.Draw(
                 drawList,
                 NodeStartConnection.OutPosition,
@@ -120,9 +137,9 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                     return;
                 }
             }
-         }
+        }
 
-        public void StartLineConnection(Nodes.Interfaces.INodeOutPutle node)
+        private void StartLineConnection(Nodes.Interfaces.INodeOutPutle node)
         {
             NodeStartConnection = node;
             IsConnecting = true;

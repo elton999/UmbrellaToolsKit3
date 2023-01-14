@@ -1,6 +1,7 @@
 ﻿using ImGuiNET;
 using Microsoft.Xna.Framework;
 using MonoGame.ImGui.Standard;
+using MonoGame.ImGui.Standard.Extensions;
 
 namespace UmbrellaToolsKit.EditorEngine.Fields
 {
@@ -49,5 +50,9 @@ namespace UmbrellaToolsKit.EditorEngine.Fields
         public static void DrawFloat(string name, ref float value) => ImGui.InputFloat(name, ref value);
 
         public static void DrawInt(string name, ref int value) => ImGui.InputInt(name, ref value);
+
+        public static void DrawString(string name, ref string value) => ImGui.InputTextWithHint(name, name, ref value, 255);
+
+        public static void DrawLongText(string name, ref string value) => ImGui.InputTextMultiline(name, ref value, 500, Vector2.Zero.ToNumericVector2());
     }
 }

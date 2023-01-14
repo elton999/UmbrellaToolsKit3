@@ -1,4 +1,5 @@
-﻿using ImGuiNET;
+﻿using System;
+using ImGuiNET;
 using MonoGame.ImGui.Standard.Extensions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -28,6 +29,8 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 
         public bool CanMoveNode = false;
 
+        public static event Action<BasicNode> OnSelectNode;
+
         public BasicNode(string name, Vector2 position)
         {
             Name = name;
@@ -56,6 +59,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             {
                 MousePosition = MouseHandler.Position;
                 NodePositionOnClick = Position;
+                OnSelectNode?.Invoke(this);
             }
 
             if (MouseHandler.ButtonLeftPressing)
