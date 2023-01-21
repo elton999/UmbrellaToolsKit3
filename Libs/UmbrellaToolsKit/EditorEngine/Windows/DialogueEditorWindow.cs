@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
 using MonoGame.ImGui.Standard.Extensions;
 using UmbrellaToolsKit.EditorEngine.Nodes;
+using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
 using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
 using UmbrellaToolsKit.Input;
 
@@ -39,6 +41,25 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             BasicNode.OnSelectNode += SelectNode;
 
             _storage= new Storage.Load(_dialogueSettingPath);
+
+            foreach(var nodeId in _storage.getItemsFloat("Id"))
+            {
+                int id = (int)nodeId;
+                string name = _storage.getItemsString($"name-{id}")[0];
+                var position = Vector2.Zero;
+                position.X = _storage.getItemsFloat($"position-{id}-vector-x")[0];
+                position.Y = _storage.getItemsFloat($"position-{id}-vector-y")[0];
+
+                var node = new NodeInPutAndOutPut(_storage, id, name, position);
+                Nodes.Add(node);
+            }
+
+            foreach(var node in Nodes)
+            {
+                var nodesConnections = _storage.getItemsFloat($"Nodes-Connection-In-{node.Id}");
+                foreach (var connection in nodesConnections)
+                    node.AddNodeConnection((INodeInPutle)Nodes[(int)connection]);
+            }
         }
 
         public static void StartConnnetingNodes(Nodes.Interfaces.INodeOutPutle node) => OnStartConnecting?.Invoke(node);
@@ -121,6 +142,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             var node = new NodeInPutAndOutPut(_storage, _idsCount, "new node", Vector2.One * 500f);
             _idsCount++;
             Nodes.Add(node);
+            _storage.Save();
         }
 
         private void TraceLineConnection(ImDrawListPtr drawList)

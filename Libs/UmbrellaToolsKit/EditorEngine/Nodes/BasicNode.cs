@@ -76,7 +76,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             Id = id;
             Name = name;
             Position = position;
-            _storage.Save();
+            //_storage.Save();
         }
 
         public virtual void Update() => HandlerMoveNode();
