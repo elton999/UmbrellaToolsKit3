@@ -13,6 +13,8 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
     {
         private bool _isConnecting = false;
 
+        public INode Node { get => this; }
+
         public List<INodeInPutle> NodesConnectionIn { get; set; }
         public List<INodeOutPutle> NodesConnectionOut { get; set; }
 
@@ -29,6 +31,8 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         {
             NodesConnectionIn = new List<INodeInPutle>();
             NodesConnectionOut = new List<INodeOutPutle>();
+
+            storage.OnSave += SaveConnections;
         }
 
         public virtual void Update()
@@ -95,5 +99,20 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public void CancelConnection() => _isConnecting = CanMoveNode = false;
 
         private bool isMouseOverPosition(Vector2 position) => (MouseHandler.Position - position).Length() <= 5.0f;
+
+        private void SaveConnections()
+        {
+            var nodesConnectionInList = new List<float>();
+            foreach (var nodeIn in NodesConnectionIn)
+                nodesConnectionInList.Add(nodeIn.Node.Id);
+
+            var nodesConnectionOutList = new List<float>();
+            foreach (var nodeOut in NodesConnectionOut)
+                nodesConnectionOutList.Add(nodeOut.Node.Id);
+
+            _storage.AddItemFloat($"Nodes-Connection-In-{Id}", nodesConnectionInList);
+            _storage.AddItemFloat($"Nodes-Connection-Out-{Id}", nodesConnectionOutList);
+        }
+
     }
 }

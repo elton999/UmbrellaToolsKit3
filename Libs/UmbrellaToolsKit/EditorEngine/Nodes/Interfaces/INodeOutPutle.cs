@@ -5,6 +5,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.Interfaces
 {
     public interface INodeOutPutle
     {
+        INode Node { get; }
         Vector2 OutPosition { get; }
         List<INodeInPutle> NodesConnectionIn { get; set; }
         

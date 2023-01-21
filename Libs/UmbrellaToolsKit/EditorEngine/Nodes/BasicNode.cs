@@ -12,7 +12,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 {
     public class BasicNode : INode
     {
-        private Load _storage;
+        protected Load _storage;
         private int _index = 0;
 
         private Vector2 _position;
@@ -123,6 +123,5 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             Primativas.Square.Draw(imDraw, Position, TitleSize, TitleColor);
             imDraw.AddText(titleTextPos.ToNumericVector2(), Color.White.PackedValue, Name);
         }
-
     }
 }
