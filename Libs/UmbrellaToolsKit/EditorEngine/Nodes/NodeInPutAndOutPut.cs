@@ -5,6 +5,7 @@ using MonoGame.ImGui.Standard.Extensions;
 using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
 using UmbrellaToolsKit.EditorEngine.Windows;
 using UmbrellaToolsKit.Input;
+using UmbrellaToolsKit.Storage;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes
 {
@@ -24,7 +25,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public bool IsOverConnectorIn { get => isMouseOverPosition(InPosition); }
         public bool IsOverConnectorOutPut { get => isMouseOverPosition(OutPosition); }
 
-        public NodeInPutAndOutPut(string name, Vector2 position) : base(name, position)
+        public NodeInPutAndOutPut(Load storage, int id, string name, Vector2 position) : base(storage, id, name, position)
         {
             NodesConnectionIn = new List<INodeInPutle>();
             NodesConnectionOut = new List<INodeOutPutle>();

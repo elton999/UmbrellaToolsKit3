@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using MonoGame.ImGui.Standard.Extensions;
 using UmbrellaToolsKit.EditorEngine.Nodes;
 using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
@@ -12,12 +11,16 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 {
     public class DialogueEditorWindow : IWindowEditable
     {
+        private const string _dialogueSettingPath = @"Content/Dialogue1.Umbrella";
+        private Storage.Load _storage;
+        private int _idsCount = 0;
+
         private GameManagement _gameManagement;
         public GameManagement GameManagement { get => _gameManagement; }
 
-        public Nodes.BasicNode SelectedNode;
+        public BasicNode SelectedNode;
 
-        public List<Nodes.NodeInPutAndOutPut> Nodes;
+        public List<NodeInPutAndOutPut> Nodes;
         public Nodes.Interfaces.INodeOutPutle NodeStartConnection;
         public bool IsConnecting = false;
 
@@ -27,13 +30,15 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         {
             _gameManagement = gameManagement;
 
-            Nodes = new List<Nodes.NodeInPutAndOutPut>();
+            Nodes = new List<NodeInPutAndOutPut>();
 
             BarEdtior.OnSwichEditorWindow += RemoveAsMainWindow;
             BarEdtior.OnOpenDialogueEditor += SetAsMainWindow;
 
             OnStartConnecting += StartLineConnection;
             BasicNode.OnSelectNode += SelectNode;
+
+            _storage= new Storage.Load(_dialogueSettingPath);
         }
 
         public static void StartConnnetingNodes(Nodes.Interfaces.INodeOutPutle node) => OnStartConnecting?.Invoke(node);
@@ -64,8 +69,11 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.SetNextWindowDockID(leftID, ImGuiCond.Once);
             ImGui.Begin("Item props");
             ImGui.SetWindowFontScale(1.2f);
+            
+            if(ImGui.Button("Save")) _storage.Save();
             if (ImGui.Button("Add Node")) AddNode();
             if(SelectedNode != null) ShowNodeInfo();
+            
             ImGui.End();
 
             ImGui.SetNextWindowDockID(rightID, ImGuiCond.Once);
@@ -110,7 +118,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
         private void AddNode()
         {
-            var node = new NodeInPutAndOutPut("new node", Vector2.One * 500f);
+            var node = new NodeInPutAndOutPut(_storage, _idsCount, "new node", Vector2.One * 500f);
+            _idsCount++;
             Nodes.Add(node);
         }
 
