@@ -61,7 +61,6 @@ namespace UmbrellaToolsKit.Storage
 
         public List<string> getItemsString(string Node)
         {
-            LoadFile();
             List<string> ListReturn = new List<string>();
 
             XmlNodeList ElementNode = doc.GetElementsByTagName(Node);
@@ -74,7 +73,6 @@ namespace UmbrellaToolsKit.Storage
 
         public List<float> getItemsFloat(string Node)
         {
-            LoadFile();
             List<float> ListReturn = new List<float>();
 
             XmlNodeList ElementNode = doc.GetElementsByTagName(Node);
@@ -87,7 +85,6 @@ namespace UmbrellaToolsKit.Storage
 
         public List<bool> getItemsBool(string Node)
         {
-            LoadFile();
             List<bool> ListReturn = new List<bool>();
 
             XmlNodeList ElementNode = doc.GetElementsByTagName(Node);

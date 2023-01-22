@@ -9,6 +9,7 @@ namespace UmbrellaToolsKit.Input
 
         internal ButtonState _buttonLeftLastState = ButtonState.Released;
         internal ButtonState _buttonRightLastState = ButtonState.Released;
+        internal ButtonState _buttonMiddleLastState = ButtonState.Released;
 
         internal static MouseHandler GetStatus
         {
@@ -52,16 +53,37 @@ namespace UmbrellaToolsKit.Input
         {
             get
             {
-               var status = GetStatus;
+                var status = GetStatus;
                 return Mouse.GetState().RightButton == ButtonState.Released;
+            }
+        }
+
+        public static bool ButtonMiddlePressed
+        {
+            get
+            {
+                var status = GetStatus;
+                return Mouse.GetState().MiddleButton == ButtonState.Pressed;
+            }
+        }
+        public static bool ButtonMiddleReleased
+        {
+            get
+            {
+                var status = GetStatus;
+                return Mouse.GetState().MiddleButton == ButtonState.Released;
             }
         }
 
         public static bool ButtonLeftPressing => ButtonLeftPressed && GetStatus._buttonLeftLastState == ButtonState.Pressed;
         public static bool ButtonRightPressing => ButtonRightPressed && GetStatus._buttonRightLastState == ButtonState.Pressed;
+        public static bool ButtonMiddlePressing => ButtonMiddlePressed && GetStatus._buttonMiddleLastState == ButtonState.Pressed;
 
         public static bool ButtonLeftOneClick => ButtonLeftPressed && GetStatus._buttonLeftLastState == ButtonState.Released;
         public static bool ButtonRightOneClick => ButtonRightPressed && GetStatus._buttonRightLastState == ButtonState.Released;
+        public static bool ButtonMiddleOneClick => ButtonMiddlePressed && GetStatus._buttonMiddleLastState == ButtonState.Released;
+
+        public static bool ButtonMiddleOneReleased => ButtonMiddleReleased && _instance._buttonMiddleLastState == ButtonState.Pressed;
 
         public static Vector2 Position => Mouse.GetState().Position.ToVector2();
         
@@ -69,6 +91,7 @@ namespace UmbrellaToolsKit.Input
         {
             _buttonLeftLastState = Mouse.GetState().LeftButton;
             _buttonRightLastState = Mouse.GetState().RightButton;
+            _instance._buttonMiddleLastState = Mouse.GetState().MiddleButton;
         }
     }
 }

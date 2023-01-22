@@ -23,10 +23,13 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         public BasicNode SelectedNode;
 
         public List<NodeInPutAndOutPut> Nodes;
-        public Nodes.Interfaces.INodeOutPutle NodeStartConnection;
+        public INodeOutPutle NodeStartConnection;
         public bool IsConnecting = false;
 
-        public static event Action<Nodes.Interfaces.INodeOutPutle> OnStartConnecting;
+        public Vector2 ClickPosition = Vector2.Zero;
+        public Vector2 LastDirection = Vector2.One;
+
+        public static event Action<INodeOutPutle> OnStartConnecting;
 
         public DialogueEditorWindow(GameManagement gameManagement)
         {
@@ -40,29 +43,11 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             OnStartConnecting += StartLineConnection;
             BasicNode.OnSelectNode += SelectNode;
 
-            _storage= new Storage.Load(_dialogueSettingPath);
-
-            foreach(var nodeId in _storage.getItemsFloat("Id"))
-            {
-                int id = (int)nodeId;
-                string name = _storage.getItemsString($"name-{id}")[0];
-                var position = Vector2.Zero;
-                position.X = _storage.getItemsFloat($"position-{id}-vector-x")[0];
-                position.Y = _storage.getItemsFloat($"position-{id}-vector-y")[0];
-
-                var node = new NodeInPutAndOutPut(_storage, id, name, position);
-                Nodes.Add(node);
-            }
-
-            foreach(var node in Nodes)
-            {
-                var nodesConnections = _storage.getItemsFloat($"Nodes-Connection-In-{node.Id}");
-                foreach (var connection in nodesConnections)
-                    node.AddNodeConnection((INodeInPutle)Nodes[(int)connection]);
-            }
+            _storage = new Storage.Load(_dialogueSettingPath);
+            LoadNodes();
         }
 
-        public static void StartConnnetingNodes(Nodes.Interfaces.INodeOutPutle node) => OnStartConnecting?.Invoke(node);
+        public static void StartConnnetingNodes(INodeOutPutle node) => OnStartConnecting?.Invoke(node);
 
         public void SetAsMainWindow() => EditorArea.OnDrawWindow += ShowWindow;
 
@@ -113,8 +98,22 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                 Color.DarkGray
             );
 
-            foreach(var node in Nodes)
+            var direction = Vector2.Zero;
+
+            if (MouseHandler.ButtonMiddleOneClick)
+                ClickPosition = MouseHandler.Position;
+
+            if (MouseHandler.ButtonMiddlePressing)
+                direction = ClickPosition - MouseHandler.Position;
+
+            foreach (var node in Nodes)
             {
+                if (direction.Length() > 0)
+                    node.Position = node.Position - direction;
+
+                if (direction.Length() == 0 && LastDirection.Length() > 0)
+                    node.Position = node.Position - LastDirection;
+
                 if (!IsConnecting)
                     node.Update();
 
@@ -122,7 +121,12 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                     TraceLineConnection(drawList);
 
                 node.Draw(drawList);
+
+                if (direction.Length() > 0)
+                    node.Position = node.Position + direction;
             }
+
+            LastDirection = direction;
 
             ImGui.End();
         }
@@ -170,10 +174,32 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             }
         }
 
-        private void StartLineConnection(Nodes.Interfaces.INodeOutPutle node)
+        private void StartLineConnection(INodeOutPutle node)
         {
             NodeStartConnection = node;
             IsConnecting = true;
+        }
+
+        private void LoadNodes()
+        {
+            foreach (var nodeId in _storage.getItemsFloat("Id"))
+            {
+                int id = (int)nodeId;
+                string name = _storage.getItemsString($"name-{id}")[0];
+                var position = Vector2.Zero;
+                position.X = _storage.getItemsFloat($"position-{id}-vector-x")[0];
+                position.Y = _storage.getItemsFloat($"position-{id}-vector-y")[0];
+
+                var node = new NodeInPutAndOutPut(_storage, id, name, position);
+                Nodes.Add(node);
+            }
+
+            foreach (var node in Nodes)
+            {
+                var nodesConnections = _storage.getItemsFloat($"Nodes-Connection-In-{node.Id}");
+                foreach (var connection in nodesConnections)
+                    node.AddNodeConnection((INodeInPutle)Nodes[(int)connection]);
+            }
         }
     }
 }
