@@ -9,11 +9,17 @@ namespace UmbrellaToolsKit.Interfaces
         bool RemoveFromScene { get; set; }
         Vector2 Position { get; set; }
         IComponent Components { get; set; }
-        string Tag { get; set; }    
+        Scene Scene { get; set; }
+        string Tag { get; set; }
 
+        void Start();
         void OnVisible();
         void OnInvisible();
         void DrawBeforeScene(SpriteBatch spriteBatch);
         void Destroy();
+
+        T AddComponent<T>() where T : IComponent;
+
+        T GetComponent<T>() where T : IComponent;
     }
 }

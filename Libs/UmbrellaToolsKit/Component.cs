@@ -7,6 +7,15 @@ namespace UmbrellaToolsKit
     {
         private IComponent _next;
         public IComponent Next { get => _next; set => _next = value; }
+        public GameObject GameObject { get; set; }
+
+        public void Init(GameObject gameObject)
+        {
+            GameObject = gameObject;
+            Start();
+        }
+
+        public virtual void Start() { }
 
         public virtual void Update(GameTime gameTime) => Next?.Update(gameTime);
         public virtual void UpdateData(GameTime gameTime) => Next?.UpdateData(gameTime);
@@ -25,6 +34,13 @@ namespace UmbrellaToolsKit
                 Next.Remove(component);
             else
                 Next = Next.Next;
+        }
+
+        public T GetComponent<T>() where T : IComponent
+        {
+            if (this is T t) return t;
+            else if (Next != null) return Next.GetComponent<T>();
+            else return default(T);
         }
     }
 }
