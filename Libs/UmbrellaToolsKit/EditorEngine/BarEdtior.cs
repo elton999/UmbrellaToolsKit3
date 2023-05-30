@@ -10,6 +10,8 @@ namespace UmbrellaToolsKit.EditorEngine
 {
     public class BarEdtior
     {
+        private string projectName = Assembly.GetCallingAssembly().GetName().Name;
+        
         public static event Action OnOpenMainEditor;
         public static event Action OnOpenDialogueEditor;
 
@@ -18,7 +20,6 @@ namespace UmbrellaToolsKit.EditorEngine
         public void Draw(GameTime gameTime)
         {
             double frameRate = 1d / gameTime.ElapsedGameTime.TotalSeconds;
-            string projectName = Assembly.GetCallingAssembly().GetName().Name;
 
             if (ImGui.BeginMainMenuBar())
             {

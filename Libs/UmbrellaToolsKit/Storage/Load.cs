@@ -7,12 +7,12 @@ using System.Runtime.CompilerServices;
 
 namespace UmbrellaToolsKit.Storage
 {
-    public class Load
+    public class Load : IDisposable
     {
         private XmlTextReader reader;
         private string _curlFile = @"Setting.Umbrella";
 
-        public XmlDocument doc = new XmlDocument();
+        public XmlDocument doc;
 
         public event Action OnSave;
 
@@ -33,6 +33,7 @@ namespace UmbrellaToolsKit.Storage
                 Save();
                 return;
             }
+            doc = new XmlDocument();
             doc.Load(_curlFile);
         }
 
@@ -134,6 +135,11 @@ namespace UmbrellaToolsKit.Storage
                 NewElement.InnerText = content.ToString();
                 ElementNode[0].AppendChild(NewElement);
             }
+        }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(doc);
         }
     }
 }
