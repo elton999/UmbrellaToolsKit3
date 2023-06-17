@@ -48,6 +48,35 @@ namespace UmbrellaToolsKit
                 Backgrounds
             };
         }
+
+        public void AddGameObject(IGameObject gameObject, Layers layer = Layers.MIDDLEGROUND)
+        {
+            gameObject.Scene = this;
+            gameObject.Start();
+
+            switch (layer)
+            {
+                case Layers.PLAYER:
+                    Players.Add(gameObject);
+                    break;
+                case Layers.ENEMIES:
+                    Enemies.Add(gameObject);
+                    break;
+                case Layers.UI:
+                    UI.Add(gameObject);
+                    break;
+                case Layers.FOREGROUND:
+                    Foreground.Add(gameObject);
+                    break;
+                case Layers.MIDDLEGROUND:
+                    Middleground.Add(gameObject);
+                    break;
+                case Layers.BACKGROUND:
+                    Backgrounds.Add(gameObject);
+                    break;
+            }
+        }
+
         #endregion
 
         #region Setting Scene

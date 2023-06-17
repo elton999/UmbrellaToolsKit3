@@ -7,10 +7,17 @@ namespace UmbrellaToolsKit.Collision
     public class Actor : GameObject
     {
         public bool active = true;
+
+        public override void Start()
+        {
+            Scene.AllActors.Add(this);
+            base.Start();
+        }
+
         public override void UpdateData(GameTime gameTime)
         {
             base.UpdateData(gameTime);
-            Gravity((float)gameTime.ElapsedGameTime.TotalMilliseconds);
+            Gravity((float)gameTime.ElapsedGameTime.TotalSeconds);
         }
 
         public int Right { get => (int)(Position.X + size.X); }
@@ -29,7 +36,9 @@ namespace UmbrellaToolsKit.Collision
         public Vector2 Gravity2D = new Vector2(0, 8);
         public Vector2 Velocity = new Vector2(0, 0);
         public float GravityScale = 1;
+        public float GravityFallMultiplier = 0.5f;
         public float MaxVelocity = 0.5f;
+        public bool YMaxVelocity = true;
 
         public void SetFalseAllEdgeCollision()
         {
@@ -49,14 +58,31 @@ namespace UmbrellaToolsKit.Collision
 
         public void Gravity(float deltaTime)
         {
-            Velocity += ((Gravity2D * GravityScale) * deltaTime);
-            float v = Velocity.Length();
-            if (v > MaxVelocity)
+            if (Velocity.Length() < 0)
+                Velocity += Gravity2D * GravityScale;
+            else
+                Velocity += Gravity2D * GravityScale * GravityFallMultiplier;
+
+            if (YMaxVelocity)
             {
-                float vs = MaxVelocity / v;
-                Velocity.X = Velocity.X * vs;
-                Velocity.Y = Velocity.Y * vs;
+                float v = (new Vector2(0, Velocity.Y)).Length();
+                if (v > MaxVelocity)
+                {
+                    float vs = MaxVelocity / v;
+                    Velocity.Y = Velocity.Y * vs;
+                }
             }
+
+            if (!YMaxVelocity)
+            {
+                float v = Velocity.Length();
+                if (v > MaxVelocity)
+                {
+                    float vs = MaxVelocity / v;
+                    Velocity *= vs;
+                }
+            }
+
             moveX(Velocity.X * deltaTime);
             moveY(Velocity.Y * deltaTime);
         }
@@ -77,12 +103,6 @@ namespace UmbrellaToolsKit.Collision
                 Vector2 _position = new Vector2(Position.X + sign, Position.Y);
                 if (!collideAt(Scene.AllSolids, _position) || AnyCollisionRamps())
                 {
-                    if (EdgesIsCollision[EDGES.BOTTOM_RIGHT] && (sign > 0 || Gravity2D.Y == 0))
-                        Position = Position + Vector2.UnitY * -sign;
-
-                    if (EdgesIsCollision[EDGES.BOTTOM_LEFT] && (sign < 0 || Gravity2D.Y == 0))
-                        Position = Position + Vector2.UnitY * sign;
-
                     Position = Position + Vector2.UnitX * sign;
                     move -= sign;
                 }
@@ -158,7 +178,7 @@ namespace UmbrellaToolsKit.Collision
                     rt = true;
                 }
             }
-            if (Scene.Grid.checkOverlap(size, position, this))
+            if (Scene.Grid != null && Scene.Grid.checkOverlap(size, position, this))
                 return true;
 
             return rt;
@@ -181,5 +201,7 @@ namespace UmbrellaToolsKit.Collision
         }
 
         public virtual void squish(string tag = null) { }
+
+        public override Actor GetActor() => this;
     }
 }

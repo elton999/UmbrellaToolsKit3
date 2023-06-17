@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 
 namespace UmbrellaToolsKit.Collision
@@ -34,6 +31,11 @@ namespace UmbrellaToolsKit.Collision
             get => (int)(Position.Y + size.Y);
         }
 
+        public override void Start()
+        {
+            Scene.AllSolids.Add(this);
+            base.Start();
+        }
 
         public void move(float x, float y)
         {
@@ -154,5 +156,7 @@ namespace UmbrellaToolsKit.Collision
             }
             return rt;
         }
+
+        public override Solid GetSolid() => this;
     }
 }
