@@ -139,8 +139,11 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             SelectedNode.Name = nameNodeValue;
         }
 
-        private void SelectNode(BasicNode node) => SelectedNode = node;
-
+        private void SelectNode(BasicNode node)
+        {
+            SelectedNode = node;
+            Console.WriteLine(node.Name);
+        }
         private void AddNode()
         {
             var node = new NodeInPutAndOutPut(_storage, _idsCount, "new node", Vector2.One * 500f);
