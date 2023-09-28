@@ -7,7 +7,6 @@ namespace UmbrellaToolsKit.Interfaces
     public interface IGameObject : IUpdatable, IUpdatableData, IDrawable, IDisposable
     {
         bool RemoveFromScene { get; set; }
-        Vector2 Position { get; set; }
         IComponent Components { get; set; }
         Scene Scene { get; set; }
         string Tag { get; set; }

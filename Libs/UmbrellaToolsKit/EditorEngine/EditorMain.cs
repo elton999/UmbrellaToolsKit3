@@ -3,7 +3,6 @@ using MonoGame.ImGui.Standard;
 using Microsoft.Xna.Framework;
 using System;
 using Microsoft.Xna.Framework.Input;
-using System.Linq;
 
 namespace UmbrellaToolsKit.EditorEngine
 {
@@ -26,8 +25,8 @@ namespace UmbrellaToolsKit.EditorEngine
         public EditorMain(Game game, GameManagement gameManagement)
         {
             _game = game;
-            _gameManagement = gameManagement;   
-            
+            _gameManagement = gameManagement;
+
             _imGUIRenderer = new ImGUIRenderer(game).Initialize().RebuildFontAtlas();
             _mainBarEditor = new BarEdtior();
             _editorArea = new EditorArea();
@@ -45,7 +44,7 @@ namespace UmbrellaToolsKit.EditorEngine
 
             if (Keyboard.GetState().IsKeyUp(Keys.F12))
                 _showEditorKeyUp = false;
-            
+
             if (!_showEditor) return;
 
             _imGUIRenderer.BeginLayout(gameTime);
@@ -57,7 +56,7 @@ namespace UmbrellaToolsKit.EditorEngine
             _editorArea.Draw(gameTime);
             _imGUIRenderer.EndLayout();
 
-             OnDrawOverLayer?.Invoke();
+            OnDrawOverLayer?.Invoke();
         }
     }
 }

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
-using MonoGame.ImGui.Standard;
 
 namespace UmbrellaToolsKit.EditorEngine
 {
@@ -13,7 +10,7 @@ namespace UmbrellaToolsKit.EditorEngine
         public static event Action OnOpenMainEditor;
         public static event Action OnOpenDialogueEditor;
 
-        public static event Action OnSwichEditorWindow;
+        public static event Action OnSwitchEditorWindow;
 
         public void Draw(GameTime gameTime)
         {
@@ -26,13 +23,13 @@ namespace UmbrellaToolsKit.EditorEngine
                 {
                     if (ImGui.MenuItem("Main Editor"))
                     {
-                        OnSwichEditorWindow?.Invoke();
+                        OnSwitchEditorWindow?.Invoke();
                         OnOpenMainEditor?.Invoke();
                     }
 
                     if (ImGui.MenuItem("Dialogue Editor"))
                     {
-                        OnSwichEditorWindow?.Invoke();
+                        OnSwitchEditorWindow?.Invoke();
                         OnOpenDialogueEditor?.Invoke();
                     }
 

@@ -1,4 +1,4 @@
-using System;
+using System.ComponentModel;
 
 namespace UmbrellaToolsKit.Interfaces
 {
@@ -12,6 +12,9 @@ namespace UmbrellaToolsKit.Interfaces
 
         void Add(IComponent component);
         void Remove(IComponent component);
+
+        void Destroy();
+        void OnDestroy();
 
         T GetComponent<T>() where T : IComponent;
     }

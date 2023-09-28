@@ -9,6 +9,8 @@ namespace UmbrellaToolsKit
 {
     public class GameManagement : IUpdatable
     {
+        private EditorMain _editor;
+
         public Dictionary<String, dynamic> Values = new Dictionary<string, dynamic>();
 
         public enum Status { LOADING, CREDITS, MENU, PAUSE, STOP, PLAYING };
@@ -21,12 +23,12 @@ namespace UmbrellaToolsKit
         public SpriteBatch SpriteBatch;
         public Game Game;
 
-        private EditorMain _edtior;
+        public static event Action OnGameUpdateData;
 
         public GameManagement(Game game)
         {
             Game = game;
-            _edtior = new EditorMain(Game, this);
+            _editor = new EditorMain(Game, this);
         }
 
         public void Start()
@@ -38,13 +40,17 @@ namespace UmbrellaToolsKit
             SceneManagement.MainScene.CreateBackBuffer();
         }
 
-        public void Update(GameTime gameTime) => SceneManagement.Update(gameTime);
+        public void Update(GameTime gameTime)
+        {
+            OnGameUpdateData?.Invoke();
+            SceneManagement.Update(gameTime);
+        }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             SpriteBatch = spriteBatch;
             SceneManagement.Draw(spriteBatch);
-            _edtior.Draw(gameTime);
+            _editor.Draw(gameTime);
         }
     }
 }

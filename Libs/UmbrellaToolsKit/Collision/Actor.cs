@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using UmbrellaToolsKit.EditorEngine.Attributes;
 
 namespace UmbrellaToolsKit.Collision
 {
@@ -17,7 +18,8 @@ namespace UmbrellaToolsKit.Collision
         public override void UpdateData(GameTime gameTime)
         {
             base.UpdateData(gameTime);
-            Gravity((float)gameTime.ElapsedGameTime.TotalSeconds);
+            if (HasGravity)
+                Gravity((float)gameTime.ElapsedGameTime.TotalSeconds);
         }
 
         public int Right { get => (int)(Position.X + size.X); }
@@ -33,12 +35,13 @@ namespace UmbrellaToolsKit.Collision
             { EDGES.BOTTOM_RIGHT, false },
         };
 
-        public Vector2 Gravity2D = new Vector2(0, 8);
-        public Vector2 Velocity = new Vector2(0, 0);
-        public float GravityScale = 1;
-        public float GravityFallMultiplier = 0.5f;
-        public float MaxVelocity = 0.5f;
-        public bool YMaxVelocity = true;
+        [ShowEditor, Category("Actor")] public bool HasGravity = true;
+        [ShowEditor, Category("Actor")] public Vector2 Gravity2D = new Vector2(0, 8);
+        [ShowEditor, Category("Actor")] public Vector2 Velocity = new Vector2(0, 0);
+        [ShowEditor, Category("Actor")] public float GravityScale = 1;
+        [ShowEditor, Category("Actor")] public float GravityFallMultiplier = 0.5f;
+        [ShowEditor, Category("Actor")] public float MaxVelocity = 0.5f;
+        [ShowEditor, Category("Actor")] public bool YMaxVelocity = true;
 
         public void SetFalseAllEdgeCollision()
         {
@@ -143,16 +146,19 @@ namespace UmbrellaToolsKit.Collision
             }
         }
 
-        public bool overlapCheck(Actor actor)
+        public bool overlapCheck(Actor actor) => overlapCheck(actor.size, actor.Position);
+
+        public bool overlapCheck(Point size, Vector2 position)
         {
-            bool AisToTheRightOfB = actor.Left >= Right;
-            bool AisToTheLeftOfB = actor.Right <= Left;
-            bool AisAboveB = actor.Bottom <= Top;
-            bool AisBelowB = actor.Top >= Bottom;
+            bool AisToTheRightOfB = position.X >= Right;
+            bool AisToTheLeftOfB = position.X + size.X <= Left;
+            bool AisAboveB = position.Y + size.Y <= Top;
+            bool AisBelowB = position.Y >= Bottom;
             return !(AisToTheRightOfB
                 || AisToTheLeftOfB
                 || AisAboveB
                 || AisBelowB);
+
         }
 
         public bool overlapCheckPixel(Actor actor)
@@ -172,33 +178,21 @@ namespace UmbrellaToolsKit.Collision
             bool rt = false;
             foreach (Solid solid in solids)
             {
-                if (solid.check(size, position))
+                if (solid.check(size, position, this))
                 {
                     solid.OnCollision(tag);
                     rt = true;
                 }
             }
-            if (Scene.Grid != null && Scene.Grid.checkOverlap(size, position, this))
+            if (Scene.Grid != null && Scene.Grid.checkOverlap(size, position, this, false))
                 return true;
 
             return rt;
         }
 
-        public virtual bool isRiding(Solid solid)
-        {
-            if (solid.check(size, new Vector2(Position.X, Position.Y + 1)))
-                return true;
+        public virtual bool isRiding(Solid solid) => solid.check(size, Position + Vector2.UnitY);
 
-            return false;
-        }
-
-        public virtual bool isRidingGrid(Grid grid)
-        {
-            if (grid.checkOverlap(size, new Vector2(Position.X, Position.Y + 1), this))
-                return true;
-
-            return false;
-        }
+        public virtual bool isRidingGrid(Grid grid) => grid.checkOverlap(size, Position + Vector2.UnitY, this);
 
         public virtual void squish(string tag = null) { }
 
