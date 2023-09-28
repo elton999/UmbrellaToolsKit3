@@ -1,4 +1,5 @@
-﻿using ImGuiNET;
+﻿using System;
+using ImGuiNET;
 using Microsoft.Xna.Framework;
 using MonoGame.ImGui.Standard;
 using MonoGame.ImGui.Standard.Extensions;
@@ -47,12 +48,39 @@ namespace UmbrellaToolsKit.EditorEngine.Fields
             }
         }
 
-        public static void DrawFloat(string name, ref float value) => ImGui.InputFloat(name, ref value);
+        public static void DrawFloat(string name, ref float value)
+        {
+            TableFormatBegin(name);
+            ImGui.InputFloat("", ref value);
+            TableFormatEnd();
+        }
 
         public static void DrawInt(string name, ref int value) => ImGui.InputInt(name, ref value);
 
-        public static void DrawString(string name, ref string value) => ImGui.InputTextWithHint(name, name, ref value, 255);
+        public static void DrawString(string name, ref string value)
+        {
+            TableFormatBegin(name);
+            ImGui.InputText("", ref value, 255);
+            TableFormatEnd();
+        }
 
-        public static void DrawLongText(string name, ref string value) => ImGui.InputTextMultiline(name, ref value, 500, Vector2.Zero.ToNumericVector2());
+        public static void DrawLongText(string name, ref string value)
+        {
+            TableFormatBegin(name);
+            ImGui.InputTextMultiline("", ref value, 500, Vector2.Zero.ToNumericVector2());
+            TableFormatEnd();
+        }
+
+        public static void DrawBoolean(string name, ref bool value) => ImGui.Checkbox(name, ref value);
+
+        public static void TableFormatBegin(string name)
+        {
+            ImGui.BeginTable($"##{name}", 2);
+            ImGui.TableNextColumn();
+            ImGui.TextUnformatted(name);
+            ImGui.TableNextColumn();
+        }
+
+        public static void TableFormatEnd() => ImGui.EndTable();
     }
 }

@@ -131,7 +131,7 @@ namespace UmbrellaToolsKit.Collision
                 || AisBelowB);
         }
 
-        public bool check(Point size, Vector2 position)
+        public virtual bool check(Point size, Vector2 position, Actor actor = null)
         {
             bool AisToTheRightOfB = position.X >= Right;
             bool AisToTheLeftOfB = position.X + size.X <= Left;

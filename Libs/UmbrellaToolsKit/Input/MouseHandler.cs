@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace UmbrellaToolsKit.Input
@@ -86,7 +86,7 @@ namespace UmbrellaToolsKit.Input
         public static bool ButtonMiddleOneReleased => ButtonMiddleReleased && _instance._buttonMiddleLastState == ButtonState.Pressed;
 
         public static Vector2 Position => Mouse.GetState().Position.ToVector2();
-        
+
         internal void setInputData()
         {
             _buttonLeftLastState = Mouse.GetState().LeftButton;

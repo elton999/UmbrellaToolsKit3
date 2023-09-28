@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using UmbrellaToolsKit.Interfaces;
+using UmbrellaToolsKit.EditorEngine.Attributes;
 
 namespace UmbrellaToolsKit
 {
@@ -11,22 +12,21 @@ namespace UmbrellaToolsKit
     {
         private IComponent _components;
         private bool _removeFromScene = false;
-        private Vector2 _position = Vector2.Zero;
         private Scene _scene;
 
         public IComponent Components { get => _components; set => _components = value; }
         public bool RemoveFromScene { get => _removeFromScene; set => _removeFromScene = value; }
-        public Vector2 Position { get => _position; set => _position = value; }
+        [ShowEditor, Category("Transform")] public Vector2 Position = Vector2.Zero;
 
-        public Vector2 Origin = Vector2.Zero;
-        public Point size;
-        public float Scale = 1;
+        [ShowEditor, Category("Sprite")] public Vector2 Origin = Vector2.Zero;
+        [ShowEditor, Category("Sprite")] public Point size;
+        [ShowEditor, Category("Sprite")] public float Scale = 1;
         public Rectangle Body;
-        public float Rotation = 0;
+        [ShowEditor, Category("Sprite")] public float Rotation = 0;
         public Color SpriteColor = Color.White;
         public SpriteEffects spriteEffect = SpriteEffects.None;
         public Texture2D Sprite;
-        public float Transparent = 1f;
+        [ShowEditor, Category("Sprite")] public float Transparent = 1f;
 
         public string tag = "gameObject";
         public string Tag { get => tag; set => tag = value; }
@@ -81,14 +81,20 @@ namespace UmbrellaToolsKit
         public virtual void OnTriggerIn(string tag) { }
         public virtual void OnTriggerOut(string tag) { }
         public virtual void OnMouseOver() { }
-        public virtual void Destroy() => RemoveFromScene = true;
+        public virtual void Destroy()
+        {
+            RemoveFromScene = true;
+            if (Components != null) Components.Destroy();
+            OnDestroy();
+        }
+        public virtual void OnDestroy() { }
 
         public virtual Collision.Actor GetActor() => default(Collision.Actor);
         public virtual Collision.Solid GetSolid() => default(Collision.Solid);
 
         public virtual void restart() { }
 
-        public void DrawSprite(SpriteBatch spriteBatch)
+        public virtual void DrawSprite(SpriteBatch spriteBatch)
         {
             if (Sprite != null)
                 spriteBatch.Draw(Sprite, Position, Body.IsEmpty ? null : Body, SpriteColor * Transparent, Rotation, Origin, Scale, spriteEffect, 0);
@@ -109,7 +115,12 @@ namespace UmbrellaToolsKit
 
         public void EndDraw(SpriteBatch spriteBatch) => spriteBatch.End();
 
-        public virtual void Dispose() => GC.SuppressFinalize(this);
+        public virtual void Dispose()
+        {
+            OnDestroy();
+            if (Components != null) Components.Destroy();
+            GC.SuppressFinalize(this);
+        }
 
         public T AddComponent<T>() where T : IComponent
         {

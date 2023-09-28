@@ -19,16 +19,16 @@ namespace UmbrellaToolsKit
         }
 
         #region Layers
-        public List<List<IGameObject>> SortLayers = new List<List<IGameObject>>();
+        public List<List<GameObject>> SortLayers = new List<List<GameObject>>();
 
         // UI
-        public List<IGameObject> UI = new List<IGameObject>();
+        public List<GameObject> UI = new List<GameObject>();
         // Layers
-        public List<IGameObject> Foreground = new List<IGameObject>();
-        public List<IGameObject> Players = new List<IGameObject>();
-        public List<IGameObject> Enemies = new List<IGameObject>();
-        public List<IGameObject> Middleground = new List<IGameObject>();
-        public List<IGameObject> Backgrounds = new List<IGameObject>();
+        public List<GameObject> Foreground = new List<GameObject>();
+        public List<GameObject> Players = new List<GameObject>();
+        public List<GameObject> Enemies = new List<GameObject>();
+        public List<GameObject> Middleground = new List<GameObject>();
+        public List<GameObject> Backgrounds = new List<GameObject>();
 
         // Collision
         public List<Solid> AllSolids = new List<Solid>();
@@ -37,9 +37,11 @@ namespace UmbrellaToolsKit
         public int CellSize = 8;
         public bool PixelArt = true;
 
+        public Effect Effect;
+
         public void addLayers()
         {
-            SortLayers = new List<List<IGameObject>>
+            SortLayers = new List<List<GameObject>>
             {
                 Foreground,
                 Players,
@@ -49,11 +51,8 @@ namespace UmbrellaToolsKit
             };
         }
 
-        public void AddGameObject(IGameObject gameObject, Layers layer = Layers.MIDDLEGROUND)
+        public void AddGameObject(GameObject gameObject, Layers layer = Layers.MIDDLEGROUND)
         {
-            gameObject.Scene = this;
-            gameObject.Start();
-
             switch (layer)
             {
                 case Layers.PLAYER:
@@ -75,14 +74,18 @@ namespace UmbrellaToolsKit
                     Backgrounds.Add(gameObject);
                     break;
             }
+
+            gameObject.Scene = this;
+            gameObject.Content = Content;
+            gameObject.Start();
         }
 
         #endregion
 
         #region Setting Scene
         //Sizes
-        private int Width = 426;
-        private int Height = 240;
+        private int Width = 160;
+        private int Height = 144;
         public GraphicsDevice ScreenGraphicsDevice;
         public ContentManager Content;
 
@@ -113,18 +116,20 @@ namespace UmbrellaToolsKit
         public Ogmo.TileSet tileSet;
         public GameManagement GameManagement;
 
-        public string MapLevelPath = "Maps/level_";
+        public string MapLevelPath = "Maps/Level_";
         public string MapLevelLdtkPath = "Maps/TileMap";
         public string TileMapPath = "Sprites/tilemap";
 
         public Vector2 LevelSize;
 
-        public void SetLevel(int level)
+        public void SetLevel(int level) => SetLevel(MapLevelPath + level);
+
+        public void SetLevel(string level)
         {
-            System.Console.WriteLine($"Level: {MapLevelPath + level}");
+            Console.WriteLine($"Level: {MapLevelPath + level}");
             CreateCamera();
 
-            Ogmo.TileMap tileMap = Content.Load<Ogmo.TileMap>(MapLevelPath + level);
+            Ogmo.TileMap tileMap = Content.Load<Ogmo.TileMap>(level);
 
             Texture2D _tilemapSprite = Content.Load<Texture2D>(TileMapPath);
 
@@ -132,12 +137,12 @@ namespace UmbrellaToolsKit
             CreateBackBuffer();
 
             LevelReady = true;
-            System.Console.WriteLine("\nDone");
+            Console.WriteLine("\nDone");
         }
 
         public void SetLevelLdtk(int level)
         {
-            System.Console.WriteLine($"Level: {MapLevelLdtkPath}");
+            Console.WriteLine($"Level: {MapLevelLdtkPath}");
             Texture2D _tilemapSprite = Content.Load<Texture2D>(TileMapPath);
 
             var tileMap = Content.Load<ldtk.LdtkJson>(MapLevelLdtkPath);
@@ -157,7 +162,7 @@ namespace UmbrellaToolsKit
         #region Update
         public float timer = 0;
         public float updateDataTime = 1 / 30f;
-        private void UpdateGameObjects(GameTime gameTime, List<List<IGameObject>> layers)
+        private void UpdateGameObjects(GameTime gameTime, List<List<GameObject>> layers)
         {
             //UI update
             for (int i = UI.Count - 1; i >= 0; i--)
@@ -200,7 +205,7 @@ namespace UmbrellaToolsKit
             }
         }
 
-        public void IsVisibleGameObject(List<List<IGameObject>> layers)
+        public void IsVisibleGameObject(List<List<GameObject>> layers)
         {
             for (int i = layers.Count - 1; i >= 0; i--)
                 for (int e = layers[i].Count - 1; e >= 0; e--)
@@ -210,7 +215,7 @@ namespace UmbrellaToolsKit
                         layers[i][e].OnInvisible();
         }
 
-        private bool CheckIsVisible(IGameObject gameObject)
+        private bool CheckIsVisible(GameObject gameObject)
         {
             Vector2 _gameObjectPosition = gameObject.Position;
 
@@ -233,12 +238,13 @@ namespace UmbrellaToolsKit
             return false;
         }
 
-        private void RemoveGameObject(List<List<IGameObject>> layers)
+        private void RemoveGameObject(List<List<GameObject>> layers)
         {
             // UI
+            IEnumerable<GameObject> _UI_Objects_to_remove = from gameObject in UI where gameObject.RemoveFromScene == true select gameObject;
 
-            IEnumerable<IGameObject> _UI_Objects = from gameObject in UI where gameObject.RemoveFromScene == false select gameObject;
-            UI = _UI_Objects.ToList<IGameObject>();
+            IEnumerable<GameObject> _UI_Objects = from gameObject in UI where gameObject.RemoveFromScene == false select gameObject;
+            UI = _UI_Objects.ToList<GameObject>();
 
             for (int i = layers.Count - 1; i >= 0; i--)
             {
@@ -262,7 +268,7 @@ namespace UmbrellaToolsKit
             ScreenGraphicsDevice.SetRenderTarget(this._BackBuffer);
         }
 
-        private void DrawGameObjects(SpriteBatch spriteBatch, List<List<IGameObject>> layers)
+        private void DrawGameObjects(SpriteBatch spriteBatch, List<List<GameObject>> layers)
         {
             for (int i = layers.Count - 1; i >= 0; i--)
                 for (int e = layers[i].Count - 1; e >= 0; e--)
@@ -270,7 +276,7 @@ namespace UmbrellaToolsKit
                         layers[i][e].Draw(spriteBatch);
         }
 
-        private void DrawGameObjectsBeforeScene(SpriteBatch spriteBatch, List<List<IGameObject>> layers)
+        private void DrawGameObjectsBeforeScene(SpriteBatch spriteBatch, List<List<GameObject>> layers)
         {
             for (int i = layers.Count - 1; i >= 0; i--)
                 for (int e = layers[i].Count - 1; e >= 0; e--)
@@ -320,7 +326,7 @@ namespace UmbrellaToolsKit
 
         public void DrawBuffer(SpriteBatch spriteBatch, float _BackBuffer_scale, float _BackBuffer_Position_x, float _BackBuffer_Position_y)
         {
-            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, Effect != null ? Effect : null, null);
             spriteBatch.Draw(
                 _BackBuffer,
                 new Vector2(_BackBuffer_Position_x, _BackBuffer_Position_y),
@@ -339,24 +345,26 @@ namespace UmbrellaToolsKit
         public void Dispose()
         {
             LevelReady = false;
-            _BackBuffer.Dispose();
+            if (_BackBuffer != null)
+                _BackBuffer.Dispose();
             _BackBuffer = null;
 
-            foreach (List<IGameObject> layer in SortLayers)
+            foreach (List<GameObject> layer in SortLayers)
             {
-                foreach (IGameObject gameObject in layer)
+                foreach (GameObject gameObject in layer)
                     gameObject.Dispose();
                 layer.Clear();
             }
 
-            foreach (IGameObject gameObject in UI)
+            foreach (GameObject gameObject in UI)
                 gameObject.Dispose();
             UI.Clear();
 
             AllSolids.Clear();
             AllActors.Clear();
 
-            Grid.Dispose();
+            if (Grid != null) Grid.Dispose();
+            Grid = null;
 
             GC.SuppressFinalize(this);
             GC.Collect();

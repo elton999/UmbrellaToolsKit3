@@ -26,6 +26,7 @@ namespace UmbrellaToolsKit.Storage
 
         private void LoadFile()
         {
+            doc = new XmlDocument();
             if (!File.Exists(_curlFile))
             {
                 File.AppendAllText(_curlFile, "umbrella");
@@ -33,7 +34,6 @@ namespace UmbrellaToolsKit.Storage
                 Save();
                 return;
             }
-            doc = new XmlDocument();
             doc.Load(_curlFile);
         }
 

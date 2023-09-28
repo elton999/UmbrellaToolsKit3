@@ -1,9 +1,8 @@
-﻿using System;
+﻿using ImGuiNET;
 using System.Reflection;
 using System.Collections.Generic;
-using ImGuiNET;
 using Microsoft.Xna.Framework;
-using UmbrellaToolsKit.Interfaces;
+using UmbrellaToolsKit.EditorEngine.Attributes;
 using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
 
 namespace UmbrellaToolsKit.EditorEngine.Windows
@@ -11,17 +10,17 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
     public class SceneEditorWindow : IWindowEditable
     {
         private GameManagement _gameManagement;
-        public GameManagement GameManagement { get => _gameManagement; }
-
-        public IGameObject GameObjectSelected;
+        public GameManagement GameManagement => _gameManagement;
+        public GameObject GameObjectSelected;
         public List<string> Logs = new List<string>();
 
         public SceneEditorWindow(GameManagement gameManagement)
         {
-            BarEdtior.OnSwichEditorWindow += RemoveAsMainWindow;
+            BarEdtior.OnSwitchEditorWindow += RemoveAsMainWindow;
             BarEdtior.OnOpenMainEditor += SetAsMainWindow;
             _gameManagement = gameManagement;
             Log.OnLog += Logs.Add;
+            Log.OnLog += System.Console.WriteLine;
         }
 
         public void SetAsMainWindow()
@@ -30,7 +29,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             EditorArea.OnDrawWindow += ShowWindow;
         }
 
-        public void RemoveAsMainWindow() 
+        public void RemoveAsMainWindow()
         {
             EditorMain.OnDrawOverLayer -= RenderEditorView;
             EditorArea.OnDrawWindow -= ShowWindow;
@@ -71,7 +70,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
             ImGui.End();
 
-            ShowGameObjectProprietes(right);
+            ShowGameObjectProprieties(right);
             ShowSceneLayers(left);
             ShowEditorView(iddock);
             ShowConsole(bottom);
@@ -84,19 +83,19 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         {
             ImGui.SetNextWindowDockID(iddock, ImGuiCond.Once);
             ImGui.Begin("Game (Edit Mode) (Playing)");
-                ImGui.SetWindowFontScale(1.2f);
+            ImGui.SetWindowFontScale(1.2f);
 
-                _windowPosition = ImGui.GetWindowPos();
-                _windowSize = ImGui.GetWindowSize();
-                _windowPosition += new System.Numerics.Vector2(0, 40f);
+            _windowPosition = ImGui.GetWindowPos();
+            _windowSize = ImGui.GetWindowSize();
+            _windowPosition += new System.Numerics.Vector2(0, 40f);
 
             ImGui.End();
         }
 
         public void RenderEditorView()
         {
-            var sceneRendered = _gameManagement.SceneManagement.MainScene.SceneRendered;
-            var backBufferSize = new Vector2(sceneRendered.Width, sceneRendered.Height);
+            var sceneRendered = _gameManagement.SceneManagement.MainScene.Sizes;
+            var backBufferSize = new Vector2(sceneRendered.X, sceneRendered.Y);
 
             float xScale = _windowSize.X / backBufferSize.X;
             float yScale = _windowSize.Y / backBufferSize.Y;
@@ -113,18 +112,19 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             );
         }
 
-
         private void ShowConsole(uint bottom)
         {
             ImGui.SetNextWindowDockID(bottom, ImGuiCond.Once);
             ImGui.Begin("Console");
             ImGui.SetWindowFontScale(1.2f);
-            
+
             if (ImGui.Button("Clear"))
                 Logs.Clear();
 
-            foreach(string line in Logs)
+            ImGui.BeginChild("Console Text");
+            foreach (string line in Logs)
                 ImGui.TextUnformatted(line);
+            ImGui.EndChild();
 
             ImGui.End();
         }
@@ -134,7 +134,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.SetNextWindowDockID(left, ImGuiCond.Once);
             ImGui.Begin("Layers");
             ImGui.SetWindowFontScale(1.2f);
-            if (ImGui.TreeNode("Forenground")) 
+            if (ImGui.TreeNode("Foreground"))
                 ShowGameObjectFromLayer(_gameManagement.SceneManagement.MainScene.Foreground);
             if (ImGui.TreeNode("Player"))
                 ShowGameObjectFromLayer(_gameManagement.SceneManagement.MainScene.Players);
@@ -147,53 +147,130 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.End();
         }
 
-        private void ShowGameObjectFromLayer(List<IGameObject> layer)
+        private void ShowGameObjectFromLayer(List<GameObject> layer)
         {
-            if(layer.Count == 0)
+            if (layer.Count == 0)
                 ImGui.Text("---- Is empty ----");
             foreach (var gameObject in layer)
-                if (ImGui.Selectable(gameObject.Tag))
+                if (ImGui.Selectable(gameObject.tag))
                     GameObjectSelected = gameObject;
             ImGui.Unindent();
         }
 
-        private void ShowGameObjectProprietes(uint right)
+        private void ShowGameObjectProprieties(uint right)
         {
             ImGui.SetNextWindowDockID(right, ImGuiCond.Once);
             ImGui.Begin("Game Object props");
-            ImGui.SetWindowFontScale(1.2f);
             if (GameObjectSelected != null)
             {
-                Type type = GameObjectSelected.GetType();
-                foreach (FieldInfo fInfo in type.GetFields())
-                {
-                    foreach (var attr in fInfo.CustomAttributes)
-                    {
-                        if (attr.AttributeType != typeof(ShowEditorAttribute))
-                            continue;
+                ImGui.SetWindowFontScale(1.5f);
+                ImGui.Text(GameObjectSelected.tag);
+                ImGui.Spacing();
+                ImGui.Separator();
+                ImGui.Spacing();
+                ImGui.SetWindowFontScale(1.2f);
 
-                        switch (fInfo.FieldType.ToString())
-                        {
-                            case "Microsoft.Xna.Framework.Vector2":
-                                var vector2 = (Vector2)fInfo.GetValue(GameObjectSelected);
-                                Fields.Field.DrawVector(fInfo.Name, ref vector2);
-                                fInfo.SetValue(GameObjectSelected, vector2);
-                                break;
-                            case "Microsoft.Xna.Framework.Vector3":
-                                var vector3 = (Vector3)fInfo.GetValue(GameObjectSelected);
-                                Fields.Field.DrawVector(fInfo.Name, ref vector3);
-                                fInfo.SetValue(GameObjectSelected, vector3);
-                                break;
-                            case "System.Single":
-                                var floatValue = (float)fInfo.GetValue(GameObjectSelected);
-                                Fields.Field.DrawFloat(fInfo.Name, ref floatValue);
-                                fInfo.SetValue(GameObjectSelected, floatValue);
-                                break;
-                        }
-                    }
-                }
+                DrawAllFields(GameObjectSelected);
+
+                ImGui.Spacing();
+                ImGui.Separator();
+                ImGui.Spacing();
+                DrawComponents(GameObjectSelected.Components);
             }
             ImGui.End();
+        }
+
+        private void DrawComponents(UmbrellaToolsKit.Interfaces.IComponent component)
+        {
+            if (component == null) return;
+
+            if (ImGui.CollapsingHeader(component.GetType().Name))
+            {
+                ImGui.Indent();
+                DrawAllFields(component);
+                ImGui.Unindent();
+            }
+
+            DrawComponents(component.Next);
+        }
+
+        private void DrawAllFields(object obj)
+        {
+            var type = obj.GetType();
+            var fieldsCategories = new Dictionary<string, List<FieldInfo>>();
+            var fieldsWithoutCategories = new List<FieldInfo>();
+
+            foreach (FieldInfo fInfo in type.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
+            {
+                foreach (var attr in fInfo.CustomAttributes)
+                {
+                    if (attr.AttributeType == typeof(CategoryAttribute))
+                    {
+                        string categoryName = (string)attr.ConstructorArguments[0].Value;
+
+                        if (!fieldsCategories.ContainsKey(categoryName))
+                            fieldsCategories.Add(categoryName, new List<FieldInfo>());
+
+                        fieldsCategories[categoryName].Add(fInfo);
+
+                    }
+                    if (attr.AttributeType == typeof(ShowEditorAttribute))
+                        fieldsWithoutCategories.Add(fInfo);
+                }
+            }
+
+            foreach (var category in fieldsCategories)
+            {
+                ImGui.Spacing();
+                ImGui.Separator();
+                ImGui.Spacing();
+                bool treeNode = ImGui.TreeNodeEx(category.Key, ImGuiTreeNodeFlags.DefaultOpen);
+
+                foreach (var field in category.Value)
+                {
+                    if (fieldsWithoutCategories.Contains(field))
+                    {
+                        fieldsWithoutCategories.Remove(field);
+                        if (treeNode) DrawField(field, obj);
+                    }
+                }
+                if (treeNode) ImGui.Unindent();
+            }
+
+            foreach (var field in fieldsWithoutCategories)
+                DrawField(field, obj);
+        }
+
+        private void DrawField(FieldInfo fInfo, object prop)
+        {
+            switch (fInfo.FieldType.ToString())
+            {
+                case "Microsoft.Xna.Framework.Vector2":
+                    var vector2 = (Vector2)fInfo.GetValue(prop);
+                    Fields.Field.DrawVector(fInfo.Name, ref vector2);
+                    fInfo.SetValue(prop, vector2);
+                    break;
+                case "Microsoft.Xna.Framework.Vector3":
+                    var vector3 = (Vector3)fInfo.GetValue(prop);
+                    Fields.Field.DrawVector(fInfo.Name, ref vector3);
+                    fInfo.SetValue(prop, vector3);
+                    break;
+                case "System.Single":
+                    var floatValue = (float)fInfo.GetValue(prop);
+                    Fields.Field.DrawFloat(fInfo.Name, ref floatValue);
+                    fInfo.SetValue(prop, floatValue);
+                    break;
+                case "System.String":
+                    var stringValue = (string)fInfo.GetValue(prop);
+                    Fields.Field.DrawString(fInfo.Name, ref stringValue);
+                    fInfo.SetValue(prop, stringValue);
+                    break;
+                case "System.Boolean":
+                    var boolValue = (bool)fInfo.GetValue(prop);
+                    Fields.Field.DrawBoolean(fInfo.Name, ref boolValue);
+                    fInfo.SetValue(prop, boolValue);
+                    break;
+            }
         }
     }
 }

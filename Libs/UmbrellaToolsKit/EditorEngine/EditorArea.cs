@@ -12,9 +12,9 @@ namespace UmbrellaToolsKit.EditorEngine
         public void Draw(GameTime gameTime)
         {
             ImGui.Begin("main window", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize);
-                ImGui.SetWindowPos(Position);
-                ImGui.SetWindowSize(ImGui.GetMainViewport().Size - Position);
-                OnDrawWindow?.Invoke(gameTime);
+            ImGui.SetWindowPos(Position);
+            ImGui.SetWindowSize(ImGui.GetMainViewport().Size - Position);
+            OnDrawWindow?.Invoke(gameTime);
             ImGui.End();
         }
     }

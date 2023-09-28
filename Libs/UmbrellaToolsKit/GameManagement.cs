@@ -9,7 +9,7 @@ namespace UmbrellaToolsKit
 {
     public class GameManagement : IUpdatable
     {
-        private EditorMain _edtior;
+        private EditorMain _editor;
 
         public Dictionary<String, dynamic> Values = new Dictionary<string, dynamic>();
 
@@ -23,12 +23,14 @@ namespace UmbrellaToolsKit
         public SpriteBatch SpriteBatch;
         public Game Game;
 
-        internal static event Action OnGameUpdateData;
+        public static event Action OnGameUpdateData;
+
+        private EditorMain _edtior;
 
         public GameManagement(Game game)
         {
             Game = game;
-            _edtior = new EditorMain(Game, this);
+            _editor = new EditorMain(Game, this);
         }
 
         public void Start()
@@ -42,6 +44,7 @@ namespace UmbrellaToolsKit
 
         public void Update(GameTime gameTime)
         {
+            OnGameUpdateData?.Invoke();
             SceneManagement.Update(gameTime);
         }
 
@@ -49,8 +52,7 @@ namespace UmbrellaToolsKit
         {
             SpriteBatch = spriteBatch;
             SceneManagement.Draw(spriteBatch);
-            _edtior.Draw(gameTime);
-            OnGameUpdateData?.Invoke();
+            _editor.Draw(gameTime);
         }
     }
 }

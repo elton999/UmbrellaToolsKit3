@@ -42,5 +42,13 @@ namespace UmbrellaToolsKit
             else if (Next != null) return Next.GetComponent<T>();
             else return default(T);
         }
+
+        public virtual void OnDestroy() { }
+
+        public void Destroy()
+        {
+            OnDestroy();
+            if (_next != null) _next.Destroy();
+        }
     }
 }

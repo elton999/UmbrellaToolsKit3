@@ -37,7 +37,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
             Nodes = new List<NodeInPutAndOutPut>();
 
-            BarEdtior.OnSwichEditorWindow += RemoveAsMainWindow;
+            BarEdtior.OnSwitchEditorWindow += RemoveAsMainWindow;
             BarEdtior.OnOpenDialogueEditor += SetAsMainWindow;
 
             OnStartConnecting += StartLineConnection;

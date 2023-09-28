@@ -85,7 +85,7 @@ namespace UmbrellaToolsKit.ParticlesSystem
 
             return new Particle()
             {
-                Position = this.Position + ParticleRadiusSpawn * velocityDirection * (float)random.NextDouble(),
+                Position = Position + ParticleRadiusSpawn * velocityDirection * (float)random.NextDouble(),
                 Scale = (float)random.NextDouble() * ParticleMaxScale,
                 Angle = MathHelper.ToRadians((float)random.NextDouble() * ParticleAngle / 100f),
                 Transparent = ParticleTransparent,
