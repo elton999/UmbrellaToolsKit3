@@ -23,5 +23,11 @@ namespace UmbrellaToolsKit.Sprite
             DrawSprite(spriteBatch);
             EndDraw(spriteBatch);
         }
+
+        public override void Dispose()
+        {
+            Sprite.Dispose();
+            base.Dispose();
+        }
     }
 }
