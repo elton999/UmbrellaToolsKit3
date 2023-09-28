@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
 using MonoGame.ImGui.Standard.Extensions;
@@ -22,7 +21,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
         public BasicNode SelectedNode;
 
-        public List<NodeInPutAndOutPut> Nodes;
+        public List<BasicNode> Nodes;
         public INodeOutPutle NodeStartConnection;
         public bool IsConnecting = false;
 
@@ -35,7 +34,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         {
             _gameManagement = gameManagement;
 
-            Nodes = new List<NodeInPutAndOutPut>();
+            Nodes = new List<BasicNode>();
 
             BarEdtior.OnSwitchEditorWindow += RemoveAsMainWindow;
             BarEdtior.OnOpenDialogueEditor += SetAsMainWindow;
@@ -47,7 +46,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             LoadNodes();
         }
 
-        public static void StartConnnetingNodes(INodeOutPutle node) => OnStartConnecting?.Invoke(node);
+        public static void StartConnectingNodes(INodeOutPutle node) => OnStartConnecting?.Invoke(node);
 
         public void SetAsMainWindow() => EditorArea.OnDrawWindow += ShowWindow;
 
@@ -75,11 +74,12 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.SetNextWindowDockID(leftID, ImGuiCond.Once);
             ImGui.Begin("Item props");
             ImGui.SetWindowFontScale(1.2f);
-            
-            if(ImGui.Button("Save")) _storage.Save();
+
+            if (ImGui.Button("Save")) _storage.Save();
+            if (ImGui.Button("Add Start Node")) AddNodeStart();
             if (ImGui.Button("Add Node")) AddNode();
-            if(SelectedNode != null) ShowNodeInfo();
-            
+            if (SelectedNode != null) ShowNodeInfo();
+
             ImGui.End();
 
             ImGui.SetNextWindowDockID(rightID, ImGuiCond.Once);
@@ -92,9 +92,9 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             var windowSize = ImGui.GetWindowSize();
 
             Primativas.Square.Draw(
-                drawList, 
-                windowPosition.ToXnaVector2(), 
-                windowSize.ToXnaVector2(), 
+                drawList,
+                windowPosition.ToXnaVector2(),
+                windowSize.ToXnaVector2(),
                 Color.DarkGray
             );
 
@@ -149,6 +149,14 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             _storage.Save();
         }
 
+        private void AddNodeStart()
+        {
+            var node = new NodeOutPut(_storage, _idsCount, "new node", Vector2.One * 500f);
+            _idsCount++;
+            Nodes.Add(node);
+            _storage.Save();
+        }
+
         private void TraceLineConnection(ImDrawListPtr drawList)
         {
             Primativas.Line.Draw(
@@ -159,17 +167,21 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
             IsConnecting = MouseHandler.ButtonLeftPressed;
 
-            if(!IsConnecting)
+            if (!IsConnecting)
                 NodeStartConnection.CancelConnection();
-            
-            foreach(var node in Nodes)
+
+            foreach (var node in Nodes)
             {
-                float distance = (node.InPosition - MouseHandler.Position).Length();
-                if (distance <= 5f)
+                if (node is INodeInPutle)
                 {
-                    NodeStartConnection.AddNodeConnection(node);
-                    IsConnecting = false;
-                    return;
+                    INodeInPutle nodeInPutle = (INodeInPutle)node;
+                    float distance = (nodeInPutle.InPosition - MouseHandler.Position).Length();
+                    if (distance <= 5f)
+                    {
+                        NodeStartConnection.AddNodeConnection(nodeInPutle);
+                        IsConnecting = false;
+                        return;
+                    }
                 }
             }
         }
@@ -198,7 +210,9 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             {
                 var nodesConnections = _storage.getItemsFloat($"Nodes-Connection-In-{node.Id}");
                 foreach (var connection in nodesConnections)
-                    node.AddNodeConnection((INodeInPutle)Nodes[(int)connection]);
+                {
+                    //node.AddNodeConnection(Nodes[(int)connection]);
+                }
             }
         }
     }

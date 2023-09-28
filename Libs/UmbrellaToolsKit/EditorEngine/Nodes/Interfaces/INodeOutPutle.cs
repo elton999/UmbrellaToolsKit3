@@ -8,12 +8,12 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.Interfaces
         INode Node { get; }
         Vector2 OutPosition { get; }
         List<INodeInPutle> NodesConnectionIn { get; set; }
-        
+
         bool IsConnecting { get; }
         bool IsOverConnectorOutPut { get; }
 
         void AddNodeConnection(INodeInPutle node);
-        void Desconnecting();
+        void Disconnecting();
         void CancelConnection();
     }
 }

@@ -6,34 +6,28 @@ using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
 using UmbrellaToolsKit.EditorEngine.Windows;
 using UmbrellaToolsKit.Input;
 using UmbrellaToolsKit.Storage;
-
 namespace UmbrellaToolsKit.EditorEngine.Nodes
 {
-    public class NodeInPutAndOutPut : BasicNode, INodeInPutle, INodeOutPutle
+    public class NodeOutPut : BasicNode, INodeOutPutle
     {
+        public NodeOutPut(Load storage, int id, string name, Vector2 position) : base(storage, id, name, position)
+        {
+            NodesConnectionIn = new List<INodeInPutle>();
+
+            storage.OnSave += SaveConnections;
+        }
+
         private bool _isConnecting = false;
 
         public INode Node { get => this; }
 
-        public List<INodeInPutle> NodesConnectionIn { get; set; }
-        public List<INodeOutPutle> NodesConnectionOut { get; set; }
-
         public Vector2 OutPosition { get => Position + TitleSize - (Vector2.UnitY * TitleSize.Y / 2f); }
-        public Vector2 InPosition { get => OutPosition - MainSquareSize * Vector2.UnitX; }
-        public Vector2 BezierFactor { get => new Vector2(0.5f, 0.1f); }
 
-        public bool IsConnecting { get => _isConnecting; }
+        public List<INodeInPutle> NodesConnectionIn { get; set; }
 
-        public bool IsOverConnectorIn { get => isMouseOverPosition(InPosition); }
+        public bool IsConnecting => _isConnecting;
+
         public bool IsOverConnectorOutPut { get => isMouseOverPosition(OutPosition); }
-
-        public NodeInPutAndOutPut(Load storage, int id, string name, Vector2 position) : base(storage, id, name, position)
-        {
-            NodesConnectionIn = new List<INodeInPutle>();
-            NodesConnectionOut = new List<INodeOutPutle>();
-
-            storage.OnSave += SaveConnections;
-        }
 
         public override void Update()
         {
@@ -46,13 +40,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             DrawConnections(imDraw);
             base.Draw(imDraw);
             imDraw.AddCircleFilled(OutPosition.ToNumericVector2(), 5f, Color.Yellow.PackedValue);
-            imDraw.AddCircleFilled(InPosition.ToNumericVector2(), 5f, Color.Yellow.PackedValue);
-        }
-
-        public void DrawConnections(ImDrawListPtr imDraw)
-        {
-            foreach (var outputNode in NodesConnectionIn)
-                Primativas.Line.Draw(imDraw, OutPosition, outputNode.InPosition);
         }
 
         public void HandlerConnectionNodes()
@@ -69,6 +56,12 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             DialogueEditorWindow.StartConnectingNodes(this);
         }
 
+        public void DrawConnections(ImDrawListPtr imDraw)
+        {
+            foreach (var outputNode in NodesConnectionIn)
+                Primativas.Line.Draw(imDraw, OutPosition, outputNode.InPosition);
+        }
+
         public void HandlerDisconnectionNodes()
         {
             if (IsOverConnectorOutPut && MouseHandler.ButtonRightPressed)
@@ -83,16 +76,8 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             node.AddNodeConnection(this);
             CancelConnection();
         }
-
-        public void AddNodeConnection(INodeOutPutle node)
-        {
-            if (NodesConnectionOut.Contains(node)) return;
-            NodesConnectionOut.Add(node);
-        }
-
         public void Disconnecting()
         {
-            NodesConnectionOut.Clear();
             NodesConnectionIn.Clear();
         }
 
@@ -106,12 +91,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             foreach (var nodeIn in NodesConnectionIn)
                 nodesConnectionInList.Add(nodeIn.Node.Id);
 
-            var nodesConnectionOutList = new List<float>();
-            foreach (var nodeOut in NodesConnectionOut)
-                nodesConnectionOutList.Add(nodeOut.Node.Id);
-
             _storage.AddItemFloat($"Nodes-Connection-In-{Id}", nodesConnectionInList);
-            _storage.AddItemFloat($"Nodes-Connection-Out-{Id}", nodesConnectionOutList);
         }
     }
 }
