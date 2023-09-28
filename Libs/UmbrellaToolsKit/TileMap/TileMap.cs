@@ -56,35 +56,37 @@ namespace UmbrellaToolsKit.TileMap
             scene.LevelSize = new Vector2((int)level.PxWid, (int)level.PxHei);
         }
 
-        public static ldtk.Level GetLevelByName(ldtk.LdtkJson tileMap, string levelName)
+        private static ldtk.Level GetLevelByName(ldtk.LdtkJson tileMap, string levelName)
         {
             return (from levels in tileMap.Levels where levels.Identifier.Equals(levelName) select levels).First();
         }
 
-        public static void SetEntities(Scene scene, ldtk.LayerInstance layer)
+        private static void SetEntities(Scene scene, ldtk.LayerInstance layer)
         {
             Console.WriteLine($"Loading Entities: {layer.Identifier} ");
+            EditorEngine.Log.Write($"Loading Entities: {layer.Identifier} ");
 
             for (var i = 0; i < layer.EntityInstances.Length; i++)
             {
                 Console.Write(".");
                 // TODO: values and nodes
                 var entity = layer.EntityInstances[i];
-                var gameObject = AssetManagement.Instance.addEntityOnScene(
+                AssetManagement.Instance.addEntityOnScene(
                         entity.Identifier,
-                        entity.Iid,
                         new Vector2(entity.Px[0] + scene.ScreenOffset.X, entity.Px[1] + scene.ScreenOffset.Y),
                         new Point((int)entity.Width, (int)entity.Height),
-                        entity.FieldInstances,
+                        null,
                         null,
                         scene
                     );
             }
         }
 
-        public static void SetEntities(Scene scene, Ogmo.TileMapLayers layer)
+        private static void SetEntities(Scene scene, Ogmo.TileMapLayers layer)
         {
             Console.WriteLine($"Loading Entities: {layer.name} ");
+            EditorEngine.Log.Write($"Loading Entities: {layer.name} ");
+
             foreach (Ogmo.TileMapEntity entity in layer.entities)
             {
                 System.Console.Write(".");
@@ -92,7 +94,6 @@ namespace UmbrellaToolsKit.TileMap
                 {
                     AssetManagement.Instance.addEntityOnScene(
                         entity.name,
-                        "gameobject",
                         new Vector2(entity.x + scene.ScreenOffset.X, entity.y + scene.ScreenOffset.Y),
                         new Point(entity.width, entity.height),
                         entity.values,
@@ -106,7 +107,7 @@ namespace UmbrellaToolsKit.TileMap
         private static void SetGrid(Scene scene, Ogmo.TileMap tileMap, Ogmo.TileMapLayers layer)
         {
             scene.Grid = new Grid();
-            scene.Grid.GridCollides = layer.grid2D;
+            scene.Grid.GridCollides = new List<List<string>>(layer.grid2D);
             scene.Grid.Scene = scene;
             scene.Grid.Origin = new Vector2(tileMap.offsetX, tileMap.offsetY);
         }
@@ -131,14 +132,14 @@ namespace UmbrellaToolsKit.TileMap
 
         private static void SetTiles(Scene scene, Ogmo.TileMap tileMap, Texture2D tilemapSprite, Ogmo.TileMapLayers layer)
         {
-            GameObjectLayer layerTiles = CreateLayer(scene, tilemapSprite);
+            Layer layerTiles = CreateLayer(scene, tilemapSprite);
             layerTiles.Origin = new Vector2(tileMap.offsetX, tileMap.offsetY);
-            layerTiles.tiles = layer.dataCoords2D;
+            layerTiles.tiles = new List<List<List<int>>>(layer.dataCoords2D);
         }
 
         private static void SetTiles(Scene scene, Texture2D tilemapSprite, ldtk.LayerInstance layer)
         {
-            GameObjectLayer layerTiles = CreateLayer(scene, tilemapSprite);
+            Layer layerTiles = CreateLayer(scene, tilemapSprite);
             layerTiles.Origin = new Vector2(scene.ScreenOffset.X, scene.ScreenOffset.Y);
             layerTiles.tiles = new List<List<List<int>>>();
 
@@ -149,16 +150,12 @@ namespace UmbrellaToolsKit.TileMap
                 var tile = layer.AutoLayerTiles[i];
                 int x = (int)tile.Px[0] / 8;
                 int y = (int)tile.Px[1] / 8;
-
-                layerTiles.tiles[y][x][0] = (int)tile.Src[0];
-                if (layerTiles.tiles[y][x].Count == 1)
-                    layerTiles.tiles[y][x].Add((int)tile.Src[1]);
-                else
-                    layerTiles.tiles[y][x][1] = (int)tile.Src[1];
+                layerTiles.tiles[y][x][0] = (int)tile.Src[0] / 8;
+                layerTiles.tiles[y][x].Add((int)(tile.Src[1] / 8));
             }
         }
 
-        private static void CreateTiles(ldtk.LayerInstance layer, GameObjectLayer layerTiles)
+        private static void CreateTiles(ldtk.LayerInstance layer, Layer layerTiles)
         {
             for (var x = 0; x < layer.CHei; x++)
             {
@@ -171,9 +168,9 @@ namespace UmbrellaToolsKit.TileMap
             }
         }
 
-        private static GameObjectLayer CreateLayer(Scene scene, Texture2D tilemapSprite)
+        private static Layer CreateLayer(Scene scene, Texture2D tilemapSprite)
         {
-            var layerTiles = new Sprite.GameObjectLayer();
+            var layerTiles = new Sprite.Layer();
             layerTiles.Sprite = tilemapSprite;
             layerTiles.Scene = scene;
 
