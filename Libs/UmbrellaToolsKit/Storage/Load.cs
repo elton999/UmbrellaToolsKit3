@@ -1,31 +1,43 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+#if !WEB
 using System.Xml;
-using System.Collections;
+#endif
 using System.Collections.Generic;
 
 namespace UmbrellaToolsKit.Storage
 {
     public class Load
     {
-        private XmlTextReader reader;
-        private string curlFile = @"Setting.Umbrella";
-
+#if !WEB
         public XmlDocument doc = new XmlDocument();
+        XmlTextReader reader;
+        string curlFile = @"Setting.Umbrella";
+#endif
 
         public Load()
         {
+#if !WEB
             if (!File.Exists(this.curlFile))
             {
                 File.AppendAllText(this.curlFile, "umbrella");
                 doc.AppendChild(doc.CreateElement("Umbrella"));
                 this.Save();
-                return;
+            } else
+            {
+                doc.Load(this.curlFile);
             }
-            doc.Load(this.curlFile);
+#endif
         }
 
-        public void Save() => doc.Save(this.curlFile);
+        public void Save()
+        {
+#if !WEB
+            doc.Save(this.curlFile);
+#endif
+        }
 
+#if !WEB
         private void CreateList(string Node, string Type)
         {
             if (doc.GetElementsByTagName(Node).Count < 1)
@@ -78,24 +90,49 @@ namespace UmbrellaToolsKit.Storage
             return ListReturn;
         }
 
-        public void AddItemString(string Node, List<string> ContentList) => AddAItem(Node, "string", ContentList);
 
-        public void AddItemFloat(string Node, List<float> ContentList) => AddAItem(Node, "float", ContentList);
-
-        public void AddItemBool(string Node, List<bool> ContentList) => AddAItem(Node, "bool", ContentList);
-
-        public void AddAItem(string Node, string typeObject, IEnumerable ContentList)
+        public void AddItemString(string Node, List<string> ContentList)
         {
-            CreateList(Node, typeObject);
+            this.CreateList(Node, "string");
 
             XmlNodeList ElementNode = doc.GetElementsByTagName(Node);
 
-            foreach (object content in ContentList)
+            foreach (string content in ContentList)
+            {
+                XmlElement NewElement = doc.CreateElement("item");
+                NewElement.InnerText = content;
+                ElementNode[0].AppendChild(NewElement);
+            }
+        }
+
+        public void AddItemFloat(string Node, List<float> ContentList)
+        {
+            this.CreateList(Node, "float");
+
+            XmlNodeList ElementNode = doc.GetElementsByTagName(Node);
+
+            foreach (float content in ContentList)
             {
                 XmlElement NewElement = doc.CreateElement("item");
                 NewElement.InnerText = content.ToString();
                 ElementNode[0].AppendChild(NewElement);
             }
         }
+
+        public void AddItemBool(string Node, List<bool> ContentList)
+        {
+            this.CreateList(Node, "bool");
+
+            XmlNodeList ElementNode = doc.GetElementsByTagName(Node);
+
+            foreach (bool content in ContentList)
+            {
+                XmlElement NewElement = doc.CreateElement("item");
+                NewElement.InnerText = content.ToString();
+                ElementNode[0].AppendChild(NewElement);
+            }
+        }
+#endif
+
     }
 }
