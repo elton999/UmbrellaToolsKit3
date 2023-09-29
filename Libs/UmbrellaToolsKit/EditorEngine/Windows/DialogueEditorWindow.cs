@@ -77,6 +77,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
             if (ImGui.Button("Save")) _storage.Save();
             if (ImGui.Button("Add Start Node")) AddNodeStart();
+            if (ImGui.Button("Add End Node")) AddNodeEnd();
             if (ImGui.Button("Add Node")) AddNode();
             if (SelectedNode != null) ShowNodeInfo();
 
@@ -155,6 +156,14 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         private void AddNodeStart()
         {
             var node = new NodeOutPut(_storage, _idsCount, "start", Vector2.One * 500f);
+            _idsCount++;
+            Nodes.Add(node);
+            _storage.Save();
+        }
+
+        private void AddNodeEnd()
+        {
+            var node = new NodeInPut(_storage, _idsCount, "end", Vector2.One * 500f);
             _idsCount++;
             Nodes.Add(node);
             _storage.Save();
