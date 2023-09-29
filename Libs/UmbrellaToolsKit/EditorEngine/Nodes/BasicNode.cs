@@ -68,6 +68,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public bool CanMoveNode = false;
 
         public static event Action<BasicNode> OnSelectNode;
+        public static BasicNode currentSelectedNode;
 
         public BasicNode(Load storage, int id, string name, Vector2 position)
         {
@@ -93,14 +94,18 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             if (MouseHandler.ButtonLeftReleased) CanMoveNode = false;
 
             if (CanMoveNode) MoveNode();
+            else if (currentSelectedNode == this) currentSelectedNode = null;
         }
 
         public void MoveNode()
         {
+            if (currentSelectedNode != this && currentSelectedNode != null) return;
+
             if (MouseHandler.ButtonLeftOneClick)
             {
                 MousePosition = MouseHandler.Position;
                 NodePositionOnClick = Position;
+                currentSelectedNode = this;
                 OnSelectNode?.Invoke(this);
             }
 

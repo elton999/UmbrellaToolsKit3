@@ -154,7 +154,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
         private void AddNodeStart()
         {
-            var node = new NodeOutPut(_storage, _idsCount, "new node", Vector2.One * 500f);
+            var node = new NodeOutPut(_storage, _idsCount, "start", Vector2.One * 500f);
             _idsCount++;
             Nodes.Add(node);
             _storage.Save();
