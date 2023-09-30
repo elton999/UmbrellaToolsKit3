@@ -4,6 +4,7 @@ using ImGuiNET;
 using Microsoft.Xna.Framework;
 using MonoGame.ImGui.Standard.Extensions;
 using UmbrellaToolsKit.EditorEngine.Nodes;
+using UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes;
 using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
 using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
 using UmbrellaToolsKit.Input;
@@ -140,11 +141,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             SelectedNode.Name = nameNodeValue;
         }
 
-        private void SelectNode(BasicNode node)
-        {
-            SelectedNode = node;
-            Console.WriteLine(node.Name);
-        }
+        private void SelectNode(BasicNode node) => SelectedNode = node;
+
         private void AddNode()
         {
             var node = new NodeInPutAndOutPut(_storage, _idsCount, "new node", Vector2.One * 500f);
@@ -155,7 +153,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
         private void AddNodeStart()
         {
-            var node = new NodeOutPut(_storage, _idsCount, "start", Vector2.One * 500f);
+            var node = new StartNode(_storage, _idsCount, Vector2.One * 500f);
             _idsCount++;
             Nodes.Add(node);
             _storage.Save();
@@ -163,7 +161,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
         private void AddNodeEnd()
         {
-            var node = new NodeInPut(_storage, _idsCount, "end", Vector2.One * 500f);
+            var node = new EndNode(_storage, _idsCount, Vector2.One * 500f);
             _idsCount++;
             Nodes.Add(node);
             _storage.Save();

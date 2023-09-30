@@ -13,6 +13,8 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
     public class BasicNode : INode
     {
         protected Load _storage;
+        protected Vector2 _titleSize = new Vector2(200, 30);
+        protected Vector2 _mainSquareSize = new Vector2(200, 30);
         private int _index = 0;
 
         private Vector2 _position;
@@ -53,10 +55,10 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
                 _storage.AddItemFloat($"position-{_index}-vector-y", new List<float>() { value.Y });
             }
         }
-        public Vector2 MainSquareSize { get => (new Vector2(200, 50)); }
+        public Vector2 MainSquareSize { get => _mainSquareSize; }
         public Vector2 SelectedNodeSize { get => MainSquareSize + Vector2.One * 4; }
         public Vector2 SelectedNodePosition { get => Position - Vector2.One * 2f; }
-        public Vector2 TitleSize { get => new Vector2(200, 30); }
+        public Vector2 TitleSize { get => _titleSize; }
 
         public Color TitleColor = Color.Blue;
 
