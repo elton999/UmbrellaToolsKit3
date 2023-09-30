@@ -51,8 +51,8 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             set
             {
                 _position = value;
-                _storage.AddItemFloat($"position-{_index}-vector-x", new List<float>() { value.X });
-                _storage.AddItemFloat($"position-{_index}-vector-y", new List<float>() { value.Y });
+                //_storage.AddItemFloat($"position-{_index}-vector-x", new List<float>() { value.X });
+                //_storage.AddItemFloat($"position-{_index}-vector-y", new List<float>() { value.Y });
             }
         }
         public Vector2 MainSquareSize { get => _mainSquareSize; }

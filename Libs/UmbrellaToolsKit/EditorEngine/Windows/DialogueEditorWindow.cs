@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
 using MonoGame.ImGui.Standard.Extensions;
 using UmbrellaToolsKit.EditorEngine.Nodes;
 using UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes;
 using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
+using UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor;
 using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
 using UmbrellaToolsKit.Input;
 
@@ -15,14 +15,12 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
     {
         private const string _dialogueSettingPath = @"Content/Dialogue1.Umbrella";
         private Storage.Load _storage;
-        private int _idsCount = 0;
 
         private GameManagement _gameManagement;
         public GameManagement GameManagement { get => _gameManagement; }
 
         public BasicNode SelectedNode;
 
-        public List<BasicNode> Nodes;
         public INodeOutPutle NodeStartConnection;
         public bool IsConnecting = false;
 
@@ -34,8 +32,6 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         public DialogueEditorWindow(GameManagement gameManagement)
         {
             _gameManagement = gameManagement;
-
-            Nodes = new List<BasicNode>();
 
             BarEdtior.OnSwitchEditorWindow += RemoveAsMainWindow;
             BarEdtior.OnOpenDialogueEditor += SetAsMainWindow;
@@ -108,7 +104,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             if (MouseHandler.ButtonMiddlePressing)
                 direction = ClickPosition - MouseHandler.Position;
 
-            foreach (var node in Nodes)
+            foreach (var node in DialogueData.Nodes)
             {
                 if (direction.Length() > 0)
                     node.Position = node.Position - direction;
@@ -145,25 +141,22 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
         private void AddNode()
         {
-            var node = new NodeInPutAndOutPut(_storage, _idsCount, "new node", Vector2.One * 500f);
-            _idsCount++;
-            Nodes.Add(node);
+            var node = new NodeWithOptions(_storage, DialogueData.GetNewNodeId(), "new node", Vector2.One * 500f); ;
+            DialogueData.AddNode(node);
             _storage.Save();
         }
 
         private void AddNodeStart()
         {
-            var node = new StartNode(_storage, _idsCount, Vector2.One * 500f);
-            _idsCount++;
-            Nodes.Add(node);
+            var node = new StartNode(_storage, DialogueData.GetNewNodeId(), Vector2.One * 500f);
+            DialogueData.AddNode(node);
             _storage.Save();
         }
 
         private void AddNodeEnd()
         {
-            var node = new EndNode(_storage, _idsCount, Vector2.One * 500f);
-            _idsCount++;
-            Nodes.Add(node);
+            var node = new EndNode(_storage, DialogueData.GetNewNodeId(), Vector2.One * 500f);
+            DialogueData.AddNode(node);
             _storage.Save();
         }
 
@@ -180,7 +173,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             if (!IsConnecting)
                 NodeStartConnection.CancelConnection();
 
-            foreach (var node in Nodes)
+            foreach (var node in DialogueData.Nodes)
             {
                 if (node is INodeInPutle)
                 {
@@ -213,10 +206,10 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                 position.Y = _storage.getItemsFloat($"position-{id}-vector-y")[0];
 
                 var node = new NodeInPutAndOutPut(_storage, id, name, position);
-                Nodes.Add(node);
+                DialogueData.AddNode(node);
             }
 
-            foreach (var node in Nodes)
+            foreach (var node in DialogueData.Nodes)
             {
                 var nodesConnections = _storage.getItemsFloat($"Nodes-Connection-In-{node.Id}");
                 foreach (var connection in nodesConnections)
