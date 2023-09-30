@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
 using MonoGame.ImGui.Standard.Extensions;
@@ -104,7 +105,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             if (MouseHandler.ButtonMiddlePressing)
                 direction = ClickPosition - MouseHandler.Position;
 
-            foreach (var node in DialogueData.Nodes)
+            var cachedNodes = new List<BasicNode>(DialogueData.Nodes);
+            foreach (var node in cachedNodes)
             {
                 if (direction.Length() > 0)
                     node.Position = node.Position - direction;

@@ -33,7 +33,9 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
         public void CreateAnOption()
         {
             int id = DialogueData.GetNewNodeId();
-            AddNodeOption(new NodeOptionOutPut(_storage, id, "option", Vector2.Zero));
+            var node = new NodeOptionOutPut(_storage, id, "option", Vector2.Zero);
+            AddNodeOption(node);
+            DialogueData.AddNode(node);
         }
 
         public override void Update()
@@ -53,14 +55,12 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
             base.Draw(imDraw);
             for(int i = 0; i < NodeOptions.Count; i++)
             {
+                var option = NodeOptions[i];
                 int optionNumber = i + 1;
-                Vector2 circlePosition = GetCircleNodePosition(i);
 
-                Vector2 textPosition = Position + _optionSize * (Vector2.UnitY * optionNumber);
-                textPosition += Vector2.One * 8.0f;
+                Vector2 nodePosition = Position + _optionSize * (Vector2.UnitY * optionNumber);
 
-                imDraw.AddCircleFilled(circlePosition.ToNumericVector2(), 5f, Color.Yellow.PackedValue);
-                imDraw.AddText(textPosition.ToNumericVector2(), Color.White.PackedValue, $"Node Option {optionNumber}");
+                option.Node.Position = nodePosition;
             }
         }
 
@@ -68,15 +68,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
         {
             _mainSquareSize = new Vector2(200, 30);
             _mainSquareSize += Vector2.UnitY * NodeOptions.Count * _mainSquareSize.Y;
-        }
-
-        private Vector2 GetCircleNodePosition(int index)
-        {
-            index += 1;
-            Vector2 circlePosition = Position + _nodePosition;
-            circlePosition += _optionSize * (Vector2.UnitY * index);
-
-            return circlePosition;
         }
     }
 }

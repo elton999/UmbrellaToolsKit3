@@ -39,6 +39,11 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         {
             DrawConnections(imDraw);
             base.Draw(imDraw);
+            DrawOutputPoint(imDraw);
+        }
+
+        protected void DrawOutputPoint(ImDrawListPtr imDraw)
+        {
             imDraw.AddCircleFilled(OutPosition.ToNumericVector2(), 5f, Color.Yellow.PackedValue);
         }
 

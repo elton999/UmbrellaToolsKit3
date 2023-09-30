@@ -120,14 +120,28 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 
         public virtual void Draw(ImDrawListPtr imDraw)
         {
-            if (CanMoveNode)
-                Primativas.Square.Draw(imDraw, SelectedNodePosition, SelectedNodeSize, Color.White);
+            DrawSelectionArea(imDraw);
+            DrawNodeSquare(imDraw);
+            DrawNodeText(imDraw);
+        }
 
+        protected void DrawNodeText(ImDrawListPtr imDraw)
+        {
             var titleTextPos = Position + Vector2.One * 8f;
+            imDraw.AddText(titleTextPos.ToNumericVector2(), Color.White.PackedValue, Name);
+        }
+
+        protected void DrawNodeSquare(ImDrawListPtr imDraw)
+        {
             Primativas.Square.Draw(imDraw, Position, MainSquareSize, Color.Black);
 
             Primativas.Square.Draw(imDraw, Position, TitleSize, TitleColor);
-            imDraw.AddText(titleTextPos.ToNumericVector2(), Color.White.PackedValue, Name);
+        }
+
+        protected void DrawSelectionArea(ImDrawListPtr imDraw)
+        {
+            if (CanMoveNode)
+                Primativas.Square.Draw(imDraw, SelectedNodePosition, SelectedNodeSize, Color.White);
         }
     }
 }
