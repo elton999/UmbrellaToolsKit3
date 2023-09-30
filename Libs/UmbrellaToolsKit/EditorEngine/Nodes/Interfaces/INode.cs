@@ -5,7 +5,10 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.Interfaces
     public interface INode
     {
         int Id { get; set; }
+        INode ParentNode { get; set; }
         string Name { get; set; }
+
+        bool IsDragbleNode { get; set; }
 
         Vector2 Position { get; set; }
         Vector2 MainSquareSize { get; }

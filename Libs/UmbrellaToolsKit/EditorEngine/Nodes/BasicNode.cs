@@ -15,7 +15,9 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         protected Load _storage;
         protected Vector2 _titleSize = new Vector2(200, 30);
         protected Vector2 _mainSquareSize = new Vector2(200, 30);
+        protected bool _isDragableNode = true;
         private int _index = 0;
+        private INode _parentNode;
 
         private Vector2 _position;
         private string _name;
@@ -59,6 +61,8 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public Vector2 SelectedNodeSize { get => MainSquareSize + Vector2.One * 4; }
         public Vector2 SelectedNodePosition { get => Position - Vector2.One * 2f; }
         public Vector2 TitleSize { get => _titleSize; }
+        public bool IsDragbleNode { get => _isDragableNode; set => _isDragableNode = value; }
+        public INode ParentNode { get => _parentNode; set => _parentNode = value; }
 
         public Color TitleColor = Color.Blue;
 
@@ -85,13 +89,13 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 
         public void HandlerMoveNode()
         {
+            if (!IsDragbleNode) return;
+
             var rectangle = new Rectangle(Position.ToPoint(), MainSquareSize.ToPoint());
             var mousePosition = Mouse.GetState().Position;
             var mousePoint = new Rectangle(mousePosition, new Point(1));
 
-            if (rectangle.Contains(mousePoint))
-                CanMoveNode = true;
-            
+            if (rectangle.Contains(mousePoint)) CanMoveNode = true;
             if (MouseHandler.ButtonLeftReleased) CanMoveNode = false;
 
             if (CanMoveNode) MoveNode();

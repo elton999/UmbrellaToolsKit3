@@ -12,7 +12,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
     public class NodeWithOptions : NodeInPut, INodeOptions
     {
         private List<INodeOutPutle> _nodeOptions;
-        private Vector2 _nodePosition => TitleSize - (Vector2.UnitY * TitleSize.Y / 2f);
         private Vector2 _optionSize => Vector2.UnitY * 30;
 
         public NodeWithOptions(Load storage, int id, string name, Vector2 position) : base(storage, id, name, position)
@@ -33,7 +32,9 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
         public void CreateAnOption()
         {
             int id = DialogueData.GetNewNodeId();
-            var node = new NodeOptionOutPut(_storage, id, "option", Vector2.Zero);
+            var node = new NodeOptionOutPut(_storage, id, $"option - {id}", Vector2.Zero) 
+            { ParentNode = this };
+
             AddNodeOption(node);
             DialogueData.AddNode(node);
         }
@@ -43,10 +44,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
             base.Update();
             if (KeyBoardHandler.KeyPressed(Microsoft.Xna.Framework.Input.Keys.K))
                 CreateAnOption();
-            foreach(var node in NodeOptions)
-            {
-
-            }
             UpdateBodyNodeSize();
         }
 
