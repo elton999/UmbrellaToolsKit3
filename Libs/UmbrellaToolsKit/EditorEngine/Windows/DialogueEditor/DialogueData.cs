@@ -22,5 +22,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
             if(_nodes.Contains(node)) return;
             _nodes.Add(node);
         }
+
+        public static void RemoveNode(BasicNode node) => _nodes.Remove(node);
     }
 }

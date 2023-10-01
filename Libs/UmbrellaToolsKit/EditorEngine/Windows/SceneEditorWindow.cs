@@ -1,8 +1,6 @@
 ﻿using ImGuiNET;
-using System.Reflection;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using UmbrellaToolsKit.EditorEngine.Attributes;
 using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
 
 namespace UmbrellaToolsKit.EditorEngine.Windows
@@ -170,7 +168,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                 ImGui.Spacing();
                 ImGui.SetWindowFontScale(1.2f);
 
-                DrawAllFields(GameObjectSelected);
+                InspectorClass.DrawAllFields(GameObjectSelected);
 
                 ImGui.Spacing();
                 ImGui.Separator();
@@ -187,90 +185,11 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             if (ImGui.CollapsingHeader(component.GetType().Name))
             {
                 ImGui.Indent();
-                DrawAllFields(component);
+                InspectorClass.DrawAllFields(component);
                 ImGui.Unindent();
             }
 
             DrawComponents(component.Next);
-        }
-
-        private void DrawAllFields(object obj)
-        {
-            var type = obj.GetType();
-            var fieldsCategories = new Dictionary<string, List<FieldInfo>>();
-            var fieldsWithoutCategories = new List<FieldInfo>();
-
-            foreach (FieldInfo fInfo in type.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
-            {
-                foreach (var attr in fInfo.CustomAttributes)
-                {
-                    if (attr.AttributeType == typeof(CategoryAttribute))
-                    {
-                        string categoryName = (string)attr.ConstructorArguments[0].Value;
-
-                        if (!fieldsCategories.ContainsKey(categoryName))
-                            fieldsCategories.Add(categoryName, new List<FieldInfo>());
-
-                        fieldsCategories[categoryName].Add(fInfo);
-
-                    }
-                    if (attr.AttributeType == typeof(ShowEditorAttribute))
-                        fieldsWithoutCategories.Add(fInfo);
-                }
-            }
-
-            foreach (var category in fieldsCategories)
-            {
-                ImGui.Spacing();
-                ImGui.Separator();
-                ImGui.Spacing();
-                bool treeNode = ImGui.TreeNodeEx(category.Key, ImGuiTreeNodeFlags.DefaultOpen);
-
-                foreach (var field in category.Value)
-                {
-                    if (fieldsWithoutCategories.Contains(field))
-                    {
-                        fieldsWithoutCategories.Remove(field);
-                        if (treeNode) DrawField(field, obj);
-                    }
-                }
-                if (treeNode) ImGui.Unindent();
-            }
-
-            foreach (var field in fieldsWithoutCategories)
-                DrawField(field, obj);
-        }
-
-        private void DrawField(FieldInfo fInfo, object prop)
-        {
-            switch (fInfo.FieldType.ToString())
-            {
-                case "Microsoft.Xna.Framework.Vector2":
-                    var vector2 = (Vector2)fInfo.GetValue(prop);
-                    Fields.Field.DrawVector(fInfo.Name, ref vector2);
-                    fInfo.SetValue(prop, vector2);
-                    break;
-                case "Microsoft.Xna.Framework.Vector3":
-                    var vector3 = (Vector3)fInfo.GetValue(prop);
-                    Fields.Field.DrawVector(fInfo.Name, ref vector3);
-                    fInfo.SetValue(prop, vector3);
-                    break;
-                case "System.Single":
-                    var floatValue = (float)fInfo.GetValue(prop);
-                    Fields.Field.DrawFloat(fInfo.Name, ref floatValue);
-                    fInfo.SetValue(prop, floatValue);
-                    break;
-                case "System.String":
-                    var stringValue = (string)fInfo.GetValue(prop);
-                    Fields.Field.DrawString(fInfo.Name, ref stringValue);
-                    fInfo.SetValue(prop, stringValue);
-                    break;
-                case "System.Boolean":
-                    var boolValue = (bool)fInfo.GetValue(prop);
-                    Fields.Field.DrawBoolean(fInfo.Name, ref boolValue);
-                    fInfo.SetValue(prop, boolValue);
-                    break;
-            }
         }
     }
 }

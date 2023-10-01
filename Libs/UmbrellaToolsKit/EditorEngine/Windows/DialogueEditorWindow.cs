@@ -133,17 +133,16 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
         public void ShowNodeInfo()
         {
-            string nameNodeValue = SelectedNode.Name;
-            Fields.Field.DrawString("Node Name", ref nameNodeValue);
-            Fields.Field.DrawLongText("Node text", ref nameNodeValue);
-            SelectedNode.Name = nameNodeValue;
+            bool treeNode = InspectorClass.DrawSeparator("Node Inspector");
+            if (treeNode) SelectedNode.DrawInspector();
+            if (treeNode) ImGui.Unindent();
         }
 
         private void SelectNode(BasicNode node) => SelectedNode = node;
 
         private void AddNode()
         {
-            var node = new NodeWithOptions(_storage, DialogueData.GetNewNodeId(), "new node", Vector2.One * 500f); ;
+            var node = new NodeWithOptions(_storage, DialogueData.GetNewNodeId(), "new node", Vector2.One * 500f);
             DialogueData.AddNode(node);
             _storage.Save();
         }

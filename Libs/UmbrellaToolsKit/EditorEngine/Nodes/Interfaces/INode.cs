@@ -7,6 +7,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.Interfaces
         int Id { get; set; }
         INode ParentNode { get; set; }
         string Name { get; set; }
+        string Content { get; set; }
 
         bool IsDragbleNode { get; set; }
 

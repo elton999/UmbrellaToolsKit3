@@ -42,8 +42,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
         public override void Update()
         {
             base.Update();
-            if (KeyBoardHandler.KeyPressed(Microsoft.Xna.Framework.Input.Keys.K))
-                CreateAnOption<NodeOptionOutPut>();
             UpdateBodyNodeSize();
         }
 
@@ -59,6 +57,36 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
 
                 option.Position = nodePosition;
             }
+        }
+
+        public override void DrawInspector()
+        {
+            base.DrawInspector();
+            for (int i = 0; i < NodeOptions.Count; i++)
+            {
+                string optionName = $"Option ({i + 1})";
+                NodeOptions[i].Name = optionName;
+                if (ImGui.CollapsingHeader(optionName))
+                {
+                    ImGui.Indent();
+                    NodeOptions[i].DrawInspector();
+                    ImGui.Unindent();
+                }
+            }
+            if (ImGui.Button("Add a new Option"))
+                CreateAnOption<NodeOptionOutPut>();
+        }
+
+        public override void OnDelete()
+        {
+            foreach (var node in NodesConnectionOut)
+                node.NodesConnectionIn.Remove(this);
+            NodesConnectionOut.Clear();
+
+            DialogueData.RemoveNode(this);
+            var nodeOptions = new List<BasicNode>(NodeOptions);
+            foreach (var node in nodeOptions)
+                node.OnDelete();
         }
 
         private void UpdateBodyNodeSize()

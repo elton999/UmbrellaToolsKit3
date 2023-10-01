@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Input;
 using UmbrellaToolsKit.Input;
 using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
 using UmbrellaToolsKit.Storage;
+using UmbrellaToolsKit.EditorEngine.Windows;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes
 {
@@ -20,7 +21,8 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         private INode _parentNode;
 
         private Vector2 _position;
-        private string _name;
+        protected string _name;
+        protected string _content;
 
         public int Id
         {
@@ -63,6 +65,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public Vector2 TitleSize { get => _titleSize; }
         public bool IsDragbleNode { get => _isDragableNode; set => _isDragableNode = value; }
         public INode ParentNode { get => _parentNode; set => _parentNode = value; }
+        public string Content { get => _content; set => _content = value; }
 
         public Color TitleColor = Color.Blue;
 
@@ -127,6 +130,18 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             DrawSelectionArea(imDraw);
             DrawNodeSquare(imDraw);
             DrawNodeText(imDraw);
+        }
+
+        public virtual void OnDelete() {}
+
+        public virtual void DrawInspector()
+        {
+            ImGui.PushStyleColor(ImGuiCol.Button, new System.Numerics.Vector4(1, 0, 0, 1));
+            if (ImGui.Button("Delete"))
+                OnDelete();
+            ImGui.PopStyleColor();
+
+            InspectorClass.DrawAllFields(this);
         }
 
         protected void DrawNodeText(ImDrawListPtr imDraw)
