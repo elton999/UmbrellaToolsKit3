@@ -33,6 +33,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
         {
             int id = DialogueData.GetNewNodeId();
             var node = (Node)Activator.CreateInstance(typeof(Node), _storage, id, $"option - {id}", Vector2.Zero);
+            node.ParentNode = this;
 
             AddNodeOption(node);
             DialogueData.AddNode(node);
