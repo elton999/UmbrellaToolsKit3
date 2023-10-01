@@ -1,6 +1,6 @@
 ﻿using ImGuiNET;
 using Microsoft.Xna.Framework;
-using MonoGame.ImGui.Standard.Extensions;
+using System;
 using System.Collections.Generic;
 using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
 using UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor;
@@ -9,31 +9,30 @@ using UmbrellaToolsKit.Storage;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
 {
-    public class NodeWithOptions : NodeInPut, INodeOptions
+    public class NodeWithOptions : NodeInPut, INodeOptions<BasicNode>
     {
-        private List<INodeOutPutle> _nodeOptions;
+        private List<BasicNode> _nodeOptions;
         private Vector2 _optionSize => Vector2.UnitY * 30;
 
         public NodeWithOptions(Load storage, int id, string name, Vector2 position) : base(storage, id, name, position)
         {
-            _nodeOptions = new List<INodeOutPutle>();
+            _nodeOptions = new List<BasicNode>();
             UpdateBodyNodeSize();
             KeyBoardHandler.AddInput(Microsoft.Xna.Framework.Input.Keys.K);
         }
 
-        public List<INodeOutPutle> NodeOptions { get => _nodeOptions; }
+        public List<BasicNode> NodeOptions { get => _nodeOptions; }
 
-        public void AddNodeOption(INodeOutPutle node)
+        public void AddNodeOption(BasicNode node)
         {
             if (_nodeOptions.Contains(node)) return;
             _nodeOptions.Add(node);
         }
 
-        public void CreateAnOption()
+        public void CreateAnOption<Node>() where Node : BasicNode
         {
             int id = DialogueData.GetNewNodeId();
-            var node = new NodeOptionOutPut(_storage, id, $"option - {id}", Vector2.Zero) 
-            { ParentNode = this };
+            var node = (Node)Activator.CreateInstance(typeof(Node), _storage, id, $"option - {id}", Vector2.Zero);
 
             AddNodeOption(node);
             DialogueData.AddNode(node);
@@ -43,7 +42,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
         {
             base.Update();
             if (KeyBoardHandler.KeyPressed(Microsoft.Xna.Framework.Input.Keys.K))
-                CreateAnOption();
+                CreateAnOption<NodeOptionOutPut>();
             UpdateBodyNodeSize();
         }
 
@@ -57,7 +56,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
 
                 Vector2 nodePosition = Position + _optionSize * (Vector2.UnitY * optionNumber);
 
-                option.Node.Position = nodePosition;
+                option.Position = nodePosition;
             }
         }
 

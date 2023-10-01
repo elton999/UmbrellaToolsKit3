@@ -2,10 +2,10 @@
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes.Interfaces
 {
-    public interface INodeOptions
+    public interface INodeOptions<T>
     {
-        List<INodeOutPutle> NodeOptions { get; }
-        void CreateAnOption();
-        void AddNodeOption(INodeOutPutle node);
+        List<T> NodeOptions { get; }
+        void CreateAnOption<Node>() where Node : BasicNode;
+        void AddNodeOption(T node);
     }
 }
