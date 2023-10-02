@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using UmbrellaToolsKit.Storage;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
@@ -10,6 +11,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
             TitleColor = Color.Red;
             _titleSize = new Vector2(100, 30);
             _mainSquareSize = new Vector2(100, 30);
+            storage.AddItemString($"Nodes-Object-{Id}", new List<string>() { typeof(StartNode).Namespace + "." + typeof(StartNode).Name});
         }
     }
 }

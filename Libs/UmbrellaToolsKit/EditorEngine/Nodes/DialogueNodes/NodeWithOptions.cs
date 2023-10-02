@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
 using UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor;
-using UmbrellaToolsKit.Input;
 using UmbrellaToolsKit.Storage;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
@@ -18,7 +17,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
         {
             _nodeOptions = new List<BasicNode>();
             UpdateBodyNodeSize();
-            KeyBoardHandler.AddInput(Microsoft.Xna.Framework.Input.Keys.K);
+            storage.AddItemString($"Nodes-Object-{Id}", new List<string>() { typeof(NodeWithOptions).Namespace + "." + typeof(NodeWithOptions).Name });
         }
 
         public List<BasicNode> NodeOptions { get => _nodeOptions; }
@@ -64,7 +63,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
             base.DrawInspector();
             for (int i = 0; i < NodeOptions.Count; i++)
             {
-                string optionName = $"Option ({i + 1})";
+                string optionName = $"Option ({i + 1}) #ID{NodeOptions[i].Id}";
                 NodeOptions[i].Name = optionName;
                 if (ImGui.CollapsingHeader(optionName))
                 {
