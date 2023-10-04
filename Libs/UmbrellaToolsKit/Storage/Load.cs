@@ -96,6 +96,8 @@ namespace UmbrellaToolsKit.Storage
             return ListReturn;
         }
 
+        public void SetString(string node, string value) => AddItemString(node, new List<string> { value });
+
         public void AddItemString(string Node, List<string> ContentList) => AddAItem(Node, "string", ContentList);
 
         public void AddItemString(string Node, string value)
@@ -105,6 +107,8 @@ namespace UmbrellaToolsKit.Storage
             AddAItem(Node, "string", contentList);
         }
 
+        public void SetFloat(string node, float value) => AddItemFloat(node, new List<float> { value });
+
         public void AddItemFloat(string Node, List<float> ContentList) => AddAItem(Node, "float", ContentList);
 
         public void AddItemFloat(string Node, float value)
@@ -113,6 +117,8 @@ namespace UmbrellaToolsKit.Storage
             contentList.Add(value);
             AddAItem(Node, "float", contentList);
         }
+
+        public void SetBool(string node, bool value) => AddItemBool(node, new List<bool> { value });
 
         public void AddItemBool(string Node, List<bool> ContentList) => AddAItem(Node, "bool", ContentList);
 
