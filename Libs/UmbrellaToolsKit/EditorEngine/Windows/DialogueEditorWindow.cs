@@ -29,6 +29,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         public Vector2 LastDirection = Vector2.One;
 
         public static event Action<INodeOutPutle> OnStartConnecting;
+        public static event Action OnSave;
 
         public DialogueEditorWindow(GameManagement gameManagement)
         {
@@ -73,7 +74,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.Begin("Item props");
             ImGui.SetWindowFontScale(1.2f);
 
-            if (ImGui.Button("Save")) _storage.Save();
+            if (ImGui.Button("Save")) OnSave?.Invoke();
             if (ImGui.Button("Add Start Node")) AddNodeStart();
             if (ImGui.Button("Add End Node")) AddNodeEnd();
             if (ImGui.Button("Add Node")) AddNode();

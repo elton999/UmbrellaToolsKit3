@@ -31,8 +31,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         {
             NodesConnectionIn = new List<INodeInPutle>();
             NodesConnectionOut = new List<INodeOutPutle>();
-
-            storage.OnSave += SaveConnections;
         }
 
         public override void Update()
@@ -47,6 +45,13 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             base.Draw(imDraw);
             imDraw.AddCircleFilled(OutPosition.ToNumericVector2(), 5f, Color.Yellow.PackedValue);
             imDraw.AddCircleFilled(InPosition.ToNumericVector2(), 5f, Color.Yellow.PackedValue);
+        }
+
+        public override void OnSave()
+        {
+            base.OnSave();
+            
+            SaveConnections();
         }
 
         public void DrawConnections(ImDrawListPtr imDraw)

@@ -11,7 +11,12 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
             TitleColor = Color.Red;
             _titleSize = new Vector2(100, 30);
             _mainSquareSize = new Vector2(100, 30);
-            storage.AddItemString($"Nodes-Object-{Id}", new List<string>() { typeof(EndNode).Namespace + "." + typeof(EndNode).Name });
+        }
+
+        public override void OnSave()
+        {
+            base.OnSave();
+            _storage.AddItemString($"Nodes-Object-{Id}", new List<string>() { typeof(EndNode).Namespace + "." + typeof(EndNode).Name });
         }
     }
 }

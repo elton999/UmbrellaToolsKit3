@@ -2,6 +2,7 @@
 using ImGuiNET;
 using Microsoft.Xna.Framework;
 using MonoGame.ImGui.Standard.Extensions;
+using UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes;
 using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
 using UmbrellaToolsKit.EditorEngine.Windows;
 using UmbrellaToolsKit.Input;
@@ -13,8 +14,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public NodeOutPut(Load storage, int id, string name, Vector2 position) : base(storage, id, name, position)
         {
             NodesConnectionIn = new List<INodeInPutle>();
-            storage.AddItemString($"Nodes-Object-{Id}", nameof(NodeOutPut));
-            storage.OnSave += SaveConnections;
         }
 
         private bool _isConnecting = false;
@@ -40,6 +39,12 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             DrawConnections(imDraw);
             base.Draw(imDraw);
             DrawOutputPoint(imDraw);
+        }
+
+        public override void OnSave()
+        {
+            base.OnSave();
+            _storage.AddItemString($"Nodes-Object-{Id}", new List<string>() { typeof(NodeOutPut).Namespace + "." + typeof(NodeOutPut).Name });
         }
 
         protected void DrawOutputPoint(ImDrawListPtr imDraw)

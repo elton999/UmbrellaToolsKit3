@@ -17,7 +17,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
         {
             _nodeOptions = new List<BasicNode>();
             UpdateBodyNodeSize();
-            storage.AddItemString($"Nodes-Object-{Id}", new List<string>() { typeof(NodeWithOptions).Namespace + "." + typeof(NodeWithOptions).Name });
         }
 
         public List<BasicNode> NodeOptions { get => _nodeOptions; }
@@ -56,6 +55,12 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
 
                 option.Position = nodePosition;
             }
+        }
+
+        public override void OnSave()
+        {
+            base.OnSave();
+            _storage.AddItemString($"Nodes-Object-{Id}", new List<string>() { typeof(NodeWithOptions).Namespace + "." + typeof(NodeWithOptions).Name });
         }
 
         public override void DrawInspector()

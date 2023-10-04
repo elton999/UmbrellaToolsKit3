@@ -13,7 +13,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public NodeInPut(Load storage, int id, string name, Vector2 position) : base(storage, id, name, position)
         {
             NodesConnectionOut = new List<INodeOutPutle>();
-            storage.OnSave += SaveConnections;
         }
 
         public INode Node => this;

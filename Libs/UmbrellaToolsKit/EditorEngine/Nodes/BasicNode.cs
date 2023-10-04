@@ -86,6 +86,8 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             Id = id;
             Name = name;
             Position = position;
+
+            DialogueEditorWindow.OnSave += OnSave;
         }
 
         public virtual void Update() => HandlerMoveNode();
@@ -132,7 +134,17 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             DrawNodeText(imDraw);
         }
 
-        public virtual void OnDelete() {}
+        public virtual void OnDelete() 
+        {
+            DialogueEditorWindow.OnSave -= OnSave;
+        }
+
+        public virtual void OnSave() 
+        {
+            _storage.AddItemFloat($"position-{Id}-vector-x", new List<float>() { Position.X });
+            _storage.AddItemFloat($"position-{Id}-vector-y", new List<float>() { Position.Y });
+            _storage.Save();
+        }
 
         public virtual void DrawInspector()
         {

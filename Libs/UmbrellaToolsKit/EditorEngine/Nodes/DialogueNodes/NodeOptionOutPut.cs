@@ -11,7 +11,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
         public NodeOptionOutPut(Load storage, int id, string name, Vector2 position) : base(storage, id, name, position)
         {
             IsDragbleNode = false;
-            storage.AddItemString($"Nodes-Object-{Id}", new List<string>() { typeof(NodeOptionOutPut).Namespace + "." + typeof(NodeOptionOutPut).Name });
         }
 
         public override void DrawInspector()
@@ -31,6 +30,12 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
                 ((NodeWithOptions)ParentNode).NodeOptions.Remove(this);
             Disconnecting();
             DialogueData.RemoveNode(this);
+        }
+
+        public override void OnSave()
+        {
+            base.OnSave();
+           _storage.AddItemString($"Nodes-Object-{Id}", new List<string>() { typeof(NodeOptionOutPut).Namespace + "." + typeof(NodeOptionOutPut).Name });
         }
 
         public override void Draw(ImDrawListPtr imDraw) 
