@@ -19,7 +19,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
         public override void OnSave()
         {
             base.OnSave();
-            _storage.AddItemString($"Nodes-Object-{Id}", new List<string>() { typeof(StartNode).Namespace + "." + typeof(StartNode).Name });
+            _storage.SetString($"Nodes-Object-{Id}", typeof(StartNode).Namespace + "." + typeof(StartNode).Name);
         }
 
         public override void OnDelete()

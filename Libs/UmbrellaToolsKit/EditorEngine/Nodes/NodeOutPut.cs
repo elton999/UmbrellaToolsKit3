@@ -44,7 +44,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public override void OnSave()
         {
             base.OnSave();
-            _storage.AddItemString($"Nodes-Object-{Id}", new List<string>() { typeof(NodeOutPut).Namespace + "." + typeof(NodeOutPut).Name });
+            _storage.SetString($"Nodes-Object-{Id}", typeof(NodeOutPut).Namespace + "." + typeof(NodeOutPut).Name);
         }
 
         protected void DrawOutputPoint(ImDrawListPtr imDraw)

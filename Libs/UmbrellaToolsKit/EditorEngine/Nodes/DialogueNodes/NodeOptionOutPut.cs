@@ -35,7 +35,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
         public override void OnSave()
         {
             base.OnSave();
-           _storage.AddItemString($"Nodes-Object-{Id}", new List<string>() { typeof(NodeOptionOutPut).Namespace + "." + typeof(NodeOptionOutPut).Name });
+           _storage.SetString($"Nodes-Object-{Id}", typeof(NodeOptionOutPut).Namespace + "." + typeof(NodeOptionOutPut).Name );
         }
 
         public override void Draw(ImDrawListPtr imDraw) 

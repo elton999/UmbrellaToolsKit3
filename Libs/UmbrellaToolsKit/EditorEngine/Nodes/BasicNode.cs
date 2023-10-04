@@ -141,8 +141,8 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 
         public virtual void OnSave() 
         {
-            _storage.AddItemFloat($"position-{Id}-vector-x", new List<float>() { Position.X });
-            _storage.AddItemFloat($"position-{Id}-vector-y", new List<float>() { Position.Y });
+            _storage.SetFloat($"position-{Id}-vector-x", Position.X);
+            _storage.SetFloat($"position-{Id}-vector-y", Position.Y);
             _storage.Save();
         }
 
