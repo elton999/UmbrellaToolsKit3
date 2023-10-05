@@ -80,6 +80,13 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
                 Disconnecting();
         }
 
+        public override void OnDelete()
+        {
+            base.OnDelete();
+            _storage.DeleteNode($"Nodes-Connection-In-{Id}");
+            _storage.DeleteNode($"Nodes-Connection-Out-{Id}");
+        }
+
         public void AddNodeConnection(INodeInPutle node)
         {
             if (NodesConnectionIn.Contains(node)) return;

@@ -44,6 +44,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public override void OnSave()
         {
             base.OnSave();
+            SaveConnections();
             _storage.SetString($"Nodes-Object-{Id}", typeof(NodeOutPut).Namespace + "." + typeof(NodeOutPut).Name);
         }
 

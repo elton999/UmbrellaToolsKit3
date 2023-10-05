@@ -83,6 +83,9 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
 
         public override void OnDelete()
         {
+            base.OnDelete();
+            _storage.DeleteNode($"Nodes-Object-{Id}");
+
             foreach (var node in NodesConnectionOut)
                 node.NodesConnectionIn.Remove(this);
             NodesConnectionOut.Clear();

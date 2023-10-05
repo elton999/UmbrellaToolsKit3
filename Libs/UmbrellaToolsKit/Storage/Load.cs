@@ -96,6 +96,14 @@ namespace UmbrellaToolsKit.Storage
             return ListReturn;
         }
 
+        public void DeleteNode(string node)
+        {
+            XmlNodeList elementNode = doc.GetElementsByTagName(node);
+            if (elementNode.Count == 0) return;
+            elementNode[0].ParentNode.RemoveChild(elementNode[0]);
+            Save();
+        }
+
         public void SetString(string node, string value) => AddItemString(node, new List<string> { value });
 
         public void AddItemString(string Node, List<string> ContentList) => AddAItem(Node, "string", ContentList);
@@ -137,9 +145,12 @@ namespace UmbrellaToolsKit.Storage
 
             foreach (object content in ContentList)
             {
-                XmlElement NewElement = doc.CreateElement("item");
-                NewElement.InnerText = content.ToString();
-                ElementNode[0].AppendChild(NewElement);
+                if(content is not null)
+                {
+                    XmlElement NewElement = doc.CreateElement("item");
+                    NewElement.InnerText = content.ToString();
+                    ElementNode[0].AppendChild(NewElement);
+                }
             }
         }
 

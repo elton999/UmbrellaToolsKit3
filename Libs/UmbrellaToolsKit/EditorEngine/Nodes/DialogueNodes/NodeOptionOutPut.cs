@@ -24,6 +24,9 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
 
         public override void OnDelete()
         {
+            base.OnDelete();
+            _storage.DeleteNode($"Nodes-Object-{Id}");
+
             foreach (var node in NodesConnectionIn)
                 node.NodesConnectionOut.Remove(this);
             if (ParentNode is NodeWithOptions)

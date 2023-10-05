@@ -27,26 +27,13 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public int Id
         {
             get => _index;
-            set
-            {
-                int itemsIdNum = _storage.getItemsFloat("Id").Count;
-
-                if (_index + 1 > itemsIdNum)
-                    _storage.AddItemFloat("Id", value);
-                else
-                    _storage.getItemsFloat("Id")[_index] = value;
-                _index = value;
-            }
+            set => _index = value;
         }
 
         public string Name
         { 
             get => _name;
-            set
-            {
-                _storage.AddItemString($"name-{_index}", new List<string>() { value });
-                _name = value;
-            }
+            set => _name = value;
         }
 
         public Vector2 Position 
@@ -86,8 +73,8 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             Id = id;
             Name = name;
             Position = position;
-
-            DialogueEditorWindow.OnSave += OnSave;
+            _storage.AddItemFloat("Id", Id); ;
+            DialogueEditorWindow.OnSave += SaveNode;
         }
 
         public virtual void Update() => HandlerMoveNode();
@@ -136,14 +123,30 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 
         public virtual void OnDelete() 
         {
-            DialogueEditorWindow.OnSave -= OnSave;
+            _storage.DeleteNode($"name-{Id}");
+            _storage.DeleteNode($"content-{Id}");
+            _storage.DeleteNode($"position-{Id}-vector-x");
+            _storage.DeleteNode($"position-{Id}-vector-y");
+
+            var ids = _storage.getItemsFloat("Id");
+            ids.Remove(Id);
+            _storage.AddItemFloat("Id", ids);
+
+            DialogueEditorWindow.OnSave -= SaveNode;
+        }
+
+        public void SaveNode()
+        {
+            OnSave();
+            _storage.Save();
         }
 
         public virtual void OnSave() 
         {
+            _storage.SetString($"name-{Id}", Name);
+            _storage.SetString($"content-{Id}", Content);
             _storage.SetFloat($"position-{Id}-vector-x", Position.X);
             _storage.SetFloat($"position-{Id}-vector-y", Position.Y);
-            _storage.Save();
         }
 
         public virtual void DrawInspector()

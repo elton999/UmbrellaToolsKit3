@@ -34,6 +34,18 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             imDraw.AddCircleFilled(InPosition.ToNumericVector2(), 5f, Color.Yellow.PackedValue);
         }
 
+        public override void OnSave()
+        {
+            SaveConnections();
+            base.OnSave();
+        }
+
+        public override void OnDelete()
+        {
+            base.OnDelete();
+            _storage.DeleteNode($"Nodes-Connection-Out-{Id}");
+        }
+
         public void DrawConnections(ImDrawListPtr imDraw)
         {
             foreach (var outputNode in NodesConnectionOut)

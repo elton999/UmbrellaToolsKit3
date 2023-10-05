@@ -12,8 +12,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
             TitleColor = Color.Red;
             _titleSize = new Vector2(100, 30);
             _mainSquareSize = new Vector2(100, 30);
-
-            DialogueEditorWindow.OnSave += OnSave;
         }
 
         public override void OnSave()
@@ -25,7 +23,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
         public override void OnDelete()
         {
             base.OnDelete();
-            DialogueEditorWindow.OnSave -= OnSave;
+            _storage.DeleteNode($"Nodes-Object-{Id}");
         }
     }
 }
