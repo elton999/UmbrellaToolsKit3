@@ -42,8 +42,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             set
             {
                 _position = value;
-                //_storage.AddItemFloat($"position-{_index}-vector-x", new List<float>() { value.X });
-                //_storage.AddItemFloat($"position-{_index}-vector-y", new List<float>() { value.Y });
             }
         }
         public Vector2 MainSquareSize { get => _mainSquareSize; }
@@ -139,6 +137,17 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         {
             OnSave();
             _storage.Save();
+        }
+
+        public virtual void Load()
+        {
+            _name = _storage.getItemsString($"name-{Id}")[0];
+            _content = _storage.getItemsString($"content-{Id}")[0];
+
+            float x = _storage.getItemsFloat($"position-{Id}-vector-x")[0];
+            float y = _storage.getItemsFloat($"position-{Id}-vector-y")[0];
+
+            _position = new Vector2(x, y);
         }
 
         public virtual void OnSave() 
