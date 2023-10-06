@@ -5,6 +5,7 @@ using MonoGame.ImGui.Standard.Extensions;
 using UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes;
 using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
 using UmbrellaToolsKit.EditorEngine.Windows;
+using UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor;
 using UmbrellaToolsKit.Input;
 using UmbrellaToolsKit.Storage;
 namespace UmbrellaToolsKit.EditorEngine.Nodes
@@ -46,6 +47,17 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             base.OnSave();
             SaveConnections();
             _storage.SetString($"Nodes-Object-{Id}", typeof(NodeOutPut).Namespace + "." + typeof(NodeOutPut).Name);
+        }
+
+        public override void Load()
+        {
+            base.Load();
+            var connections = _storage.getItemsFloat($"Nodes-Connection-In-{Id}");
+            foreach (var connection in connections)
+            {
+                var node = DialogueData.Nodes.FindAll(x => x.Id == (int)connection)[0] as INodeInPutle;
+                AddNodeConnection(node);
+            }
         }
 
         protected void DrawOutputPoint(ImDrawListPtr imDraw)

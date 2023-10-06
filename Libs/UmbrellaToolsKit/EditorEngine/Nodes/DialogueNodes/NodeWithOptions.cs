@@ -63,6 +63,15 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
             _storage.SetString($"Nodes-Object-{Id}", typeof(NodeWithOptions).Namespace + "." + typeof(NodeWithOptions).Name );
         }
 
+        public override void Load()
+        {
+            base.Load();
+            var nodes = DialogueData.Nodes.FindAll(x => x.ParentNode != null && x.ParentNode.Id == this.Id);
+
+            foreach(var node in nodes)
+                AddNodeOption(node);
+        }
+
         public override void DrawInspector()
         {
             base.DrawInspector();

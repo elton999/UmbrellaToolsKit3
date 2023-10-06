@@ -1,6 +1,5 @@
 ﻿using ImGuiNET;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor;
 using UmbrellaToolsKit.Storage;
 

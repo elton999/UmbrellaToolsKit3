@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
 using MonoGame.ImGui.Standard.Extensions;
@@ -74,7 +75,16 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.Begin("Item props");
             ImGui.SetWindowFontScale(1.2f);
 
-            if (ImGui.Button("Save")) OnSave?.Invoke();
+            if (ImGui.Button("Save"))
+            {
+                List<float> ids = new List<float>();
+                foreach (var node in DialogueData.Nodes)
+                    ids.Add(node.Id);
+                _storage.AddItemFloat("Ids", ids);
+
+                OnSave?.Invoke();
+            }
+                
             if (ImGui.Button("Add Start Node")) AddNodeStart();
             if (ImGui.Button("Add End Node")) AddNodeEnd();
             if (ImGui.Button("Add Node")) AddNode();
@@ -150,14 +160,14 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
         private void AddNodeStart()
         {
-            var node = new StartNode(_storage, DialogueData.GetNewNodeId(), Vector2.One * 500f);
+            var node = new StartNode(_storage, DialogueData.GetNewNodeId(), null, Vector2.One * 500f);
             DialogueData.AddNode(node);
             _storage.Save();
         }
 
         private void AddNodeEnd()
         {
-            var node = new EndNode(_storage, DialogueData.GetNewNodeId(), Vector2.One * 500f);
+            var node = new EndNode(_storage, DialogueData.GetNewNodeId(), null, Vector2.One * 500f);
             DialogueData.AddNode(node);
             _storage.Save();
         }
@@ -199,26 +209,30 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
         private void LoadNodes()
         {
-            foreach (var nodeId in _storage.getItemsFloat("Id"))
+            var nodeIds = _storage.getItemsFloat("Ids");
+            foreach (float nodeId in nodeIds)
             {
                 int id = (int)nodeId;
-                string name = _storage.getItemsString($"name-{id}")[0];
-                var position = Vector2.Zero;
-                position.X = _storage.getItemsFloat($"position-{id}-vector-x")[0];
-                position.Y = _storage.getItemsFloat($"position-{id}-vector-y")[0];
+                if(DialogueData.LastNodeId < id)
+                    DialogueData.LastNodeId = id;
+            }
+            DialogueData.LastNodeId++;
 
-                var node = new NodeInPutAndOutPut(_storage, id, name, position);
+            foreach (float id in nodeIds)
+            {
+                string nodeType = _storage.getItemsString($"Nodes-Object-{(int)id}")[0];
+
+                Type type = Type.GetType(nodeType);
+                object[] args = new object[] { _storage, (int)id, "name", Vector2.Zero };
+                var node = (BasicNode)Activator.CreateInstance(type, args);
                 DialogueData.AddNode(node);
             }
 
             foreach (var node in DialogueData.Nodes)
-            {
-                var nodesConnections = _storage.getItemsFloat($"Nodes-Connection-In-{node.Id}");
-                foreach (var connection in nodesConnections)
-                {
-                    //node.AddNodeConnection(Nodes[(int)connection]);
-                }
-            }
+                node.Load();
+
+            foreach (var node in DialogueData.Nodes)
+                node.Load();
         }
     }
 }

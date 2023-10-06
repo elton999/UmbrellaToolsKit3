@@ -8,6 +8,7 @@ using UmbrellaToolsKit.Input;
 using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
 using UmbrellaToolsKit.Storage;
 using UmbrellaToolsKit.EditorEngine.Windows;
+using UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes
 {
@@ -71,7 +72,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             Id = id;
             Name = name;
             Position = position;
-            _storage.AddItemFloat("Id", Id); ;
             DialogueEditorWindow.OnSave += SaveNode;
         }
 
@@ -121,6 +121,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 
         public virtual void OnDelete() 
         {
+            _storage.AddItemFloat("Id", Id);
             _storage.DeleteNode($"name-{Id}");
             _storage.DeleteNode($"content-{Id}");
             _storage.DeleteNode($"position-{Id}-vector-x");
@@ -142,12 +143,20 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public virtual void Load()
         {
             _name = _storage.getItemsString($"name-{Id}")[0];
-            _content = _storage.getItemsString($"content-{Id}")[0];
+            var contents = _storage.getItemsString($"content-{Id}");
+            if(contents.Count > 0)
+                _content = contents[0];
 
             float x = _storage.getItemsFloat($"position-{Id}-vector-x")[0];
             float y = _storage.getItemsFloat($"position-{Id}-vector-y")[0];
-
             _position = new Vector2(x, y);
+
+            var parentsNode = _storage.getItemsFloat($"parent-{Id}");
+            if(parentsNode.Count > 0)
+            {
+                INode parentNode = DialogueData.Nodes.FindAll(x => x.Id == (int)parentsNode[0])[0];
+                ParentNode = parentNode;
+            }
         }
 
         public virtual void OnSave() 
@@ -156,6 +165,8 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             _storage.SetString($"content-{Id}", Content);
             _storage.SetFloat($"position-{Id}-vector-x", Position.X);
             _storage.SetFloat($"position-{Id}-vector-y", Position.Y);
+            if(ParentNode != null)
+                _storage.SetFloat($"parent-{Id}", ParentNode.Id);
         }
 
         public virtual void DrawInspector()

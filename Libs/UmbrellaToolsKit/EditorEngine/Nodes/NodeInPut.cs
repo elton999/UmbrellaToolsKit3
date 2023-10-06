@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using UmbrellaToolsKit.Input;
 using ImGuiNET;
 using MonoGame.ImGui.Standard.Extensions;
+using UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes
 {
@@ -38,6 +39,17 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         {
             SaveConnections();
             base.OnSave();
+        }
+
+        public override void Load()
+        {
+            base.Load();
+            var connections = _storage.getItemsFloat($"Nodes-Connection-Out-{Id}");
+            foreach(var connection in connections)
+            {
+                var node = DialogueData.Nodes.FindAll(x => x.Id == (int)connection)[0] as INodeOutPutle;
+                AddNodeConnection(node);
+            }
         }
 
         public override void OnDelete()
