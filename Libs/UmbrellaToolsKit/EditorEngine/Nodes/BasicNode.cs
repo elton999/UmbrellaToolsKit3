@@ -131,6 +131,8 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             ids.Remove(Id);
             _storage.AddItemFloat("Id", ids);
 
+            DialogueData.RemoveNode(this);
+
             DialogueEditorWindow.OnSave -= SaveNode;
         }
 
