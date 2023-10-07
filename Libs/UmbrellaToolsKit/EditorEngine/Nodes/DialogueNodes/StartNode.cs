@@ -1,6 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using UmbrellaToolsKit.EditorEngine.Windows;
 using UmbrellaToolsKit.Storage;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes

@@ -99,7 +99,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
                 node.NodesConnectionIn.Remove(this);
             NodesConnectionOut.Clear();
 
-            DialogueData.RemoveNode(this);
             var nodeOptions = new List<BasicNode>(NodeOptions);
             foreach (var node in nodeOptions)
                 node.OnDelete();

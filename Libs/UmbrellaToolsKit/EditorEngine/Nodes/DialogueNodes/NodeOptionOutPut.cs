@@ -31,7 +31,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
             if (ParentNode is NodeWithOptions)
                 ((NodeWithOptions)ParentNode).NodeOptions.Remove(this);
             Disconnecting();
-            DialogueData.RemoveNode(this);
         }
 
         public override void OnSave()
