@@ -63,6 +63,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public bool CanMoveNode = false;
 
         public static event Action<BasicNode> OnSelectNode;
+        public static event Action<BasicNode> OnDestroyNode;
         public static BasicNode currentSelectedNode;
 
         public BasicNode(Load storage, int id, string name, Vector2 position)
@@ -132,6 +133,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             _storage.AddItemFloat("Id", ids);
 
             DialogueData.RemoveNode(this);
+            OnDestroyNode?.Invoke(this);
 
             DialogueEditorWindow.OnSave -= SaveNode;
         }

@@ -4,7 +4,6 @@ using ImGuiNET;
 using Microsoft.Xna.Framework;
 using MonoGame.ImGui.Standard.Extensions;
 using UmbrellaToolsKit.EditorEngine.Nodes;
-using UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes;
 using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
 using UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor;
 using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
@@ -15,7 +14,6 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
     public class DialogueEditorWindow : IWindowEditable
     {
         private const string _dialogueSettingPath = @"Content/Dialogue1.Umbrella";
-        private const string _dialogueJsonPath = @"Content/Dialogue1.dn";
         private Storage.Load _storage;
 
         private GameManagement _gameManagement;
@@ -41,6 +39,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
             OnStartConnecting += StartLineConnection;
             BasicNode.OnSelectNode += SelectNode;
+            BasicNode.OnDestroyNode += RemoveSelectedNode;
 
             _storage = new Storage.Load(_dialogueSettingPath);
             LoadNodes();
@@ -48,9 +47,16 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
         public static void StartConnectingNodes(INodeOutPutle node) => OnStartConnecting?.Invoke(node);
 
-        public void SetAsMainWindow() => EditorArea.OnDrawWindow += ShowWindow;
-
-        public void RemoveAsMainWindow() => EditorArea.OnDrawWindow -= ShowWindow;
+        public void SetAsMainWindow()
+        {
+            BarEdtior.AdicionalBar = new DialogueEditorMainBar(_storage);
+            EditorArea.OnDrawWindow += ShowWindow;
+        }
+        public void RemoveAsMainWindow()
+        {
+            BarEdtior.AdicionalBar = null;
+            EditorArea.OnDrawWindow -= ShowWindow;
+        }
 
         public void ShowWindow(GameTime gameTime)
         {
@@ -75,21 +81,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.Begin("Item props");
             ImGui.SetWindowFontScale(1.2f);
 
-            if (ImGui.Button("Save"))
-            {
-                List<float> ids = new List<float>();
-                foreach (var node in DialogueData.Nodes)
-                    ids.Add(node.Id);
-                _storage.AddItemFloat("Ids", ids);
-
-                OnSave?.Invoke();
-            }
-                
-            if (ImGui.Button("Add Start Node")) AddNodeStart();
-            if (ImGui.Button("Add End Node")) AddNodeEnd();
-            if (ImGui.Button("Add Node")) AddNode();
             if (SelectedNode != null) ShowNodeInfo();
-            if (ImGui.Button("Export")) DialogueJsonExport.Export(_dialogueJsonPath);
 
             ImGui.End();
 
@@ -102,28 +94,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             var windowPosition = ImGui.GetWindowPos();
             var windowSize = ImGui.GetWindowSize();
 
-            Primativas.Square.Draw(
-                drawList,
-                windowPosition.ToXnaVector2(),
-                windowSize.ToXnaVector2(),
-                Color.DarkGray
-            );
-
-            int lines = 10;
-            int columns = 10;
-            for (int i = 0; i < lines; i++)
-            {
-                for(int j = 0; j < columns; j++)
-                {
-                    if((i+j) % 2 == 0)
-                    {
-                        Vector2 size = Vector2.One * 200;
-                        Vector2 position = size * (new Vector2(i, j));
-
-                        Primativas.Square.Draw(drawList, position, size, Color.DimGray);
-                    }
-                }
-            }
+            DrawBackground(drawList, windowPosition, windowSize);
 
             var direction = Vector2.Zero;
 
@@ -159,7 +130,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             var displayPos = windowPosition.ToXnaVector2() + Vector2.One * 30;
             var displaySize = new Vector2(150, 30);
             var displayPosText = displayPos + Vector2.One * 8;
-            Primativas.Square.Draw(drawList, displayPos, displaySize, new Color(0,0,0,0.5f));
+            Primativas.Square.Draw(drawList, displayPos, displaySize, new Color(0, 0, 0, 0.5f));
             drawList.AddText(displayPosText.ToNumericVector2(), Color.White.PackedValue, $"x: {direction.X}, y: {direction.Y}");
 
             Primativas.Square.Draw(drawList, displayPos + displaySize * Vector2.UnitX, displaySize, new Color(0, 0, 0, 0.5f));
@@ -167,6 +138,34 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
             ImGui.End();
         }
+
+        private static void DrawBackground(ImDrawListPtr drawList, System.Numerics.Vector2 windowPosition, System.Numerics.Vector2 windowSize)
+        {
+            Primativas.Square.Draw(
+                drawList,
+                windowPosition.ToXnaVector2(),
+                windowSize.ToXnaVector2(),
+                Color.DarkGray
+            );
+
+            int lines = 10;
+            int columns = 6;
+            for (int i = 0; i < lines; i++)
+            {
+                for (int j = 0; j < columns; j++)
+                {
+                    if ((i + j) % 2 == 0)
+                    {
+                        Vector2 size = Vector2.One * 200;
+                        Vector2 position = size * (new Vector2(i, j));
+
+                        Primativas.Square.Draw(drawList, position, size, Color.DimGray);
+                    }
+                }
+            }
+        }
+
+        public static void Save() => OnSave?.Invoke();
 
         public void ShowNodeInfo()
         {
@@ -176,27 +175,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         }
 
         private void SelectNode(BasicNode node) => SelectedNode = node;
-
-        private void AddNode()
-        {
-            var node = new NodeWithOptions(_storage, DialogueData.GetNewNodeId(), "new node", Vector2.One * 500f);
-            DialogueData.AddNode(node);
-            _storage.Save();
-        }
-
-        private void AddNodeStart()
-        {
-            var node = new StartNode(_storage, DialogueData.GetNewNodeId(), null, Vector2.One * 500f);
-            DialogueData.AddNode(node);
-            _storage.Save();
-        }
-
-        private void AddNodeEnd()
-        {
-            var node = new EndNode(_storage, DialogueData.GetNewNodeId(), null, Vector2.One * 500f);
-            DialogueData.AddNode(node);
-            _storage.Save();
-        }
+        private void RemoveSelectedNode(BasicNode node) => SelectedNode = SelectedNode == node ? null: node;
 
         private void TraceLineConnection(ImDrawListPtr drawList)
         {

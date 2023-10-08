@@ -2,6 +2,7 @@
 using System.Reflection;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
+using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
 
 namespace UmbrellaToolsKit.EditorEngine
 {
@@ -14,12 +15,17 @@ namespace UmbrellaToolsKit.EditorEngine
 
         public static event Action OnSwitchEditorWindow;
 
+        public static IBarEditor AdicionalBar;
+
         public void Draw(GameTime gameTime)
         {
             double frameRate = 1d / gameTime.ElapsedGameTime.TotalSeconds;
 
             if (ImGui.BeginMainMenuBar())
             {
+                if (AdicionalBar is IBarEditor)
+                    AdicionalBar.Draw();
+
                 if (ImGui.BeginMenu("Window"))
                 {
                     if (ImGui.MenuItem("Main Editor"))
@@ -36,6 +42,7 @@ namespace UmbrellaToolsKit.EditorEngine
 
                     ImGui.EndMenu();
                 }
+
                 ImGui.BeginTable("##positionBar", 4);
                 ImGui.TableNextColumn();
                 ImGui.TableNextColumn();
