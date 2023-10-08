@@ -18,6 +18,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
                 SetStartNode(dialogue, basicNode);
 
                 var node = new Node();
+                node.Id = basicNode.Id;
                 node.Name = basicNode.Name;
                 node.Content = basicNode.Content;
                 node.Options = new();
