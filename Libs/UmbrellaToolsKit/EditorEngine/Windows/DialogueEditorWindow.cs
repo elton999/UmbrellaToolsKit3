@@ -15,6 +15,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
     public class DialogueEditorWindow : IWindowEditable
     {
         private const string _dialogueSettingPath = @"Content/Dialogue1.Umbrella";
+        private const string _dialogueJsonPath = @"Content/Dialogue1.dn";
         private Storage.Load _storage;
 
         private GameManagement _gameManagement;
@@ -88,6 +89,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             if (ImGui.Button("Add End Node")) AddNodeEnd();
             if (ImGui.Button("Add Node")) AddNode();
             if (SelectedNode != null) ShowNodeInfo();
+            if (ImGui.Button("Export")) DialogueJsonExport.Export(_dialogueJsonPath);
 
             ImGui.End();
 
