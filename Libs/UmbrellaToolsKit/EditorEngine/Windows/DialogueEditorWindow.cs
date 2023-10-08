@@ -109,6 +109,22 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                 Color.DarkGray
             );
 
+            int lines = 10;
+            int columns = 10;
+            for (int i = 0; i < lines; i++)
+            {
+                for(int j = 0; j < columns; j++)
+                {
+                    if((i+j) % 2 == 0)
+                    {
+                        Vector2 size = Vector2.One * 200;
+                        Vector2 position = size * (new Vector2(i, j));
+
+                        Primativas.Square.Draw(drawList, position, size, Color.DimGray);
+                    }
+                }
+            }
+
             var direction = Vector2.Zero;
 
             if (MouseHandler.ButtonMiddleOneClick)
@@ -139,6 +155,15 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             }
 
             LastDirection = direction;
+
+            var displayPos = windowPosition.ToXnaVector2() + Vector2.One * 30;
+            var displaySize = new Vector2(150, 30);
+            var displayPosText = displayPos + Vector2.One * 8;
+            Primativas.Square.Draw(drawList, displayPos, displaySize, new Color(0,0,0,0.5f));
+            drawList.AddText(displayPosText.ToNumericVector2(), Color.White.PackedValue, $"x: {direction.X}, y: {direction.Y}");
+
+            Primativas.Square.Draw(drawList, displayPos + displaySize * Vector2.UnitX, displaySize, new Color(0, 0, 0, 0.5f));
+            drawList.AddText((displayPosText + displaySize * Vector2.UnitX).ToNumericVector2(), Color.White.PackedValue, $"m x: {MouseHandler.Position.X}, y: {MouseHandler.Position.Y}");
 
             ImGui.End();
         }
