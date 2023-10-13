@@ -9,6 +9,7 @@ namespace UmbrellaToolsKit.EditorEngine
     public class BarEdtior
     {
         private string projectName = Assembly.GetCallingAssembly().GetName().Name;
+        private bool isShowingImguiDemo = false;
         
         public static event Action OnOpenMainEditor;
         public static event Action OnOpenDialogueEditor;
@@ -16,6 +17,7 @@ namespace UmbrellaToolsKit.EditorEngine
         public static event Action OnSwitchEditorWindow;
 
         public static IBarEditor AdicionalBar;
+
 
         public void Draw(GameTime gameTime)
         {
@@ -43,6 +45,14 @@ namespace UmbrellaToolsKit.EditorEngine
                     ImGui.EndMenu();
                 }
 
+                if (ImGui.BeginMenu("Help"))
+                {
+                    if (ImGui.MenuItem("Imgui helper"))
+                        isShowingImguiDemo = true;
+
+                    ImGui.EndMenu();
+                }
+                
                 ImGui.BeginTable("##positionBar", 4);
                 ImGui.TableNextColumn();
                 ImGui.TableNextColumn();
@@ -54,6 +64,9 @@ namespace UmbrellaToolsKit.EditorEngine
             }
             ImGui.SetWindowFontScale(1.2f);
             ImGui.EndMainMenuBar();
+
+            if(isShowingImguiDemo)
+                ImGui.ShowDemoWindow();
         }
     }
 }
