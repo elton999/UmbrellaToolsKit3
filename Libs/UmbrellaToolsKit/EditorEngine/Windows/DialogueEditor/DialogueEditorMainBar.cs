@@ -4,16 +4,19 @@ using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Eto.Forms;
+using System;
 
 namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
 {
     public class DialogueEditorMainBar : IBarEditor
     {
+        public static event Action<string> OnAnyOpenFile;
+
         public DialogueEditorMainBar( Storage.Load storage) { _storage = storage; }
 
         private Storage.Load _storage;
-        private string _dialogueJsonPath = @"Content/Dialogue1.dn";
-        private string _dialogueSettingPath = @"Content/Dialogue1.Umbrella";
+        private string _dialogueJsonPath;
+        private string _dialogueSettingPath;
 
         public void Draw()
         {
@@ -21,6 +24,12 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
             {
                 if (ImGui.MenuItem("Open..."))
                 {
+                    var openFileDialog = OpenFileDialogue.OpenFileDialog("Open file", "Dialogue Nodes", ".Umbrella");
+                    if(OpenFileDialogue.SaveFileDialog(openFileDialog))
+                    {
+                        _dialogueSettingPath = openFileDialog.FileName;
+                        OnAnyOpenFile?.Invoke(_dialogueSettingPath);
+                    }
                 }
 
                 if (ImGui.MenuItem("Save"))

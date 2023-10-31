@@ -13,7 +13,6 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 {
     public class DialogueEditorWindow : IWindowEditable
     {
-        private const string _dialogueSettingPath = @"Content/Dialogue1.Umbrella";
         private Storage.Load _storage;
 
         private GameManagement _gameManagement;
@@ -40,12 +39,16 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             OnStartConnecting += StartLineConnection;
             BasicNode.OnSelectNode += SelectNode;
             BasicNode.OnDestroyNode += RemoveSelectedNode;
-
-            _storage = new Storage.Load(_dialogueSettingPath);
-            LoadNodes();
+            DialogueEditorMainBar.OnAnyOpenFile += OpenFile;
         }
 
         public static void StartConnectingNodes(INodeOutPutle node) => OnStartConnecting?.Invoke(node);
+
+        public void OpenFile(string filename)
+        {
+            _storage = new Storage.Load(filename);
+            LoadNodes();
+        }
 
         public void SetAsMainWindow()
         {
