@@ -35,16 +35,11 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
 
                 if (ImGui.MenuItem("Export DN file"))
                 {
-                    var saveFileDialog = new SaveFileDialog
-                    {
-                        Title = "Export to ...",
-                        Filters = { new FileDialogFilter("Umbrella Tools Kit Dialogue Nodes file", ".dn") }
-                    };
+                    var saveFileDialog = ExportDialogue.SaveFileDialog("Export to ...", "Umbrella Tools Kit Dialogue Nodes file", ".dn");
 
-                    if (saveFileDialog.ShowDialog(Application.Instance.MainForm) == DialogResult.Ok)
+                    if (ExportDialogue.ShowSaveDialog(saveFileDialog))
                     {
-                        var srcfile = saveFileDialog.FileName;
-                        _dialogueJsonPath = srcfile;
+                        _dialogueJsonPath = saveFileDialog.FileName;
                         DialogueJsonExport.Export(_dialogueJsonPath);
                     }
                 }
