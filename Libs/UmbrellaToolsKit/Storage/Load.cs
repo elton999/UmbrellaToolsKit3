@@ -24,6 +24,8 @@ namespace UmbrellaToolsKit.Storage
             LoadFile();
         }
 
+        public void SetFilename(string filename) => _curlFile = filename;
+
         private void LoadFile()
         {
             doc = new XmlDocument();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.ComTypes;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
 using MonoGame.ImGui.Standard.Extensions;
@@ -17,6 +18,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
         private GameManagement _gameManagement;
         public GameManagement GameManagement { get => _gameManagement; }
+
+        public Storage.Load Storage => _storage;
 
         public BasicNode SelectedNode;
 
@@ -40,6 +43,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             BasicNode.OnSelectNode += SelectNode;
             BasicNode.OnDestroyNode += RemoveSelectedNode;
             DialogueEditorMainBar.OnAnyOpenFile += OpenFile;
+            _storage = new Storage.Load();
         }
 
         public static void StartConnectingNodes(INodeOutPutle node) => OnStartConnecting?.Invoke(node);
@@ -52,7 +56,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
         public void SetAsMainWindow()
         {
-            BarEdtior.AdicionalBar = new DialogueEditorMainBar(_storage);
+            BarEdtior.AdicionalBar = new DialogueEditorMainBar(this);
             EditorArea.OnDrawWindow += ShowWindow;
         }
         public void RemoveAsMainWindow()
@@ -168,7 +172,20 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             }
         }
 
-        public static void Save() => OnSave?.Invoke();
+        public void Save(string filename)
+        {
+            if (_storage == null)
+                _storage = new Storage.Load(filename);
+            if(_storage != null)
+                _storage.SetFilename(filename);
+            
+            List<float> ids = new List<float>();
+            foreach (var node in DialogueData.Nodes)
+                ids.Add(node.Id);
+            _storage.AddItemFloat("Ids", ids);
+
+            OnSave?.Invoke();
+        }
 
         public void ShowNodeInfo()
         {

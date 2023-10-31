@@ -2,8 +2,6 @@
 using UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes;
 using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using Eto.Forms;
 using System;
 
 namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
@@ -12,11 +10,12 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
     {
         public static event Action<string> OnAnyOpenFile;
 
-        public DialogueEditorMainBar( Storage.Load storage) { _storage = storage; }
-
-        private Storage.Load _storage;
         private string _dialogueJsonPath;
         private string _dialogueSettingPath;
+
+        private DialogueEditorWindow _dialogueEditorWindow;
+
+        public DialogueEditorMainBar(DialogueEditorWindow dialogueEditorWindow) => _dialogueEditorWindow = dialogueEditorWindow;
 
         public void Draw()
         {
@@ -34,12 +33,19 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
 
                 if (ImGui.MenuItem("Save"))
                 {
-                    List<float> ids = new List<float>();
-                    foreach (var node in DialogueData.Nodes)
-                        ids.Add(node.Id);
-                    _storage.AddItemFloat("Ids", ids);
+                    if(_dialogueSettingPath == null)
+                    {
+                        var saveFileDialog = ExportDialogue.SaveFileDialog("Save", "Umbrella Tools Kit Dialogue Nodes file", ".Umbrella");
 
-                    DialogueEditorWindow.Save();
+                        if (ExportDialogue.ShowSaveDialog(saveFileDialog))
+                        {
+                            _dialogueSettingPath = saveFileDialog.FileName;
+                            _dialogueEditorWindow.Save(_dialogueSettingPath);
+                        }
+
+                        return;
+                    }else 
+                        _dialogueEditorWindow.Save(_dialogueSettingPath);
                 }
 
                 if (ImGui.MenuItem("Export DN file"))
@@ -60,19 +66,19 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
             {
                 if (ImGui.MenuItem("Add Start Node"))
                 {
-                    var node = new StartNode(_storage, DialogueData.GetNewNodeId(), null, Vector2.One * 500f);
+                    var node = new StartNode(_dialogueEditorWindow.Storage, DialogueData.GetNewNodeId(), null, Vector2.One * 500f);
                     DialogueData.AddNode(node);
                 }
 
                 if (ImGui.MenuItem("Add End Node"))
                 {
-                    var node = new EndNode(_storage, DialogueData.GetNewNodeId(), null, Vector2.One * 500f);
+                    var node = new EndNode(_dialogueEditorWindow.Storage, DialogueData.GetNewNodeId(), null, Vector2.One * 500f);
                     DialogueData.AddNode(node);
                 }
 
                 if (ImGui.MenuItem("Add Nove With Options"))
                 {
-                    var node = new NodeWithOptions(_storage, DialogueData.GetNewNodeId(), "new node", Vector2.One * 500f);
+                    var node = new NodeWithOptions(_dialogueEditorWindow.Storage, DialogueData.GetNewNodeId(), "new node", Vector2.One * 500f);
                     DialogueData.AddNode(node);
                 }
 
