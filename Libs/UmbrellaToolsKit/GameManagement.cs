@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using UmbrellaToolsKit.Interfaces;
 using UmbrellaToolsKit.EditorEngine;
+using Eto;
+using Eto.Forms;
 
 namespace UmbrellaToolsKit
 {
@@ -31,6 +33,8 @@ namespace UmbrellaToolsKit
         {
             Game = game;
             _editor = new EditorMain(Game, this);
+            Platform platform;
+            new Application(new Eto.WinForms.Platform());
         }
 
         public void Start()

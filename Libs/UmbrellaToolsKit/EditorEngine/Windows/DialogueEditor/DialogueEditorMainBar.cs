@@ -3,6 +3,7 @@ using UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes;
 using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using Eto.Forms;
 
 namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
 {
@@ -11,8 +12,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
         public DialogueEditorMainBar( Storage.Load storage) { _storage = storage; }
 
         private Storage.Load _storage;
-        private const string _dialogueJsonPath = @"Content/Dialogue1.dn";
-        private const string _dialogueSettingPath = @"Content/Dialogue1.Umbrella";
+        private string _dialogueJsonPath = @"Content/Dialogue1.dn";
+        private string _dialogueSettingPath = @"Content/Dialogue1.Umbrella";
 
         public void Draw()
         {
@@ -32,8 +33,21 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
                     DialogueEditorWindow.Save();
                 }
 
-                if (ImGui.MenuItem("Export Json"))
-                    DialogueJsonExport.Export(_dialogueJsonPath);
+                if (ImGui.MenuItem("Export DN file"))
+                {
+                    var saveFileDialog = new SaveFileDialog
+                    {
+                        Title = "Export to ...",
+                        Filters = { new FileDialogFilter("Umbrella Tools Kit Dialogue Nodes file", ".dn") }
+                    };
+
+                    if (saveFileDialog.ShowDialog(Application.Instance.MainForm) == DialogResult.Ok)
+                    {
+                        var srcfile = saveFileDialog.FileName;
+                        _dialogueJsonPath = srcfile;
+                        DialogueJsonExport.Export(_dialogueJsonPath);
+                    }
+                }
 
                 ImGui.EndMenu();
             }
