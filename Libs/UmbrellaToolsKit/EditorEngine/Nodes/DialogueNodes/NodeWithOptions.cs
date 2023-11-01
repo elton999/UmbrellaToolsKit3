@@ -77,11 +77,13 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
             base.DrawInspector();
             for (int i = 0; i < NodeOptions.Count; i++)
             {
-                string optionName = $"Option ({i + 1}) #ID{NodeOptions[i].Id}";
-                NodeOptions[i].Name = optionName;
-                if (ImGui.CollapsingHeader(optionName))
+                if (ImGui.CollapsingHeader($"Option - {NodeOptions[i].Id}"))
                 {
                     ImGui.Indent();
+                    string stringValue = NodeOptions[i].Name;
+                    Fields.Field.DrawString("Name option", ref stringValue);
+                    NodeOptions[i].Name = stringValue;
+
                     NodeOptions[i].DrawInspector();
                     ImGui.Unindent();
                 }
