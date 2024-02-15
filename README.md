@@ -44,7 +44,7 @@ namespace Project
         var scene = _gameManagement.SceneManagement.MainScene;
         var gameObj = new GameObject();
         gameObj.Sprite = Content.Load<Texture2D>("Sprites/picture");
-        scene.Middleground.Add(gameObj);
+        scene.Middleground.AddGameObject(gameObj, Layers.MIDDLEGROUND);
         //...
     }
 }
@@ -89,6 +89,43 @@ public class Player : GameObject
 ### Components
 <img src="https://raw.githubusercontent.com/elton999/UmbrellaToolsKit3/main/Concept/project-opengl_pOItuqnfwN.png" width="100%" />
 
+Creating a new component:
+
+```csharp
+using System;
+using UmbrellaToolsKit;
+
+namespace Project.Components
+{
+    public class HealthComponent : Component
+    {
+        [ShowEditor] private bool _isImmortal = false;
+
+        [ShowEditor] public float HP = 10.0f;
+        public bool IsAlive => HP > 0.0f;
+        public static event Action<GameObject> OnAnyEntityDie;
+
+        public event Action OnDie;
+
+        public void TakeDamage(float damage)
+        {
+            if (!IsAlive || _isImmortal) return;
+
+            HP = Math.Clamp(HP - damage, 0, float.PositiveInfinity);
+
+            if (HP > 0.0f) return;
+
+            OnAnyEntityDie?.Invoke(GameObject);
+            OnDie?.Invoke();
+        }
+
+        public void BeImmortal() => _isImmortal = true;
+    }
+}
+```
+
+You can add your own components to any game object:
+
 ```csharp
 namespace Project
 {
@@ -97,8 +134,8 @@ namespace Project
         //...
         var scene = _gameManagement.SceneManagement.MainScene;
         var gameObj = new GameObject();
-        gameObj.Sprite = Content.Load<Texture2D>("Sprites/picture");
-        scene.Middleground.Add(gameObj);
+        scene.Middleground.AddGameObject(gameObj, Layers.MIDDLEGROUND);
+        gameObj.AddComponent<HealthComponent>();
         //...
     }
 }
