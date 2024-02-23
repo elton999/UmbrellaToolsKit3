@@ -11,6 +11,7 @@ namespace UmbrellaToolsKit
     public class GameObject : IGameObject
     {
         private IComponent _components;
+        private CoroutineManagement _coroutineManagement;
         private bool _removeFromScene = false;
         private Scene _scene;
 
@@ -33,6 +34,9 @@ namespace UmbrellaToolsKit
 
         public ContentManager Content;
         public Scene Scene { get => _scene; set => _scene = value; }
+
+        public CoroutineManagement CoroutineManagement => _coroutineManagement;
+
         public dynamic Values;
         public List<Vector2> Nodes;
 
@@ -50,6 +54,8 @@ namespace UmbrellaToolsKit
         public Effect Effect = null;
 
         public float Radius;
+
+        public GameObject() => _coroutineManagement = new CoroutineManagement();
 
         public virtual void Start() { }
         public virtual void OnVisible() { }

@@ -175,6 +175,8 @@ namespace UmbrellaToolsKit
                     layers[i][e].Update(gameTime);
                     if (layers[i][e].Components != null)
                         layers[i][e].Components.Update(gameTime);
+
+                    layers[i][e].CoroutineManagement.Update(gameTime);
                 }
             }
 
