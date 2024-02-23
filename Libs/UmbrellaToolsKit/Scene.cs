@@ -169,8 +169,14 @@ namespace UmbrellaToolsKit
                 UI[i].Update(gameTime);
 
             for (int i = layers.Count - 1; i >= 0; i--)
+            {
                 for (int e = layers[i].Count - 1; e >= 0; e--)
+                {
                     layers[i][e].Update(gameTime);
+                    if (layers[i][e].Components != null)
+                        layers[i][e].Components.Update(gameTime);
+                }
+            }
 
             timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             while (timer >= updateDataTime)
@@ -183,6 +189,9 @@ namespace UmbrellaToolsKit
 
                         if (Camera != null)
                             Camera.update(gameTime);
+
+                        if (layers[i][e].Components != null)
+                            layers[i][e].Components.UpdateData(gameTime);
                     }
 
                 }

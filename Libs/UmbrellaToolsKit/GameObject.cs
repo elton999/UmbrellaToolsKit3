@@ -55,15 +55,9 @@ namespace UmbrellaToolsKit
         public virtual void OnVisible() { }
         public virtual void OnInvisible() { }
 
-        public virtual void Update(GameTime gameTime)
-        {
-            if (Components != null) Components.Update(gameTime);
-        }
+        public virtual void Update(GameTime gameTime) {}
 
-        public virtual void UpdateData(GameTime gameTime)
-        {
-            if (Components != null) Components.UpdateData(gameTime);
-        }
+        public virtual void UpdateData(GameTime gameTime){}
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {

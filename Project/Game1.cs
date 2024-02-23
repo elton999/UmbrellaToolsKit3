@@ -36,6 +36,7 @@ namespace Project
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             _assetManagement = new AssetManagement();
+            _gameManagement.SceneManagement.MainScene.AddGameObject(new GameObject(), Layers.FOREGROUND);
         }
 
         protected override void Update(GameTime gameTime)
