@@ -7,7 +7,7 @@ namespace UmbrellaToolsKit
     {
         public ShowEditorAttribute()
         {
-            Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++");
+
         }
     }
 }

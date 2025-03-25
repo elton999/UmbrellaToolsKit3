@@ -37,6 +37,7 @@ namespace Project
 
             _assetManagement = new AssetManagement();
             _gameManagement.SceneManagement.MainScene.AddGameObject(new GameObject(), Layers.FOREGROUND);
+            _gameManagement.SceneManagement.MainScene.LevelReady = true;
         }
 
         protected override void Update(GameTime gameTime)

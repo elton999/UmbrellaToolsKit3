@@ -8,49 +8,60 @@ namespace UmbrellaToolsKit.ParticlesSystem
     public class ParticlesSystem : GameObject
     {
         private float _timer = 0.0f;
-
-        public bool IsPlaying { get => (IsOnTime && Particles.Count > 0) || EmitsFor == TypeEmitter.INFINITE; }
-
-        private bool IsOnTime { get => EmitsFor == TypeEmitter.FOR_TIME && _timer >= 0; }
+        private bool _isPlaying = false;
+        public bool IsPlaying { get => _isPlaying && ((IsOnTime && Particles.Count > 0) || EmitsFor == TypeEmitter.INFINITE); }
+        private bool IsOnTime { get => EmitsFor == TypeEmitter.FOR_TIME && _timer > 0.0f; }
 
         public enum TypeEmitter { FOR_TIME, INFINITE }
 
         public List<Particle> Particles = new List<Particle>();
         public List<Texture2D> Sprites = new List<Texture2D>();
-        public float EmitterTime = 0.0f;
+        [ShowEditor] public float EmitterTime = 0.0f;
         public TypeEmitter EmitsFor = TypeEmitter.INFINITE;
 
-        public int MaxParticles = 5;
+        [ShowEditor] public int MaxParticles = 5;
 
-        public float ParticleVelocityAngle = 90f;
-        public float ParticleAngleEmitter = 180f - (90f / 2f);
-        public float ParticleMaxScale = 20;
-        public float ParticleAngle = 90f;
-        public float ParticleLifeTime = 1800f;
-        public float ParticleTransparent = 0.5f;
-        public float ParticleVelocity = 200f;
-        public float ParticleAngleRotation = 90f;
-        public float ParticleRadiusSpawn = 10f;
+        [ShowEditor] public float ParticleVelocityAngle = 90f;
+        [ShowEditor] public float ParticleAngleEmitter = 180f - (90f / 2f);
+        [ShowEditor] public float ParticleMaxScale = 20;
+        [ShowEditor] public float ParticleAngle = 90f;
+        [ShowEditor] public float ParticleLifeTime = 1800f;
+        [ShowEditor] public float ParticleTransparent = 0.5f;
+        [ShowEditor] public float ParticleVelocity = 200f;
+        [ShowEditor] public float ParticleAngleRotation = 90f;
+        [ShowEditor] public float ParticleRadiusSpawn = 10f;
+        [ShowEditor] public bool ParticleDecreaseScale = false;
+        [ShowEditor] public float ParticleScaleSpeed = 10.0f;
+
+        public override void Start() => Tag = nameof(ParticlesSystem);
 
         public void Restart() => _timer = EmitterTime;
 
-        public override void Update(GameTime gameTime)
+        public void Play()
         {
-            _timer -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            _isPlaying = true;
+            Restart();
+        }
+
+        public override void Update(float deltaTime)
+        {
+            deltaTime = MathUtils.SecondsToMilliseconds(deltaTime);
+            _timer -= deltaTime;
 
             if (IsOnTime || EmitsFor == TypeEmitter.INFINITE)
                 ImitParticles();
 
-            CheckLifeTimeParticles(gameTime);
+            CheckLifeTimeParticles(deltaTime);
         }
 
-        public void CheckLifeTimeParticles(GameTime gameTime)
+        public void CheckLifeTimeParticles(float deltaTime)
         {
             for (int i = 0; i < Particles.Count; i++)
             {
-                Particles[i].Update(gameTime);
+                Particles[i].Update(deltaTime);
                 if (Particles[i].LifeTime <= 0f)
                 {
+                    Particles[i].Dispose();
                     Particles.RemoveAt(i);
                     i--;
                 }
@@ -65,7 +76,7 @@ namespace UmbrellaToolsKit.ParticlesSystem
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            BeginDraw(spriteBatch);
+            BeginDraw(spriteBatch, Layer != Layers.UI);
             DrawParticles(spriteBatch);
             EndDraw(spriteBatch);
         }
@@ -80,8 +91,8 @@ namespace UmbrellaToolsKit.ParticlesSystem
         {
             var random = new Random();
             var velocityDirection = new Vector2(
-                (float)Math.Sin((double)MathHelper.ToRadians((float)random.NextDouble() * ParticleVelocityAngle + ParticleAngleEmitter)),
-                (float)Math.Cos((double)MathHelper.ToRadians((float)random.NextDouble() * ParticleVelocityAngle + ParticleAngleEmitter)));
+                (float)Math.Sin(MathHelper.ToRadians((float)random.NextDouble() * ParticleVelocityAngle + ParticleAngleEmitter)),
+                (float)Math.Cos(MathHelper.ToRadians((float)random.NextDouble() * ParticleVelocityAngle + ParticleAngleEmitter)));
 
             return new Particle()
             {
@@ -91,7 +102,9 @@ namespace UmbrellaToolsKit.ParticlesSystem
                 Transparent = ParticleTransparent,
                 Velocity = velocityDirection * ParticleVelocity / 1000f,
                 Sprite = Sprites[random.Next(0, Sprites.Count - 1)],
-                LifeTime = (float)random.NextDouble() * ParticleLifeTime
+                LifeTime = (float)random.NextDouble() * ParticleLifeTime,
+                DecreaseScale = ParticleDecreaseScale,
+                DecreaseScaleSpeed = ParticleScaleSpeed,
             };
         }
     }

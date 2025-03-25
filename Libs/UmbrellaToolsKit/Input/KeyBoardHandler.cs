@@ -11,18 +11,9 @@ namespace UmbrellaToolsKit.Input
         private static Dictionary<Keys, Tuple<KeyState, KeyState>> _keysStatus = new Dictionary<Keys, Tuple<KeyState, KeyState>>();
         private static Dictionary<string, List<Keys>> _bindedInputs = new Dictionary<string, List<Keys>>();
 
-        internal static KeyBoardHandler GetStatus
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new KeyBoardHandler();
-                    GameManagement.OnGameUpdateData += _instance.setInputData;
-                }
-                return _instance;
-            }
-        }
+        public KeyBoardHandler() => GameManagement.OnGameUpdateData += setInputData;
+
+        internal static KeyBoardHandler GetStatus => _instance ??= new KeyBoardHandler();
 
         public static bool KeyPressed(Keys key)
         {

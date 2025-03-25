@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Reflection;
+#if !RELEASE
 using ImGuiNET;
+#endif
 using Microsoft.Xna.Framework;
 using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
 
@@ -10,9 +12,10 @@ namespace UmbrellaToolsKit.EditorEngine
     {
         private string projectName = Assembly.GetCallingAssembly().GetName().Name;
         private bool isShowingImguiDemo = false;
-        
+
         public static event Action OnOpenMainEditor;
         public static event Action OnOpenDialogueEditor;
+        public static event Action OnOpenGameSettingsEditor;
 
         public static event Action OnSwitchEditorWindow;
 
@@ -21,6 +24,7 @@ namespace UmbrellaToolsKit.EditorEngine
 
         public void Draw(GameTime gameTime)
         {
+#if !RELEASE
             double frameRate = 1d / gameTime.ElapsedGameTime.TotalSeconds;
 
             if (ImGui.BeginMainMenuBar())
@@ -42,6 +46,12 @@ namespace UmbrellaToolsKit.EditorEngine
                         OnOpenDialogueEditor?.Invoke();
                     }
 
+                    if (ImGui.MenuItem("GameSettings Editor"))
+                    {
+                        OnSwitchEditorWindow?.Invoke();
+                        OnOpenGameSettingsEditor?.Invoke();
+                    }
+
                     ImGui.EndMenu();
                 }
 
@@ -52,7 +62,7 @@ namespace UmbrellaToolsKit.EditorEngine
 
                     ImGui.EndMenu();
                 }
-                
+
                 ImGui.BeginTable("##positionBar", 4);
                 ImGui.TableNextColumn();
                 ImGui.TableNextColumn();
@@ -65,8 +75,9 @@ namespace UmbrellaToolsKit.EditorEngine
             ImGui.SetWindowFontScale(1.2f);
             ImGui.EndMainMenuBar();
 
-            if(isShowingImguiDemo)
+            if (isShowingImguiDemo)
                 ImGui.ShowDemoWindow();
+#endif
         }
     }
 }

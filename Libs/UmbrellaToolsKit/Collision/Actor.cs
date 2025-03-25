@@ -15,11 +15,17 @@ namespace UmbrellaToolsKit.Collision
             base.Start();
         }
 
-        public override void UpdateData(GameTime gameTime)
+        public override void UpdateData(float deltaTime)
         {
-            base.UpdateData(gameTime);
+            base.UpdateData(deltaTime);
             if (HasGravity)
-                Gravity((float)gameTime.ElapsedGameTime.TotalSeconds);
+            {
+                Gravity(deltaTime);
+                return;
+            }
+
+            moveX(Velocity.X * deltaTime);
+            moveY(Velocity.Y * deltaTime);
         }
 
         public int Right { get => (int)(Position.X + size.X); }

@@ -1,21 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using UmbrellaToolsKit.Collision;
-using UmbrellaToolsKit.Interfaces;
+using UmbrellaToolsKit.Utils;
 
 namespace UmbrellaToolsKit
 {
-    public class Scene : IUpdatable, IDisposable
+    public class Scene : IDisposable
     {
         public Scene(GraphicsDevice screenGraphicsDevice, ContentManager content)
         {
             ScreenGraphicsDevice = screenGraphicsDevice;
             Content = content;
             addLayers();
+#if DEBUG
+            AddGameObject(new CheatListener(), Layers.BACKGROUND);
+#endif
         }
 
         #region Layers
@@ -76,6 +78,7 @@ namespace UmbrellaToolsKit
             }
 
             gameObject.Scene = this;
+            gameObject.Layer = layer;
             gameObject.Content = Content;
             gameObject.Start();
         }
@@ -84,12 +87,12 @@ namespace UmbrellaToolsKit
 
         #region Setting Scene
         //Sizes
-        private int Width = 160;
+        private int Width = 256;
         private int Height = 144;
         public GraphicsDevice ScreenGraphicsDevice;
         public ContentManager Content;
 
-        private Color BackgroundColor = Color.CornflowerBlue;
+        private Color backgroundColor = Color.CornflowerBlue;
         public ScreenController Screen { get; set; }
 
         //Camera
@@ -106,9 +109,10 @@ namespace UmbrellaToolsKit
 
         public Point Sizes { get => new Point(Width, Height); }
 
-        public Color SetBackgroundColor
+        public Color BackgroundColor
         {
-            set => BackgroundColor = value;
+            set => backgroundColor = value;
+            get => backgroundColor;
         }
         #endregion
 
@@ -126,7 +130,7 @@ namespace UmbrellaToolsKit
 
         public void SetLevel(string level)
         {
-            Console.WriteLine($"Level: {MapLevelPath + level}");
+            EditorEngine.Log.Write($"Level: {MapLevelPath + level}");
             CreateCamera();
 
             Ogmo.TileMap tileMap = Content.Load<Ogmo.TileMap>(level);
@@ -137,17 +141,23 @@ namespace UmbrellaToolsKit
             CreateBackBuffer();
 
             LevelReady = true;
-            Console.WriteLine("\nDone");
+            EditorEngine.Log.Write("\nDone");
         }
 
         public void SetLevelLdtk(int level)
         {
-            Console.WriteLine($"Level: {MapLevelLdtkPath}");
+            EditorEngine.Log.Write($"Level: {MapLevelLdtkPath}");
+            EditorEngine.Log.Write($"tilemap sprite: {TileMapPath}");
+
+            CreateCamera();
+            CreateBackBuffer();
+
             Texture2D _tilemapSprite = Content.Load<Texture2D>(TileMapPath);
-
             var tileMap = Content.Load<ldtk.LdtkJson>(MapLevelLdtkPath);
-
             TileMap.TileMap.Create(this, tileMap, "Level_" + level, _tilemapSprite);
+
+            LevelReady = true;
+            EditorEngine.Log.Write("\nDone");
         }
 
         public void CreateCamera()
@@ -160,46 +170,71 @@ namespace UmbrellaToolsKit
         #endregion
 
         #region Update
-        public float timer = 0;
-        public float updateDataTime = 1 / 30f;
+        public float deltaTimerData = 0;
+        public float updateDataTime = 1.0f / 30.0f;
         private void UpdateGameObjects(GameTime gameTime, List<List<GameObject>> layers)
         {
+            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
             //UI update
             for (int i = UI.Count - 1; i >= 0; i--)
-                UI[i].Update(gameTime);
+            {
+                UI[i].Update(deltaTime);
+                UI[i].CoroutineManagement.Update(gameTime);
+            }
 
             for (int i = layers.Count - 1; i >= 0; i--)
             {
                 for (int e = layers[i].Count - 1; e >= 0; e--)
                 {
-                    layers[i][e].Update(gameTime);
                     if (layers[i][e].Components != null)
-                        layers[i][e].Components.Update(gameTime);
-
-                    layers[i][e].CoroutineManagement.Update(gameTime);
+                    {
+                        var component = layers[i][e].Components;
+                        while (component != null)
+                        {
+                            component.Update(deltaTime);
+                            component = component.Next;
+                        }
+                    }
+                    try
+                    {
+                        layers[i][e].Update(deltaTime);
+                        layers[i][e].CoroutineManagement.Update(gameTime);
+                    }
+                    catch { }
                 }
             }
 
-            timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
-            while (timer >= updateDataTime)
+            deltaTimerData += deltaTime;
+            if (deltaTimerData >= MathUtils.MillisecondsToSeconds(updateDataTime))
             {
                 for (int i = layers.Count - 1; i >= 0; i--)
                 {
                     for (int e = layers[i].Count - 1; e >= 0; e--)
                     {
-                        layers[i][e].UpdateData(gameTime);
 
                         if (Camera != null)
-                            Camera.update(gameTime);
+                            Camera.update(deltaTimerData);
 
                         if (layers[i][e].Components != null)
-                            layers[i][e].Components.UpdateData(gameTime);
+                        {
+                            var component = layers[i][e].Components;
+                            while (component != null)
+                            {
+                                component.UpdateData(deltaTimerData);
+                                component = component.Next;
+                            }
+                        }
+                        try
+                        {
+                            layers[i][e].UpdateData(deltaTimerData);
+                        }
+                        catch { }
                     }
-
                 }
                 if (Camera != null)
                     Camera.CheckActorAndSolids();
-                timer -= updateDataTime;
+                deltaTimerData = 0.0f;
             }
         }
 
@@ -211,8 +246,7 @@ namespace UmbrellaToolsKit
                 UpdateGameObjects(gameTime, SortLayers);
                 // check if gameobjects is visible
                 IsVisibleGameObject(SortLayers);
-                // remove gameObjects
-                RemoveGameObject(SortLayers);
+
             }
         }
 
@@ -252,10 +286,11 @@ namespace UmbrellaToolsKit
         private void RemoveGameObject(List<List<GameObject>> layers)
         {
             // UI
-            IEnumerable<GameObject> _UI_Objects_to_remove = from gameObject in UI where gameObject.RemoveFromScene == true select gameObject;
-
-            IEnumerable<GameObject> _UI_Objects = from gameObject in UI where gameObject.RemoveFromScene == false select gameObject;
-            UI = _UI_Objects.ToList<GameObject>();
+            for (int i = UI.Count - 1; i >= 0; i--)
+            {
+                if (UI[i].RemoveFromScene)
+                    UI.RemoveAt(i);
+            }
 
             for (int i = layers.Count - 1; i >= 0; i--)
             {
@@ -304,12 +339,13 @@ namespace UmbrellaToolsKit
                 DrawGameObjectsBeforeScene(spriteBatch, SortLayers);
 
                 //UI Draw before scene
-                for (int i = UI.Count - 1; i >= 0; i--)
-                    UI[i].DrawBeforeScene(spriteBatch);
+                for (int i = 0; i < UI.Count; i++)
+                    if (!UI[i].RemoveFromScene)
+                        UI[i].DrawBeforeScene(spriteBatch);
 
 
                 RestartRenderTarget();
-                if (BackgroundColor != Color.Transparent) graphicsDevice.Clear(BackgroundColor);
+                if (backgroundColor != Color.Transparent) graphicsDevice.Clear(backgroundColor);
 
                 DrawGameObjects(spriteBatch, SortLayers);
 
@@ -318,8 +354,12 @@ namespace UmbrellaToolsKit
                     this.Grid.Draw(spriteBatch);
 #endif
                 //UI Draw
-                for (int i = UI.Count - 1; i >= 0; i--)
-                    UI[i].Draw(spriteBatch);
+                for (int i = 0; i < UI.Count; i++)
+                    if (!UI[i].RemoveFromScene)
+                        UI[i].Draw(spriteBatch);
+
+                // remove gameObjects
+                RemoveGameObject(SortLayers);
             }
 
             //Scale canvas settings

@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 
 namespace UmbrellaToolsKit.ParticlesSystem
@@ -7,15 +8,24 @@ namespace UmbrellaToolsKit.ParticlesSystem
         public float LifeTime = 10000f;
         public Vector2 Velocity = new Vector2(0, 1);
         public float Angle = 0;
+        public bool DecreaseScale = false;
+        public float DecreaseScaleSpeed = 10.0f;
 
-        public override void Update(GameTime gameTime)
+        public override void Start()
         {
-            float deltaTime = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            var spriteSize = new Vector2(Sprite.Width, Sprite.Height);
+            Origin = -MathUtils.Divide(spriteSize);
+            base.Start();
+        }
+
+        public override void Update(float deltaTime)
+        {
             LifeTime -= deltaTime;
             Rotation += Angle * deltaTime;
             Position += Velocity * deltaTime;
+            if (DecreaseScale) Scale = Math.Max(Scale - deltaTime * DecreaseScaleSpeed, 0.0f);
 
-            Origin = Vector2.One / 2f;
+            Origin = MathUtils.Divide(Vector2.One);
         }
     }
 }

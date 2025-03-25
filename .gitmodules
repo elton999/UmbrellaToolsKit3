@@ -1,0 +1,3 @@
+[submodule "Libs/Monogame.ImGui"]
+	path = Libs/Monogame.ImGui
+	url = git@github.com:elton999/Monogame.ImGui.git

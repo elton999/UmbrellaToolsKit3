@@ -12,7 +12,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
             var dialogue = new DialogueFormat();
             dialogue.Ids = new();
             dialogue.Nodes = new();
-            foreach(var basicNode in DialogueData.Nodes)
+            foreach (var basicNode in DialogueData.Nodes)
             {
                 dialogue.Ids.Add(basicNode.Id);
                 SetStartNode(dialogue, basicNode);
@@ -21,6 +21,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
                 node.Id = basicNode.Id;
                 node.Name = basicNode.Name;
                 node.Content = basicNode.Content;
+                node.Sprite = basicNode.SpriteName;
                 node.NextNode = -1;
                 node.Options = new();
 

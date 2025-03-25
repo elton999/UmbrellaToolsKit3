@@ -7,8 +7,8 @@ namespace UmbrellaToolsKit.Ldtk
     {
         protected override ldtk.LdtkJson Read(ContentReader input, ldtk.LdtkJson existingInstance)
         {
-                string text = input.ReadString();
-                return ldtk.LdtkJson.FromJson(text);
+            string text = input.ReadString();
+            return ldtk.LdtkJson.FromJson(text);
         }
     }
 }

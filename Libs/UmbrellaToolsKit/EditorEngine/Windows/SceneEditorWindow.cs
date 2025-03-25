@@ -1,4 +1,6 @@
-﻿using ImGuiNET;
+﻿#if !RELEASE
+using ImGuiNET;
+#endif
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
@@ -23,18 +25,23 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
         public void SetAsMainWindow()
         {
+#if !RELEASE
             EditorMain.OnDrawOverLayer += RenderEditorView;
             EditorArea.OnDrawWindow += ShowWindow;
+#endif
         }
 
         public void RemoveAsMainWindow()
         {
+#if !RELEASE
             EditorMain.OnDrawOverLayer -= RenderEditorView;
             EditorArea.OnDrawWindow -= ShowWindow;
+#endif
         }
 
         public void ShowWindow(GameTime gameTime)
         {
+#if !RELEASE
             uint iddock = ImGui.GetID("MainDocking");
             uint left = ImGui.GetID("MainLeft");
             uint right = ImGui.GetID("MainRight");
@@ -72,8 +79,9 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ShowSceneLayers(left);
             ShowEditorView(iddock);
             ShowConsole(bottom);
+#endif
         }
-
+#if !RELEASE
         private System.Numerics.Vector2 _windowPosition;
         private System.Numerics.Vector2 _windowSize;
 
@@ -142,6 +150,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                 ShowGameObjectFromLayer(_gameManagement.SceneManagement.MainScene.Middleground);
             if (ImGui.TreeNode("Background"))
                 ShowGameObjectFromLayer(_gameManagement.SceneManagement.MainScene.Backgrounds);
+            if (ImGui.TreeNode("UI"))
+                ShowGameObjectFromLayer(_gameManagement.SceneManagement.MainScene.UI);
             ImGui.End();
         }
 
@@ -191,5 +201,6 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
             DrawComponents(component.Next);
         }
+#endif
     }
 }

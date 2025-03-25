@@ -1,9 +1,12 @@
-﻿using Eto.Forms;
+﻿#if !RELEASE
+using Eto.Forms;
+#endif
 
 namespace UmbrellaToolsKit.EditorEngine.Windows
 {
     public class OpenFileDialogue
     {
+#if !RELEASE
         public static OpenFileDialog OpenFileDialog(string title, string extensionTile, string extension)
         {
             return new OpenFileDialog
@@ -17,5 +20,6 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         {
             return openFileDialog.ShowDialog(Application.Instance.MainForm) == DialogResult.Ok;
         }
+#endif
     }
 }

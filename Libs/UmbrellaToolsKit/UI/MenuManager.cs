@@ -17,7 +17,7 @@ namespace UmbrellaToolsKit.UI
 
         private bool IsPressed = false;
 
-        public override void Update(GameTime gameTime)
+        public override void Update(float deltaTime)
         {
             // move up item
             if (Keyboard.GetState().IsKeyDown(Keys.Up) && !this.IsPressed)
