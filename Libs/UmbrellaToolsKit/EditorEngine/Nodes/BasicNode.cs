@@ -18,7 +18,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         protected Load _storage;
         protected Vector2 _titleSize = new Vector2(200, 30);
         protected Vector2 _mainSquareSize = new Vector2(200, 30);
-        protected bool _isDragableNode = true;
+        protected bool _isDraggableNode = true;
         private int _index = 0;
         private INode _parentNode;
 
@@ -50,13 +50,13 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public Vector2 SelectedNodeSize { get => MainSquareSize + Vector2.One * 4; }
         public Vector2 SelectedNodePosition { get => Position - Vector2.One * 2f; }
         public Vector2 TitleSize { get => _titleSize; }
-        public bool IsDragbleNode { get => _isDragableNode; set => _isDragableNode = value; }
+        public bool IsDraggableNode { get => _isDraggableNode; set => _isDraggableNode = value; }
         public INode ParentNode { get => _parentNode; set => _parentNode = value; }
         public string Content { get => _content; set => _content = value; }
 
         public Color TitleColor = Color.Blue;
 
-        public float ItemPedding = 30f;
+        public float ItemPadding = 30f;
 
         public Vector2 MousePosition;
         public Vector2 NodePositionOnClick;
@@ -81,7 +81,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 
         public void HandlerMoveNode()
         {
-            if (!IsDragbleNode) return;
+            if (!IsDraggableNode) return;
 
             var rectangle = new Rectangle(Position.ToPoint(), MainSquareSize.ToPoint());
             var mousePosition = Mouse.GetState().Position;
@@ -193,15 +193,15 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 
         protected void DrawNodeSquare(ImDrawListPtr imDraw)
         {
-            Primativas.Square.Draw(imDraw, Position, MainSquareSize, Color.Black);
+            Primitives.Square.Draw(imDraw, Position, MainSquareSize, Color.Black);
 
-            Primativas.Square.Draw(imDraw, Position, TitleSize, TitleColor);
+            Primitives.Square.Draw(imDraw, Position, TitleSize, TitleColor);
         }
 
         protected void DrawSelectionArea(ImDrawListPtr imDraw)
         {
             if (!CanMoveNode) return;
-            Primativas.Square.Draw(imDraw, SelectedNodePosition, SelectedNodeSize, Color.White);
+            Primitives.Square.Draw(imDraw, SelectedNodePosition, SelectedNodeSize, Color.White);
         }
 #endif
     }

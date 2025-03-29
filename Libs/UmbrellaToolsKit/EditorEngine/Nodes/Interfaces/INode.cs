@@ -9,7 +9,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.Interfaces
         string Name { get; set; }
         string Content { get; set; }
 
-        bool IsDragbleNode { get; set; }
+        bool IsDraggableNode { get; set; }
 
         Vector2 Position { get; set; }
         Vector2 MainSquareSize { get; }

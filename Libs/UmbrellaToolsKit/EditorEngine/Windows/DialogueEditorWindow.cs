@@ -139,10 +139,10 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             var displayPos = windowPosition.ToXnaVector2() + Vector2.One * 30;
             var displaySize = new Vector2(150, 30);
             var displayPosText = displayPos + Vector2.One * 8;
-            Primativas.Square.Draw(drawList, displayPos, displaySize, new Color(0, 0, 0, 0.5f));
+            Primitives.Square.Draw(drawList, displayPos, displaySize, new Color(0, 0, 0, 0.5f));
             drawList.AddText(displayPosText.ToNumericVector2(), Color.White.PackedValue, $"x: {direction.X}, y: {direction.Y}");
 
-            Primativas.Square.Draw(drawList, displayPos + displaySize * Vector2.UnitX, displaySize, new Color(0, 0, 0, 0.5f));
+            Primitives.Square.Draw(drawList, displayPos + displaySize * Vector2.UnitX, displaySize, new Color(0, 0, 0, 0.5f));
             drawList.AddText((displayPosText + displaySize * Vector2.UnitX).ToNumericVector2(), Color.White.PackedValue, $"m x: {MouseHandler.Position.X}, y: {MouseHandler.Position.Y}");
 
             ImGui.End();
@@ -151,7 +151,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 #if !RELEASE
         private static void DrawBackground(ImDrawListPtr drawList, System.Numerics.Vector2 windowPosition, System.Numerics.Vector2 windowSize)
         {
-            Primativas.Square.Draw(
+            Primitives.Square.Draw(
                 drawList,
                 windowPosition.ToXnaVector2(),
                 windowSize.ToXnaVector2(),
@@ -169,7 +169,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                         Vector2 size = Vector2.One * 200;
                         Vector2 position = size * (new Vector2(lineCount, columnCount));
 
-                        Primativas.Square.Draw(drawList, position, size, Color.DimGray);
+                        Primitives.Square.Draw(drawList, position, size, Color.DimGray);
                     }
                 }
             }
@@ -202,7 +202,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 #if !RELEASE
         private void TraceLineConnection(ImDrawListPtr drawList)
         {
-            Primativas.Line.Draw(
+            Primitives.Line.Draw(
                 drawList,
                 NodeStartConnection.OutPosition,
                 MouseHandler.Position
