@@ -94,14 +94,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
                 }
             }
 
-            string path = "Content/CutScenes/";
-            var options = Directory.GetFiles(@"" + path);
-            for (int k = 0; k < options.Length; k++)
-                options[k] = options[k].Replace(path, "").Replace(".xnb", "");
-
-            string spriteNameValue = SpriteName;
-            Fields.Field.DrawStringOptions("Sprite option", ref spriteNameValue, options);
-            SpriteName = spriteNameValue;
 
             if (ImGui.Button("Add a new Option"))
                 CreateAnOption<NodeOptionOutPut>();

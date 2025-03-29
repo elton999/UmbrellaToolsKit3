@@ -24,7 +24,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 
         private Vector2 _position;
         protected string _name;
-        protected string _spriteName;
         protected string _content;
 
         public int Id
@@ -37,12 +36,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         {
             get => _name;
             set => _name = value;
-        }
-
-        public string SpriteName
-        {
-            get => _spriteName;
-            set => _spriteName = value;
         }
 
         public Vector2 Position
@@ -170,8 +163,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
                 INode parentNode = DialogueData.Nodes.FindAll(x => x.Id == (int)parentsNode[0])[0];
                 ParentNode = parentNode;
             }
-
-            _spriteName = _storage.getItemsString($"sprite-{Id}")[0];
         }
 
         public virtual void OnSave()
@@ -182,7 +173,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             _storage.SetFloat($"position-{Id}-vector-y", Position.Y);
             if (ParentNode is not null)
                 _storage.SetFloat($"parent-{Id}", ParentNode.Id);
-            _storage.SetString($"sprite-{Id}", SpriteName);
 
         }
 

@@ -21,7 +21,6 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
                 node.Id = basicNode.Id;
                 node.Name = basicNode.Name;
                 node.Content = basicNode.Content;
-                node.Sprite = basicNode.SpriteName;
                 node.NextNode = -1;
                 node.Options = new();
 
