@@ -6,9 +6,10 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
     internal class DialogueData
     {
         private static List<BasicNode> _nodes = new List<BasicNode>();
-
+        private static DialogueVariable _fields;
         public static int LastNodeId = 0;
         public static List<BasicNode> Nodes { get => _nodes; }
+        
 
         public static int GetNewNodeId()
         {
@@ -21,6 +22,12 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
         {
             if(_nodes.Contains(node)) return;
             _nodes.Add(node);
+        }
+
+        public static void AddIntVariable(string name)
+        {
+            if(_fields == null)
+                _fields = new DialogueVariable();
         }
 
         public static void RemoveNode(BasicNode node) => _nodes.Remove(node);
