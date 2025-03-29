@@ -10,12 +10,15 @@ using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
 using UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor;
 using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
 using UmbrellaToolsKit.Input;
+using UmbrellaToolsKit.EditorEngine.Fields;
 
 namespace UmbrellaToolsKit.EditorEngine.Windows
 {
     public class DialogueEditorWindow : IWindowEditable
     {
         private Storage.Load _storage;
+
+        private VariableSettings _variableSettings = new VariableSettings("", VariableType.NONE);
 
         private GameManagement _gameManagement;
         public GameManagement GameManagement => _gameManagement;
@@ -193,6 +196,38 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 #if !RELEASE
             bool treeNode = InspectorClass.DrawSeparator("Node Inspector");
             if (treeNode) SelectedNode.DrawInspector();
+            if (treeNode) ImGui.Unindent();
+
+            if (InspectorClass.DrawSeparator("Variables"))
+            {
+                foreach (var variable in DialogueData.Fields.Variables)
+                {
+                    object value = DialogueData.Fields.GetVariableType(variable.Key);
+
+                    Field.DrawEnum(DialogueData.Fields.GetName(variable.Key), typeof(VariableType), ref value);
+                    DialogueData.Fields.Variables[variable.Key].Name = variable.Value.Name;
+                    DialogueData.Fields.Variables[variable.Key].Type = (VariableType)value;
+                }
+                
+                ImGui.Spacing();
+                ImGui.Separator();
+                ImGui.Spacing();
+
+                object variableValue = _variableSettings.Type;
+                Field.DrawEnum("Variable Type", typeof(VariableType), ref variableValue);
+                Field.DrawString("Variable Name", ref _variableSettings.Name);
+                _variableSettings.Type = (VariableType)variableValue;
+
+                if(Buttons.BlueButton("Add"))
+                {
+                    if (DialogueData.Fields.AddVariable(_variableSettings.Name, (VariableType)variableValue))
+                    {
+                        _variableSettings.Type = VariableType.NONE;
+                        _variableSettings.Name = "";
+                    }
+                }
+            }
+
             if (treeNode) ImGui.Unindent();
 #endif
         }
