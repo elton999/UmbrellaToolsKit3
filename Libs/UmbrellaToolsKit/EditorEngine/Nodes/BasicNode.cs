@@ -10,6 +10,7 @@ using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
 using UmbrellaToolsKit.Storage;
 using UmbrellaToolsKit.EditorEngine.Windows;
 using UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor;
+using System.Collections.Generic;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes
 {
@@ -25,6 +26,8 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         private Vector2 _position;
         protected string _name;
         protected string _content;
+
+        private List<VariableFields> _variableFields = new List<VariableFields>();
 
         public int Id
         {
@@ -62,6 +65,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public Vector2 NodePositionOnClick;
 
         public bool CanMoveNode = false;
+        public List<VariableFields> VariableFields { get => _variableFields; set => _variableFields = value; }
 
         public static event Action<BasicNode> OnSelectNode;
         public static event Action<BasicNode> OnDestroyNode;

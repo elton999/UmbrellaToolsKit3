@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes.Interfaces
 {
@@ -16,5 +17,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.Interfaces
         Vector2 SelectedNodeSize { get; }
         Vector2 SelectedNodePosition { get; }
         Vector2 TitleSize { get; }
+
+        List<VariableFields> VariableFields { get; set; }
     }
 }
