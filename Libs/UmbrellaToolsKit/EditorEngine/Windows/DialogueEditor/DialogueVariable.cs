@@ -24,17 +24,9 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
 
     public class DialogueVariable
     {
-        private Dictionary<int, VariableSettings> _variables = new Dictionary<int, VariableSettings>();
+        private Dictionary<int, VariableSettings> _variables = new();
 
-        public Dictionary<int, VariableSettings> Variables 
-        {
-            get 
-            {
-                if (_variables == null)
-                    _variables = new();
-                return _variables;
-            }
-        }
+        public Dictionary<int, VariableSettings> Variables => _variables ??= new();
 
         public bool AddVariable(string name, VariableType type)
         {
@@ -67,6 +59,25 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
             if (!Variables.ContainsKey(id)) return "";
 
             return Variables[id].Name;
+        }
+        
+
+        public int GetIdByName(string name)
+        {
+            int id = -1;
+            foreach (var variable in Variables)
+                if (variable.Value.Name.ToLower() == name.ToLower())
+                    id = variable.Key;
+            return id;
+        }
+
+        public string[] GetAllVariablesNames()
+        {
+            var names = new List<string>();
+            foreach (var variable in Variables)
+                names.Add(variable.Value.Name);
+
+            return names.ToArray();
         }
     }
 }
