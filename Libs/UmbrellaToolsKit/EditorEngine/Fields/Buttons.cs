@@ -26,5 +26,14 @@ namespace UmbrellaToolsKit.EditorEngine.Fields
 #endif
             return ColorButton(text, redColor);
         }
+
+        public static bool BlueButton(string text)
+        {
+             bool clicked = false;
+#if !RELEASE
+            clicked = ImGui.Button(text);
+#endif
+            return clicked;
+        }
     }
 }
