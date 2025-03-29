@@ -91,6 +91,16 @@ namespace UmbrellaToolsKit.EditorEngine.Fields
 #endif
 		}
 
+		public static void DrawEnum(string name, Type type, ref object value)
+		{
+#if !RELEASE
+			var values = Enum.GetNames(type);
+			string valueName = value.ToString();
+			DrawStringOptions(name, ref valueName, values);
+			value = Enum.Parse(type, valueName, true);
+#endif
+		}
+
 		public static void DrawStringOptions(string name, ref string value, string[] options)
 		{
 #if !RELEASE
