@@ -4,7 +4,7 @@ using MonoGame.ImGui.Extensions;
 #endif
 using Microsoft.Xna.Framework;
 
-namespace UmbrellaToolsKit.EditorEngine.Primativas
+namespace UmbrellaToolsKit.EditorEngine.Primitives
 {
     public class Square
     {

@@ -4,8 +4,9 @@ using ImGuiNET;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using UmbrellaToolsKit.EditorEngine.Fields;
 using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
+using UmbrellaToolsKit.EditorEngine.Windows;
 using UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor;
 using UmbrellaToolsKit.Storage;
 
@@ -77,6 +78,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
         }
 
 #if !RELEASE
+        private string _currentVariableFormName;
         public override void DrawInspector()
         {
             base.DrawInspector();
@@ -94,9 +96,46 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
                 }
             }
 
-
             if (ImGui.Button("Add a new Option"))
                 CreateAnOption<NodeOptionOutPut>();
+
+            var options =  DialogueData.Fields.GetAllVariablesNames();
+
+            if (options.Length <= 0) return; 
+            bool treeNode = InspectorClass.DrawSeparator("Settings");
+            if (treeNode)
+            {
+                ImGui.Indent();
+
+                foreach (var field in VariableFields)
+                {
+                    switch (field.GetType())
+                    {
+                        case VariableType.INT:
+                            Field.DrawInt(DialogueData.Fields.Variables[field.Id].Name, ref field.IntValue);
+                            break;
+                        case VariableType.FLOAT:
+                            Field.DrawFloat(DialogueData.Fields.Variables[field.Id].Name, ref field.FloatValue);
+                            break;
+                        case VariableType.STRING:
+                            Field.DrawString(DialogueData.Fields.Variables[field.Id].Name, ref field.StringValue);
+                            break;
+                    }
+                }
+
+                ImGui.Spacing();
+                ImGui.Separator();
+                ImGui.Spacing();
+
+                Field.DrawStringOptions("Variables", ref _currentVariableFormName, options);
+                if(Buttons.BlueButton("Add field"))
+                {
+                    int id = DialogueData.Fields.GetIdByName(_currentVariableFormName);
+                    VariableFields.Add(new VariableFields() { Id = id });
+                }
+
+                ImGui.Unindent();
+            }
         }
 #endif
 

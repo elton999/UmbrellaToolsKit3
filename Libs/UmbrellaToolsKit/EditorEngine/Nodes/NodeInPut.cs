@@ -65,7 +65,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public void DrawConnections(ImDrawListPtr imDraw)
         {
             foreach (var outputNode in NodesConnectionOut)
-                Primativas.Line.Draw(imDraw, InPosition, outputNode.OutPosition);
+                Primitives.Line.Draw(imDraw, InPosition, outputNode.OutPosition);
         }
 #endif
         public void AddNodeConnection(INodeOutPutle node)

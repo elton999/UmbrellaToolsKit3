@@ -14,7 +14,7 @@ namespace UmbrellaToolsKit
     {
         private EditorMain _editor;
 
-        public Dictionary<String, dynamic> Values = new Dictionary<string, dynamic>();
+        public Dictionary<string, dynamic> Values = new Dictionary<string, dynamic>();
 
         public enum Status { LOADING, CREDITS, MENU, PAUSE, STOP, PLAYING };
         public Status CurrentStatus;
@@ -27,8 +27,6 @@ namespace UmbrellaToolsKit
         public Game Game;
 
         public static event Action OnGameUpdateData;
-
-        private EditorMain _edtior;
 
         public GameManagement(Game game)
         {

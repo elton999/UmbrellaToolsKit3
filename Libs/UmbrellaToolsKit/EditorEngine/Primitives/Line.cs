@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-#if !RELEASE
+﻿#if !RELEASE
 using ImGuiNET;
 using MonoGame.ImGui.Extensions;
 #endif
 using Microsoft.Xna.Framework;
 
-namespace UmbrellaToolsKit.EditorEngine.Primativas
+namespace UmbrellaToolsKit.EditorEngine.Primitives
 {
     public class Line
     {

@@ -141,10 +141,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
             if (obj.Value is Enum)
             {
-                var values = Enum.GetNames(obj.Type);
-                string valueName = obj.Value.ToString();
-                Fields.Field.DrawStringOptions(obj.Name, ref valueName, values);
-                obj.Value = Enum.Parse(obj.Type, valueName, true);
+                Fields.Field.DrawEnum(obj.Name, obj.Type, ref obj.Value);
                 return;
             }
 

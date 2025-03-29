@@ -10,7 +10,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
     {
         public NodeOptionOutPut(Load storage, int id, string name, Vector2 position) : base(storage, id, name, position)
         {
-            IsDragbleNode = false;
+            IsDraggableNode = false;
         }
 
 #if !RELEASE
