@@ -1,5 +1,4 @@
 using System;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace UmbrellaToolsKit.Interfaces
@@ -9,6 +8,8 @@ namespace UmbrellaToolsKit.Interfaces
         bool RemoveFromScene { get; set; }
         IComponent Components { get; set; }
         Scene Scene { get; set; }
+        Layers Layer { get; set; }
+        CoroutineManagement CoroutineManagement { get; }
         string Tag { get; set; }
 
         void Start();

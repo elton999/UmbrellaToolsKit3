@@ -18,7 +18,7 @@ namespace UmbrellaToolsKit
         public float Rotation { get; set; }
         public float Scale { get; set; }
         public float Zoom { get; set; }
-        public Vector2 Origin { get => new Vector2(this.Scene.Sizes.X / 2, this.Scene.Sizes.Y / 2) / 1; }
+        public Vector2 Origin { get => new Vector2(Scene.Sizes.X / 2, Scene.Sizes.Y / 2) / 1; }
         public Vector2 Target { get; set; }
         public Vector2 ScreenSize { get; set; }
         public Vector2 ScreenTargetAreaLimits { get; set; }
@@ -36,17 +36,16 @@ namespace UmbrellaToolsKit
             Rotation = 0f;
         }
 
-        public void update(GameTime gameTime)
+        public void update(float deltaTime)
         {
 
-            this.InitialPosition = this._position;
-            this.Shake(gameTime);
+            InitialPosition = _position;
+            Shake(deltaTime);
 
-            if (this.Target != Vector2.Zero)
+            if (Target != Vector2.Zero)
             {
-                var delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
-                this.moveX(delta);
-                this.moveY(delta);
+                moveX(deltaTime);
+                moveY(deltaTime);
                 if (Scene.PixelArt) Position = Position.ToPoint().ToVector2();
             }
 
@@ -55,10 +54,10 @@ namespace UmbrellaToolsKit
         public void CheckActorAndSolids()
         {
             Collision.Actor _actorCamera = new Collision.Actor();
-            _actorCamera.size = this.Scene.Sizes;
-            _actorCamera.Position = new Vector2(this.Position.X - this.Origin.X, this.Position.Y - this.Origin.Y);
+            _actorCamera.size = Scene.Sizes;
+            _actorCamera.Position = new Vector2(Position.X - Origin.X, Position.Y - Origin.Y);
             List<Collision.Actor> _actorsList = new List<Collision.Actor>();
-            _actorsList.AddRange(this.Scene.AllActors);
+            _actorsList.AddRange(Scene.AllActors);
 
             foreach (Collision.Actor actor in _actorsList)
                 if (actor.overlapCheck(_actorCamera))
@@ -70,26 +69,26 @@ namespace UmbrellaToolsKit
         public bool UseLevelLimits = true;
         public void moveX(float delta)
         {
-            this._position.X = MathHelper.Lerp(this.Position.X, this.Target.X, this.MoveSpeed * delta);
-            if (this.UseLevelLimits)
+            _position.X = Microsoft.Xna.Framework.MathHelper.Lerp(Position.X, Target.X, MoveSpeed * delta);
+            if (UseLevelLimits)
             {
-                float maxValue = this.Scene.LevelSize.X + this.Scene.ScreenOffset.X - this.Origin.X;
-                float minValue = this.Scene.ScreenOffset.X + this.Origin.X;
-                this._position.X = Math.Max(this._position.X, minValue);
-                this._position.X = Math.Min(this._position.X, maxValue);
+                float maxValue = Scene.LevelSize.X + Scene.ScreenOffset.X - Origin.X;
+                float minValue = Scene.ScreenOffset.X + Origin.X;
+                _position.X = Math.Max(_position.X, minValue);
+                _position.X = Math.Min(_position.X, maxValue);
             }
         }
 
         public void moveY(float delta)
         {
-            this._position.Y = MathHelper.Lerp(this.Position.Y, this.Target.Y, this.MoveSpeed * delta);
+            _position.Y = Microsoft.Xna.Framework.MathHelper.Lerp(Position.Y, Target.Y, MoveSpeed * delta);
 
-            if (this.UseLevelLimits)
+            if (UseLevelLimits)
             {
-                float maxValue = this.Scene.LevelSize.Y + this.Scene.ScreenOffset.Y - this.Origin.Y;
-                float minValue = this.Scene.ScreenOffset.Y + this.Origin.Y;
-                this._position.Y = Math.Min(this._position.Y, maxValue);
-                this._position.Y = Math.Max(this._position.Y, minValue);
+                float maxValue = Scene.LevelSize.Y + Scene.ScreenOffset.Y - Origin.Y;
+                float minValue = Scene.ScreenOffset.Y + Origin.Y;
+                _position.Y = Math.Min(_position.Y, maxValue);
+                _position.Y = Math.Max(_position.Y, minValue);
 
             }
         }
@@ -101,26 +100,26 @@ namespace UmbrellaToolsKit
         public Vector2 InitialPosition;
         public float ShakeMagnitude = 0.05f;
 
-        private void Shake(GameTime gameTime)
+        private void Shake(float deltaTime)
         {
-            if (this.TimeShake > 0)
+            if (TimeShake > 0)
             {
                 int randomX = getRandom.Next(-5, 5);
                 int randomY = getRandom.Next(-5, 5);
 
-                this.Target = new Vector2(
-                    this.InitialPosition.X + randomX * this.ShakeMagnitude,
-                    this.InitialPosition.Y + randomY * this.ShakeMagnitude
+                Target = new Vector2(
+                    InitialPosition.X + randomX * ShakeMagnitude,
+                    InitialPosition.Y + randomY * ShakeMagnitude
                 );
-                this.TimeShake -= 1;
+                TimeShake -= 1;
             }
         }
         #endregion
 
         public Matrix TransformMatrix()
         {
-            return Matrix.CreateRotationZ(this.Rotation) *
-                Matrix.CreateTranslation(-(int)this.Position.X, -(int)this.Position.Y, 0) *
+            return Matrix.CreateRotationZ(Rotation) *
+                Matrix.CreateTranslation(-(int)Position.X, -(int)Position.Y, 0) *
                 Matrix.CreateTranslation(Origin.X, Origin.Y, 0) *
                 Matrix.CreateScale(new Vector3(Zoom, Zoom, Zoom));
 

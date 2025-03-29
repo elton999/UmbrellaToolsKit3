@@ -8,7 +8,7 @@ namespace UmbrellaToolsKit.UI
     {
         public bool Show = false;
 
-        public override void Update(GameTime gameTime) => Position = Mouse.GetState().Position.ToVector2();
+        public override void Update(float deltaTime) => Position = Mouse.GetState().Position.ToVector2();
 
         public override void Draw(SpriteBatch spriteBatch)
         {

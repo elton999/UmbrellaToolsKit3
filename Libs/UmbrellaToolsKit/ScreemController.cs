@@ -36,7 +36,7 @@ namespace UmbrellaToolsKit
             get => new Vector2(this.Resolutions[this.Resolution].X / 2f, this.Resolutions[this.Resolution].Y / 2f);
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update(float deltaTime)
         {
             float _screemWidth = graphics.PreferredBackBufferWidth;
             float _screemHeight = graphics.PreferredBackBufferHeight;
@@ -60,7 +60,7 @@ namespace UmbrellaToolsKit
                 this.Scale = this.getCurrentResolutionSize.X / Scene.ScreenOffset.X;
                 //CameraManagement.ScreemSize = Scene.ScreemOffset;
                 CameraManagement.Scale = this.Scale;
-                CameraManagement.update(gameTime);
+                CameraManagement.update(deltaTime);
             }
         }
 

@@ -2,16 +2,19 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>9.0</LangVersion>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ImGui.NET" Version="1.89.2" />
+    <PackageReference Include="Eto.Forms" Version="2.8.0" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
+    <PackageReference Include="Eto.Platform.Windows" Version="2.8.0" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="MonoGame.Framework.Content.Pipeline" Version="3.8.0.1641" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Monogame.ImGui.Standard" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoGame.ContentPipeline.UmbrellaToolsKit\MonoGame.ContentPipeline.UmbrellaToolsKit.csproj" />
+    <ProjectReference Include="..\Monogame.ImGui\MonoGame.ImGui\MonoGame.ImGui.csproj" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
   </ItemGroup>
 </Project>

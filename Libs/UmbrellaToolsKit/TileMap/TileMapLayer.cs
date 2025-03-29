@@ -7,10 +7,7 @@ namespace UmbrellaToolsKit.TileMap
     {
         private List<Tile> Items = new List<Tile>();
 
-        public void addGameObject(Tile gameObject)
-        {
-            this.Items.Add(gameObject);
-        }
+        public void addGameObject(Tile gameObject) => Items.Add(gameObject);
 
         public override void Draw(SpriteBatch spriteBatch)
         {

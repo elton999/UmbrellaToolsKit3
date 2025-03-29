@@ -24,15 +24,42 @@ namespace MonoGame.ContentPipeline.UmbrellaToolsKit
             }
 
             // frames
-            output.Write(((JArray)value["frames"]).Count);
-            for (int i = 0; i < ((JArray)value["frames"]).Count; i++)
+            int framesCount = ((JArray)value["frames"]).Count;
+            output.Write(framesCount);
+            for (int i = 0; i < framesCount; i++)
             {
                 output.Write((int)value["frames"][i]["frame"]["x"]);
                 output.Write((int)value["frames"][i]["frame"]["y"]);
                 output.Write((int)value["frames"][i]["frame"]["w"]);
                 output.Write((int)value["frames"][i]["frame"]["h"]);
                 output.Write((int)value["frames"][i]["duration"]);
-            }    
+            }
+
+            // slices
+            int slicesCount = ((JArray)value["meta"]["slices"]).Count;
+            output.Write(slicesCount);
+            for (int i = 0; i < slicesCount; i++)
+            {
+                output.Write((string)value["meta"]["slices"][i]["name"]);
+                output.Write(((JArray)value["meta"]["slices"][i]["keys"]).Count);
+                for (int j = 0; j < ((JArray)value["meta"]["slices"][i]["keys"]).Count; j++)
+                {
+                    int frame = (int)value["meta"]["slices"][i]["keys"][j]["frame"];
+                    output.Write(frame);
+                    output.Write((int)value["meta"]["slices"][i]["keys"][j]["bounds"]["x"] + (int)value["frames"][frame]["frame"]["x"]);
+                    output.Write((int)value["meta"]["slices"][i]["keys"][j]["bounds"]["y"] + (int)value["frames"][frame]["frame"]["y"]);
+                    output.Write((int)value["meta"]["slices"][i]["keys"][j]["bounds"]["w"]);
+                    output.Write((int)value["meta"]["slices"][i]["keys"][j]["bounds"]["h"]);
+
+                    bool hasPivot = (value["meta"]["slices"][i]["keys"][j]["pivot"] != null);
+                    output.Write(hasPivot);
+                    if(hasPivot)
+                    {
+                        output.Write((int)value["meta"]["slices"][i]["keys"][j]["pivot"]["x"]);
+                        output.Write((int)value["meta"]["slices"][i]["keys"][j]["pivot"]["y"]);
+                    }
+                }
+            }
         }
 
         public override string GetRuntimeReader(TargetPlatform targetPlatform)

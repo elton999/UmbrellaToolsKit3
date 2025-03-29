@@ -1,7 +1,8 @@
 ﻿using System;
+#if !RELEASE
 using ImGuiNET;
-using System.Collections.Generic;
-using MonoGame.ImGui.Standard.Extensions;
+using MonoGame.ImGui.Extensions;
+#endif
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using UmbrellaToolsKit.Input;
@@ -32,12 +33,12 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         }
 
         public string Name
-        { 
+        {
             get => _name;
             set => _name = value;
         }
 
-        public Vector2 Position 
+        public Vector2 Position
         {
             get => _position;
             set
@@ -69,7 +70,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public BasicNode(Load storage, int id, string name, Vector2 position)
         {
             _storage = storage;
-            _index= id;
+            _index = id;
             Id = id;
             Name = name;
             Position = position;
@@ -112,21 +113,22 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
                 Position = NodePositionOnClick + direction;
             }
         }
-
+#if !RELEASE
         public virtual void Draw(ImDrawListPtr imDraw)
         {
             DrawSelectionArea(imDraw);
             DrawNodeSquare(imDraw);
             DrawNodeText(imDraw);
         }
-
-        public virtual void OnDelete() 
+#endif
+        public virtual void OnDelete()
         {
             _storage.AddItemFloat("Id", Id);
             _storage.DeleteNode($"name-{Id}");
             _storage.DeleteNode($"content-{Id}");
             _storage.DeleteNode($"position-{Id}-vector-x");
             _storage.DeleteNode($"position-{Id}-vector-y");
+            _storage.DeleteNode($"sprite-{Id}");
 
             var ids = _storage.getItemsFloat("Id");
             ids.Remove(Id);
@@ -148,7 +150,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         {
             _name = _storage.getItemsString($"name-{Id}")[0];
             var contents = _storage.getItemsString($"content-{Id}");
-            if(contents.Count > 0)
+            if (contents.Count > 0)
                 _content = contents[0];
 
             float x = _storage.getItemsFloat($"position-{Id}-vector-x")[0];
@@ -156,29 +158,29 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             _position = new Vector2(x, y);
 
             var parentsNode = _storage.getItemsFloat($"parent-{Id}");
-            if(parentsNode.Count > 0)
+            if (parentsNode.Count > 0)
             {
                 INode parentNode = DialogueData.Nodes.FindAll(x => x.Id == (int)parentsNode[0])[0];
                 ParentNode = parentNode;
             }
         }
 
-        public virtual void OnSave() 
+        public virtual void OnSave()
         {
             _storage.SetString($"name-{Id}", Name);
             _storage.SetString($"content-{Id}", Content);
             _storage.SetFloat($"position-{Id}-vector-x", Position.X);
             _storage.SetFloat($"position-{Id}-vector-y", Position.Y);
-            if(ParentNode != null)
+            if (ParentNode is not null)
                 _storage.SetFloat($"parent-{Id}", ParentNode.Id);
+
         }
 
+#if !RELEASE
         public virtual void DrawInspector()
         {
-            ImGui.PushStyleColor(ImGuiCol.Button, new System.Numerics.Vector4(1, 0, 0, 1));
-            if (ImGui.Button("Delete"))
+            if (Fields.Buttons.RedButton("Delete"))
                 OnDelete();
-            ImGui.PopStyleColor();
 
             InspectorClass.DrawAllFields(this);
         }
@@ -198,8 +200,9 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 
         protected void DrawSelectionArea(ImDrawListPtr imDraw)
         {
-            if (CanMoveNode)
-                Primativas.Square.Draw(imDraw, SelectedNodePosition, SelectedNodeSize, Color.White);
+            if (!CanMoveNode) return;
+            Primativas.Square.Draw(imDraw, SelectedNodePosition, SelectedNodeSize, Color.White);
         }
+#endif
     }
 }

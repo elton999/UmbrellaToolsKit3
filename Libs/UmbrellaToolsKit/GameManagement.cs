@@ -2,12 +2,15 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using UmbrellaToolsKit.Interfaces;
 using UmbrellaToolsKit.EditorEngine;
+#if !RELEASE
+using Eto;
+using Eto.Forms;
+#endif
 
 namespace UmbrellaToolsKit
 {
-    public class GameManagement : IUpdatable
+    public class GameManagement
     {
         private EditorMain _editor;
 
@@ -31,6 +34,9 @@ namespace UmbrellaToolsKit
         {
             Game = game;
             _editor = new EditorMain(Game, this);
+#if !RELEASE
+            new Application(new Eto.WinForms.Platform());
+#endif
         }
 
         public void Start()

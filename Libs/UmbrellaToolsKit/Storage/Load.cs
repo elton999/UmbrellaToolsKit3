@@ -3,7 +3,6 @@ using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
 using System;
-using System.Runtime.CompilerServices;
 
 namespace UmbrellaToolsKit.Storage
 {
@@ -20,9 +19,11 @@ namespace UmbrellaToolsKit.Storage
 
         public Load(string curlFile)
         {
-            _curlFile= curlFile;
+            _curlFile = curlFile;
             LoadFile();
         }
+
+        public void SetFilename(string filename) => _curlFile = filename;
 
         private void LoadFile()
         {
@@ -104,7 +105,7 @@ namespace UmbrellaToolsKit.Storage
             Save();
         }
 
-        public void SetString(string node, string value) => AddItemString(node, new List<string> { value });
+        public void SetString(string node, string value) => AddItemString(node, new List<string> { value == null ? "" : value });
 
         public void AddItemString(string Node, List<string> ContentList) => AddAItem(Node, "string", ContentList);
 
@@ -145,7 +146,7 @@ namespace UmbrellaToolsKit.Storage
 
             foreach (object content in ContentList)
             {
-                if(content is not null)
+                if (content is not null)
                 {
                     XmlElement NewElement = doc.CreateElement("item");
                     NewElement.InnerText = content.ToString();

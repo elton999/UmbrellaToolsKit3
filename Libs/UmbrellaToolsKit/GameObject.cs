@@ -11,8 +11,10 @@ namespace UmbrellaToolsKit
     public class GameObject : IGameObject
     {
         private IComponent _components;
+        private CoroutineManagement _coroutineManagement;
         private bool _removeFromScene = false;
         private Scene _scene;
+        private Layers _layer;
 
         public IComponent Components { get => _components; set => _components = value; }
         public bool RemoveFromScene { get => _removeFromScene; set => _removeFromScene = value; }
@@ -33,6 +35,11 @@ namespace UmbrellaToolsKit
 
         public ContentManager Content;
         public Scene Scene { get => _scene; set => _scene = value; }
+
+        public CoroutineManagement CoroutineManagement => _coroutineManagement;
+
+        public Layers Layer { get => _layer; set => _layer = value; }
+
         public dynamic Values;
         public List<Vector2> Nodes;
 
@@ -51,23 +58,24 @@ namespace UmbrellaToolsKit
 
         public float Radius;
 
+        public GameObject() => _coroutineManagement = new CoroutineManagement();
+
         public virtual void Start() { }
         public virtual void OnVisible() { }
         public virtual void OnInvisible() { }
 
-        public virtual void Update(GameTime gameTime)
-        {
-            if (Components != null) Components.Update(gameTime);
-        }
+        public virtual void Update(float deltaTime) { }
 
-        public virtual void UpdateData(GameTime gameTime)
+        public virtual void UpdateData(float deltaTime) { }
+
+        public System.Collections.IEnumerator Wait(float time)
         {
-            if (Components != null) Components.UpdateData(gameTime);
+            yield return _coroutineManagement.Wait(time);
         }
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            BeginDraw(spriteBatch, true);
+            BeginDraw(spriteBatch, Layer != Layers.UI);
             DrawSprite(spriteBatch);
             EndDraw(spriteBatch);
         }
@@ -83,8 +91,7 @@ namespace UmbrellaToolsKit
         public virtual void OnMouseOver() { }
         public virtual void Destroy()
         {
-            RemoveFromScene = true;
-            if (Components != null) Components.Destroy();
+            _removeFromScene = true;
             OnDestroy();
         }
         public virtual void OnDestroy() { }
@@ -118,6 +125,7 @@ namespace UmbrellaToolsKit
         public virtual void Dispose()
         {
             OnDestroy();
+            Sprite = null;
             if (Components != null) Components.Destroy();
             GC.SuppressFinalize(this);
         }

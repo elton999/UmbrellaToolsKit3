@@ -11,18 +11,9 @@ namespace UmbrellaToolsKit.Input
         internal ButtonState _buttonRightLastState = ButtonState.Released;
         internal ButtonState _buttonMiddleLastState = ButtonState.Released;
 
-        internal static MouseHandler GetStatus
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new MouseHandler();
-                    GameManagement.OnGameUpdateData += _instance.setInputData;
-                }
-                return _instance;
-            }
-        }
+        public MouseHandler() => GameManagement.OnGameUpdateData += setInputData;
+
+        internal static MouseHandler GetStatus => _instance ??= new MouseHandler();
 
         public static bool ButtonLeftPressed
         {

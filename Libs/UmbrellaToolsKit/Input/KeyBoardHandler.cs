@@ -9,19 +9,11 @@ namespace UmbrellaToolsKit.Input
         private static KeyBoardHandler _instance;
 
         private static Dictionary<Keys, Tuple<KeyState, KeyState>> _keysStatus = new Dictionary<Keys, Tuple<KeyState, KeyState>>();
+        private static Dictionary<string, List<Keys>> _bindedInputs = new Dictionary<string, List<Keys>>();
 
-        internal static KeyBoardHandler GetStatus
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new KeyBoardHandler();
-                    GameManagement.OnGameUpdateData += _instance.setInputData;
-                }
-                return _instance;
-            }
-        }
+        public KeyBoardHandler() => GameManagement.OnGameUpdateData += setInputData;
+
+        internal static KeyBoardHandler GetStatus => _instance ??= new KeyBoardHandler();
 
         public static bool KeyPressed(Keys key)
         {
@@ -29,6 +21,14 @@ namespace UmbrellaToolsKit.Input
             foreach (var keyState in _keysStatus)
                 if (keyState.Key == key)
                     return keyState.Value.Item1 == KeyState.Down && keyState.Value.Item2 == KeyState.Up;
+            return false;
+        }
+
+        public static bool KeyPressed(string name)
+        {
+            if (!_bindedInputs.ContainsKey(name)) return false;
+            foreach (var input in _bindedInputs[name])
+                if (KeyPressed(input)) return true;
             return false;
         }
 
@@ -41,12 +41,28 @@ namespace UmbrellaToolsKit.Input
             return false;
         }
 
+        public static bool KeyDown(string name)
+        {
+            if (!_bindedInputs.ContainsKey(name)) return false;
+            foreach (var input in _bindedInputs[name])
+                if (KeyDown(input)) return true;
+            return false;
+        }
+
         public static bool KeyUp(Keys key)
         {
             var status = GetStatus;
             foreach (var keyState in _keysStatus)
                 if (keyState.Key == key)
                     return keyState.Value.Item1 == KeyState.Up;
+            return false;
+        }
+
+        public static bool KeyUp(string name)
+        {
+            if (!_bindedInputs.ContainsKey(name)) return false;
+            foreach (var input in _bindedInputs[name])
+                if (KeyUp(input)) return true;
             return false;
         }
 
@@ -66,6 +82,20 @@ namespace UmbrellaToolsKit.Input
             _keysStatus.Add(key, keyStatus);
         }
 
+        public static void AddInput(string name, Keys key)
+        {
+            if (!_bindedInputs.ContainsKey(name))
+                _bindedInputs.Add(name, new List<Keys>());
+            _bindedInputs[name].Add(key);
+            AddInput(key);
+        }
+
+        public static void AddInput(string name, Keys[] keys)
+        {
+            foreach (var key in keys)
+                AddInput(name, key);
+        }
+
         internal void setInputData()
         {
             var newInputStatus = new Dictionary<Keys, Tuple<KeyState, KeyState>>();
@@ -82,4 +112,3 @@ namespace UmbrellaToolsKit.Input
         }
     }
 }
-

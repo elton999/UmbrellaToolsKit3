@@ -1,7 +1,10 @@
-﻿using ImGuiNET;
+﻿#if !RELEASE
+using ImGuiNET;
+#endif
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
 using UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor;
 using UmbrellaToolsKit.Storage;
@@ -43,10 +46,11 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
             UpdateBodyNodeSize();
         }
 
+#if !RELEASE
         public override void Draw(ImDrawListPtr imDraw)
         {
             base.Draw(imDraw);
-            for(int i = 0; i < NodeOptions.Count; i++)
+            for (int i = 0; i < NodeOptions.Count; i++)
             {
                 var option = NodeOptions[i];
                 int optionNumber = i + 1;
@@ -56,39 +60,45 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
                 option.Position = nodePosition;
             }
         }
+#endif
 
         public override void OnSave()
         {
             base.OnSave();
-            _storage.SetString($"Nodes-Object-{Id}", typeof(NodeWithOptions).Namespace + "." + typeof(NodeWithOptions).Name );
+            _storage.SetString($"Nodes-Object-{Id}", typeof(NodeWithOptions).Namespace + "." + typeof(NodeWithOptions).Name);
         }
 
         public override void Load()
         {
             base.Load();
             var nodes = DialogueData.Nodes.FindAll(x => x.ParentNode != null && x.ParentNode.Id == this.Id);
-
-            foreach(var node in nodes)
+            foreach (var node in nodes)
                 AddNodeOption(node);
         }
 
+#if !RELEASE
         public override void DrawInspector()
         {
             base.DrawInspector();
             for (int i = 0; i < NodeOptions.Count; i++)
             {
-                string optionName = $"Option ({i + 1}) #ID{NodeOptions[i].Id}";
-                NodeOptions[i].Name = optionName;
-                if (ImGui.CollapsingHeader(optionName))
+                if (ImGui.CollapsingHeader($"Option - {NodeOptions[i].Id}"))
                 {
                     ImGui.Indent();
+                    string stringValue = NodeOptions[i].Name;
+                    Fields.Field.DrawString("Name option", ref stringValue);
+                    NodeOptions[i].Name = stringValue;
+
                     NodeOptions[i].DrawInspector();
                     ImGui.Unindent();
                 }
             }
+
+
             if (ImGui.Button("Add a new Option"))
                 CreateAnOption<NodeOptionOutPut>();
         }
+#endif
 
         public override void OnDelete()
         {

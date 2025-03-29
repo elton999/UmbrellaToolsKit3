@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+#if !RELEASE
 using ImGuiNET;
+using MonoGame.ImGui.Extensions;
+#endif
 using Microsoft.Xna.Framework;
-using MonoGame.ImGui.Standard.Extensions;
 using UmbrellaToolsKit.EditorEngine.Nodes;
 using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
 using UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor;
@@ -13,11 +15,12 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 {
     public class DialogueEditorWindow : IWindowEditable
     {
-        private const string _dialogueSettingPath = @"Content/Dialogue1.Umbrella";
         private Storage.Load _storage;
 
         private GameManagement _gameManagement;
-        public GameManagement GameManagement { get => _gameManagement; }
+        public GameManagement GameManagement => _gameManagement;
+
+        public Storage.Load Storage => _storage;
 
         public BasicNode SelectedNode;
 
@@ -40,16 +43,21 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             OnStartConnecting += StartLineConnection;
             BasicNode.OnSelectNode += SelectNode;
             BasicNode.OnDestroyNode += RemoveSelectedNode;
-
-            _storage = new Storage.Load(_dialogueSettingPath);
-            LoadNodes();
+            DialogueEditorMainBar.OnAnyOpenFile += OpenFile;
+            _storage = new Storage.Load();
         }
 
         public static void StartConnectingNodes(INodeOutPutle node) => OnStartConnecting?.Invoke(node);
 
+        public void OpenFile(string filename)
+        {
+            _storage = new Storage.Load(filename);
+            LoadNodes();
+        }
+
         public void SetAsMainWindow()
         {
-            BarEdtior.AdicionalBar = new DialogueEditorMainBar(_storage);
+            BarEdtior.AdicionalBar = new DialogueEditorMainBar(this);
             EditorArea.OnDrawWindow += ShowWindow;
         }
         public void RemoveAsMainWindow()
@@ -60,6 +68,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
         public void ShowWindow(GameTime gameTime)
         {
+#if !RELEASE
             uint leftID = ImGui.GetID("MainLeft");
             uint rightID = ImGui.GetID("MainRight");
 
@@ -137,8 +146,9 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             drawList.AddText((displayPosText + displaySize * Vector2.UnitX).ToNumericVector2(), Color.White.PackedValue, $"m x: {MouseHandler.Position.X}, y: {MouseHandler.Position.Y}");
 
             ImGui.End();
+#endif
         }
-
+#if !RELEASE
         private static void DrawBackground(ImDrawListPtr drawList, System.Numerics.Vector2 windowPosition, System.Numerics.Vector2 windowSize)
         {
             Primativas.Square.Draw(
@@ -150,33 +160,46 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
             int lines = 10;
             int columns = 6;
-            for (int i = 0; i < lines; i++)
+            for (int lineCount = 0; lineCount < lines; lineCount++)
             {
-                for (int j = 0; j < columns; j++)
+                for (int columnCount = 0; columnCount < columns; columnCount++)
                 {
-                    if ((i + j) % 2 == 0)
+                    if ((lineCount + columnCount) % 2 == 0)
                     {
                         Vector2 size = Vector2.One * 200;
-                        Vector2 position = size * (new Vector2(i, j));
+                        Vector2 position = size * (new Vector2(lineCount, columnCount));
 
                         Primativas.Square.Draw(drawList, position, size, Color.DimGray);
                     }
                 }
             }
         }
+#endif
+        public void Save(string filename)
+        {
+            _storage ??= new Storage.Load(filename);
+            _storage.SetFilename(filename);
 
-        public static void Save() => OnSave?.Invoke();
+            List<float> ids = new List<float>();
+            foreach (var node in DialogueData.Nodes)
+                ids.Add(node.Id);
+            _storage.AddItemFloat("Ids", ids);
+
+            OnSave?.Invoke();
+        }
 
         public void ShowNodeInfo()
         {
+#if !RELEASE
             bool treeNode = InspectorClass.DrawSeparator("Node Inspector");
             if (treeNode) SelectedNode.DrawInspector();
             if (treeNode) ImGui.Unindent();
+#endif
         }
 
         private void SelectNode(BasicNode node) => SelectedNode = node;
-        private void RemoveSelectedNode(BasicNode node) => SelectedNode = SelectedNode == node ? null: node;
-
+        private void RemoveSelectedNode(BasicNode node) => SelectedNode = SelectedNode == node ? null : node;
+#if !RELEASE
         private void TraceLineConnection(ImDrawListPtr drawList)
         {
             Primativas.Line.Draw(
@@ -192,20 +215,20 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
             foreach (var node in DialogueData.Nodes)
             {
-                if (node is INodeInPutle)
+                if (node is not INodeInPutle) continue;
+
+                INodeInPutle nodeInPutle = (INodeInPutle)node;
+                float distance = (nodeInPutle.InPosition - MouseHandler.Position).Length();
+
+                if (distance <= 5f)
                 {
-                    INodeInPutle nodeInPutle = (INodeInPutle)node;
-                    float distance = (nodeInPutle.InPosition - MouseHandler.Position).Length();
-                    if (distance <= 5f)
-                    {
-                        NodeStartConnection.AddNodeConnection(nodeInPutle);
-                        IsConnecting = false;
-                        return;
-                    }
+                    NodeStartConnection.AddNodeConnection(nodeInPutle);
+                    IsConnecting = false;
+                    return;
                 }
             }
         }
-
+#endif
         private void StartLineConnection(INodeOutPutle node)
         {
             NodeStartConnection = node;
@@ -218,7 +241,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             foreach (float nodeId in nodeIds)
             {
                 int id = (int)nodeId;
-                if(DialogueData.LastNodeId < id)
+                if (DialogueData.LastNodeId < id)
                     DialogueData.LastNodeId = id;
             }
             DialogueData.LastNodeId++;

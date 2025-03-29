@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+#if !RELEASE
 using ImGuiNET;
-using MonoGame.ImGui.Standard.Extensions;
+using MonoGame.ImGui.Extensions;
+#endif
 using Microsoft.Xna.Framework;
 
 namespace UmbrellaToolsKit.EditorEngine.Primativas
@@ -11,6 +13,7 @@ namespace UmbrellaToolsKit.EditorEngine.Primativas
     {
         public static Vector2 BezierFactor { get => new Vector2(0.5f, 0.1f); }
 
+#if !RELEASE
         public static void Draw(ImDrawListPtr imDraw, Vector2 start, Vector2 end)
         {
             float lenght = (start - end).Length();
@@ -24,5 +27,6 @@ namespace UmbrellaToolsKit.EditorEngine.Primativas
                 end.ToNumericVector2(),
                 Color.Yellow.PackedValue, 2f);
         }
+#endif
     }
 }

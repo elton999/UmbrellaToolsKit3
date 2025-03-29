@@ -3,8 +3,10 @@ using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
 using UmbrellaToolsKit.Storage;
 using Microsoft.Xna.Framework;
 using UmbrellaToolsKit.Input;
+#if !RELEASE
 using ImGuiNET;
-using MonoGame.ImGui.Standard.Extensions;
+using MonoGame.ImGui.Extensions;
+#endif
 using UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes
@@ -29,11 +31,13 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             base.Update();
         }
 
+#if !RELEASE
         public override void Draw(ImDrawListPtr imDraw)
         {
             base.Draw(imDraw);
             imDraw.AddCircleFilled(InPosition.ToNumericVector2(), 5f, Color.Yellow.PackedValue);
         }
+#endif
 
         public override void OnSave()
         {
@@ -57,13 +61,13 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             base.OnDelete();
             _storage.DeleteNode($"Nodes-Connection-Out-{Id}");
         }
-
+#if !RELEASE
         public void DrawConnections(ImDrawListPtr imDraw)
         {
             foreach (var outputNode in NodesConnectionOut)
                 Primativas.Line.Draw(imDraw, InPosition, outputNode.OutPosition);
         }
-
+#endif
         public void AddNodeConnection(INodeOutPutle node)
         {
             if (NodesConnectionOut.Contains(node)) return;

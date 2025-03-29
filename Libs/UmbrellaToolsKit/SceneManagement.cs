@@ -4,7 +4,7 @@ using UmbrellaToolsKit.Interfaces;
 
 namespace UmbrellaToolsKit
 {
-    public class SceneManagement : IUpdatable, Interfaces.IDrawable
+    public class SceneManagement : Interfaces.IDrawable
     {
         public GameManagement GameManagement;
         public Scene MainScene;
@@ -20,7 +20,6 @@ namespace UmbrellaToolsKit
                 GameManagement.Game.Content
             );
             MainScene.GameManagement = GameManagement;
-            MainScene.LevelReady = true;
         }
 
         public void Update(GameTime gameTime)
