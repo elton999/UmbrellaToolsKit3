@@ -8,5 +8,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public int IntValue;
         public float FloatValue;   
         public string StringValue;
+
+        public VariableType GetType() => DialogueData.Fields.GetVariableType(Id);
     }
 }
