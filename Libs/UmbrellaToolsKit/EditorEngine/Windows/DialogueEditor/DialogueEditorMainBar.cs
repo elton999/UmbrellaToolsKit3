@@ -81,7 +81,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
 
                 if (ImGui.MenuItem("Add Nove With Options"))
                 {
-                    var node = new NodeWithOptions(_dialogueEditorWindow.Storage, DialogueData.GetNewNodeId(), "new node", Vector2.One * 500f);
+                    var node = new NodeWithOptions(_dialogueEditorWindow.Storage, DialogueData.GetNewNodeId(), "Dialogue Node", Vector2.One * 500f);
                     DialogueData.AddNode(node);
                 }
 
