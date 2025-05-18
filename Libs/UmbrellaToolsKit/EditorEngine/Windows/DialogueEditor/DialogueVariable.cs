@@ -30,6 +30,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
 
         public bool AddVariable(string name, VariableType type)
         {
+            if (string.IsNullOrEmpty(name) || type == VariableType.NONE) return false;
+
             name = name.Trim().Replace(" ", "_");
             foreach (var variable in Variables)
                 if (variable.Value.Name.ToLower() == name.ToLower())
