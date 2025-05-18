@@ -123,10 +123,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
                     }
                 }
 
-                ImGui.Spacing();
-                ImGui.Separator();
-                ImGui.Spacing();
-
                 Field.DrawStringOptions("Variables", ref _currentVariableFormName, options);
                 if(Buttons.BlueButton("Add field"))
                 {

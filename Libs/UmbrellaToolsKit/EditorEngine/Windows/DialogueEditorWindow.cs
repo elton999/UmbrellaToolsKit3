@@ -18,7 +18,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
     {
         private Storage.Load _storage;
 
-        private VariableSettings _variableSettings = new VariableSettings("", VariableType.NONE);
+        private VariableSettings _variableSettings;
 
         private GameManagement _gameManagement;
         public GameManagement GameManagement => _gameManagement;
@@ -90,11 +90,19 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.SameLine();
 
             ImGui.SetNextWindowDockID(leftID, ImGuiCond.Once);
-            ImGui.Begin("Item props");
-            ImGui.SetWindowFontScale(1.2f);
+            if(ImGui.Begin("Variables"))
+            {
+                ImGui.SetWindowFontScale(1.2f);
+                ShowVariableSettings();
+            }
+            ImGui.End();
 
-            if (SelectedNode != null) ShowNodeInfo();
-
+            ImGui.SetNextWindowDockID(leftID, ImGuiCond.Once);
+            if(ImGui.Begin("Item props"))
+            {
+                ImGui.SetWindowFontScale(1.2f);
+                if (SelectedNode != null) ShowNodeInfo();
+            }
             ImGui.End();
 
             ImGui.SetNextWindowDockID(rightID, ImGuiCond.Once);
@@ -170,7 +178,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                     if ((lineCount + columnCount) % 2 == 0)
                     {
                         Vector2 size = Vector2.One * 200;
-                        Vector2 position = size * (new Vector2(lineCount, columnCount));
+                        Vector2 position = size * new Vector2(lineCount, columnCount);
 
                         Primitives.Square.Draw(drawList, position, size, Color.DimGray);
                     }
@@ -196,7 +204,26 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 #if !RELEASE
             bool treeNode = InspectorClass.DrawSeparator("Node Inspector");
             if (treeNode) SelectedNode.DrawInspector();
-            if (treeNode) ImGui.Unindent();
+#endif
+        }
+
+        public void ShowVariableSettings()
+        {
+#if !RELEASE
+            _variableSettings ??= new VariableSettings("", VariableType.NONE);
+            object variableValue = _variableSettings.Type;
+            Field.DrawEnum("Variable Type", typeof(VariableType), ref variableValue);
+            Field.DrawString("Variable Name", ref _variableSettings.Name);
+            _variableSettings.Type = (VariableType)variableValue;
+
+            if (Buttons.BlueButton("Add"))
+            {
+                if (DialogueData.Fields.AddVariable(_variableSettings.Name, (VariableType)variableValue))
+                {
+                    _variableSettings.Type = VariableType.NONE;
+                    _variableSettings.Name = "";
+                }
+            }
 
             if (InspectorClass.DrawSeparator("Variables"))
             {
@@ -208,27 +235,11 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                     DialogueData.Fields.Variables[variable.Key].Name = variable.Value.Name;
                     DialogueData.Fields.Variables[variable.Key].Type = (VariableType)value;
                 }
-                
+
                 ImGui.Spacing();
                 ImGui.Separator();
                 ImGui.Spacing();
-
-                object variableValue = _variableSettings.Type;
-                Field.DrawEnum("Variable Type", typeof(VariableType), ref variableValue);
-                Field.DrawString("Variable Name", ref _variableSettings.Name);
-                _variableSettings.Type = (VariableType)variableValue;
-
-                if(Buttons.BlueButton("Add"))
-                {
-                    if (DialogueData.Fields.AddVariable(_variableSettings.Name, (VariableType)variableValue))
-                    {
-                        _variableSettings.Type = VariableType.NONE;
-                        _variableSettings.Name = "";
-                    }
-                }
             }
-
-            if (treeNode) ImGui.Unindent();
 #endif
         }
 
