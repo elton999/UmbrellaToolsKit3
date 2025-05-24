@@ -90,10 +90,10 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.SameLine();
 
             ImGui.SetNextWindowDockID(leftID, ImGuiCond.Once);
-            if(ImGui.Begin("Variables"))
+            if(ImGui.Begin("Fields"))
             {
                 ImGui.SetWindowFontScale(1.2f);
-                ShowVariableSettings();
+                ShowFieldsSettings();
             }
             ImGui.End();
 
@@ -207,7 +207,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 #endif
         }
 
-        public void ShowVariableSettings()
+        public void ShowFieldsSettings()
         {
 #if !RELEASE
             _variableSettings ??= new VariableSettings("", VariableType.NONE);
@@ -225,7 +225,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                 }
             }
 
-            if (InspectorClass.DrawSeparator("Variables"))
+            if (InspectorClass.DrawSeparator("Fields"))
             {
                 foreach (var variable in DialogueData.Fields.Variables)
                 {
