@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using UmbrellaToolsKit.EditorEngine.Nodes;
 using UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes;
 
@@ -35,9 +34,9 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
 
         public static void Export(string path, DialogueFormat dialogue)
         {
-            Console.WriteLine("Saving Dialogue ...");
+            Log.Write("Saving Dialogue ...");
             File.WriteAllText(path, dialogue.ToJson());
-            Console.WriteLine($"Saved: {path}");
+            Log.Write($"Saved: {path}");
         }
 
         private static void SetNodeOption(BasicNode basicNode, Node node)

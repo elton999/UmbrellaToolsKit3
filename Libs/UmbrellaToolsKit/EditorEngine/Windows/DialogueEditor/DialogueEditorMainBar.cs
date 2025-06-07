@@ -79,9 +79,9 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
                     DialogueData.AddNode(node);
                 }
 
-                if (ImGui.MenuItem("Add Nove With Options"))
+                if (ImGui.MenuItem("Add Node With Options"))
                 {
-                    var node = new NodeWithOptions(_dialogueEditorWindow.Storage, DialogueData.GetNewNodeId(), "new node", Vector2.One * 500f);
+                    var node = new NodeWithOptions(_dialogueEditorWindow.Storage, DialogueData.GetNewNodeId(), "Dialogue Node", Vector2.One * 500f);
                     DialogueData.AddNode(node);
                 }
 

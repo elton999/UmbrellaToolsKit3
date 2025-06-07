@@ -18,7 +18,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
     {
         private Storage.Load _storage;
 
-        private VariableSettings _variableSettings = new VariableSettings("", VariableType.NONE);
+        private VariableSettings _variableSettings;
 
         private GameManagement _gameManagement;
         public GameManagement GameManagement => _gameManagement;
@@ -90,11 +90,19 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.SameLine();
 
             ImGui.SetNextWindowDockID(leftID, ImGuiCond.Once);
-            ImGui.Begin("Item props");
-            ImGui.SetWindowFontScale(1.2f);
+            if(ImGui.Begin("Fields"))
+            {
+                ImGui.SetWindowFontScale(1.2f);
+                ShowFieldsSettings();
+            }
+            ImGui.End();
 
-            if (SelectedNode != null) ShowNodeInfo();
-
+            ImGui.SetNextWindowDockID(leftID, ImGuiCond.Once);
+            if(ImGui.Begin("Item props"))
+            {
+                ImGui.SetWindowFontScale(1.2f);
+                if (SelectedNode != null) ShowNodeInfo();
+            }
             ImGui.End();
 
             ImGui.SetNextWindowDockID(rightID, ImGuiCond.Once);
@@ -170,7 +178,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                     if ((lineCount + columnCount) % 2 == 0)
                     {
                         Vector2 size = Vector2.One * 200;
-                        Vector2 position = size * (new Vector2(lineCount, columnCount));
+                        Vector2 position = size * new Vector2(lineCount, columnCount);
 
                         Primitives.Square.Draw(drawList, position, size, Color.DimGray);
                     }
@@ -182,6 +190,17 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         {
             _storage ??= new Storage.Load(filename);
             _storage.SetFilename(filename);
+
+            var variablesName = new List<string>();
+            var variablesType = new List<float>();
+
+            foreach (var variable in DialogueData.Fields.Variables)
+            {
+                variablesName.Add(variable.Value.Name);
+                variablesType.Add((int)variable.Value.Type);
+            }
+            _storage.AddItemString($"Fields-Name", variablesName);
+            _storage.AddItemFloat($"Fields-Type", variablesType);
 
             List<float> ids = new List<float>();
             foreach (var node in DialogueData.Nodes)
@@ -196,9 +215,28 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 #if !RELEASE
             bool treeNode = InspectorClass.DrawSeparator("Node Inspector");
             if (treeNode) SelectedNode.DrawInspector();
-            if (treeNode) ImGui.Unindent();
+#endif
+        }
 
-            if (InspectorClass.DrawSeparator("Variables"))
+        public void ShowFieldsSettings()
+        {
+#if !RELEASE
+            _variableSettings ??= new VariableSettings("", VariableType.NONE);
+            object variableValue = _variableSettings.Type;
+            Field.DrawEnum("Variable Type", typeof(VariableType), ref variableValue);
+            Field.DrawString("Variable Name", ref _variableSettings.Name);
+            _variableSettings.Type = (VariableType)variableValue;
+
+            if (Buttons.BlueButton("Add"))
+            {
+                if (DialogueData.Fields.AddVariable(_variableSettings.Name, (VariableType)variableValue))
+                {
+                    _variableSettings.Type = VariableType.NONE;
+                    _variableSettings.Name = "";
+                }
+            }
+
+            if (InspectorClass.DrawSeparator("Fields"))
             {
                 foreach (var variable in DialogueData.Fields.Variables)
                 {
@@ -208,27 +246,11 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                     DialogueData.Fields.Variables[variable.Key].Name = variable.Value.Name;
                     DialogueData.Fields.Variables[variable.Key].Type = (VariableType)value;
                 }
-                
+
                 ImGui.Spacing();
                 ImGui.Separator();
                 ImGui.Spacing();
-
-                object variableValue = _variableSettings.Type;
-                Field.DrawEnum("Variable Type", typeof(VariableType), ref variableValue);
-                Field.DrawString("Variable Name", ref _variableSettings.Name);
-                _variableSettings.Type = (VariableType)variableValue;
-
-                if(Buttons.BlueButton("Add"))
-                {
-                    if (DialogueData.Fields.AddVariable(_variableSettings.Name, (VariableType)variableValue))
-                    {
-                        _variableSettings.Type = VariableType.NONE;
-                        _variableSettings.Name = "";
-                    }
-                }
             }
-
-            if (treeNode) ImGui.Unindent();
 #endif
         }
 
@@ -270,8 +292,26 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             IsConnecting = true;
         }
 
+        private void ClearNodes()
+        {
+            DialogueData.ClearNodes();
+            SelectedNode = null;
+        }
+
         private void LoadNodes()
         {
+            ClearNodes();
+            DialogueData.ClearNodes();
+
+            var fieldsCount = _storage.getItemsString("Fields-Name").Count;
+            for (int i = 0; i < fieldsCount; i++)
+            {
+                string name = _storage.getItemsString("Fields-Name")[i];
+                VariableType type = (VariableType)_storage.getItemsFloat("Fields-Type")[i];
+                DialogueData.Fields.AddVariable(name, type);
+                Log.Write(name.ToString());
+            }
+
             var nodeIds = _storage.getItemsFloat("Ids");
             foreach (float nodeId in nodeIds)
             {

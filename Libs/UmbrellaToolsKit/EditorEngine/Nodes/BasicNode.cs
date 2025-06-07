@@ -177,7 +177,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             _storage.SetFloat($"position-{Id}-vector-y", Position.Y);
             if (ParentNode is not null)
                 _storage.SetFloat($"parent-{Id}", ParentNode.Id);
-
         }
 
 #if !RELEASE
