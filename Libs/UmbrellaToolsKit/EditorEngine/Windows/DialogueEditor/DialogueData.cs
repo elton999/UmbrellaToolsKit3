@@ -9,11 +9,11 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
         private static DialogueVariable _fields;
         public static int LastNodeId = 0;
         public static List<BasicNode> Nodes => _nodes;
-        public static DialogueVariable Fields 
+        public static DialogueVariable Fields
         {
             get
             {
-                if(_fields == null)
+                if (_fields == null)
                     _fields = new DialogueVariable();
                 return _fields;
             }
@@ -28,10 +28,17 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
 
         public static void AddNode(BasicNode node)
         {
-            if(_nodes.Contains(node)) return;
+            if (_nodes.Contains(node)) return;
             _nodes.Add(node);
         }
 
         public static void RemoveNode(BasicNode node) => _nodes.Remove(node);
+        
+        public static void ClearNodes()
+        {
+            _nodes.Clear();
+            LastNodeId = 0;
+            _fields = null;
+        }
     }
 }

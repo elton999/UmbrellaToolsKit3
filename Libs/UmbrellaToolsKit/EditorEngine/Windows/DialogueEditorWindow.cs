@@ -281,8 +281,16 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             IsConnecting = true;
         }
 
+        private void ClearNodes()
+        {
+            DialogueData.ClearNodes();
+            SelectedNode = null;
+        }
+
         private void LoadNodes()
         {
+            ClearNodes();
+            DialogueData.ClearNodes();
             var nodeIds = _storage.getItemsFloat("Ids");
             foreach (float nodeId in nodeIds)
             {
