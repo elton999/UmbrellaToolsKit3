@@ -191,6 +191,17 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             _storage ??= new Storage.Load(filename);
             _storage.SetFilename(filename);
 
+            var variablesName = new List<string>();
+            var variablesType = new List<float>();
+
+            foreach (var variable in DialogueData.Fields.Variables)
+            {
+                variablesName.Add(variable.Value.Name);
+                variablesType.Add((int)variable.Value.Type);
+            }
+            _storage.AddItemString($"Fields-Name", variablesName);
+            _storage.AddItemFloat($"Fields-Type", variablesType);
+
             List<float> ids = new List<float>();
             foreach (var node in DialogueData.Nodes)
                 ids.Add(node.Id);
@@ -291,6 +302,16 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         {
             ClearNodes();
             DialogueData.ClearNodes();
+
+            var fieldsCount = _storage.getItemsString("Fields-Name").Count;
+            for (int i = 0; i < fieldsCount; i++)
+            {
+                string name = _storage.getItemsString("Fields-Name")[i];
+                VariableType type = (VariableType)_storage.getItemsFloat("Fields-Type")[i];
+                DialogueData.Fields.AddVariable(name, type);
+                Log.Write(name.ToString());
+            }
+
             var nodeIds = _storage.getItemsFloat("Ids");
             foreach (float nodeId in nodeIds)
             {

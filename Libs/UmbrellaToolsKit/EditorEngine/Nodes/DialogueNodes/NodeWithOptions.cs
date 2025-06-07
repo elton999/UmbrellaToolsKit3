@@ -5,8 +5,8 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using UmbrellaToolsKit.EditorEngine.Fields;
-using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
 using UmbrellaToolsKit.EditorEngine.Windows;
+using UmbrellaToolsKit.EditorEngine.Nodes.Interfaces;
 using UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor;
 using UmbrellaToolsKit.Storage;
 
@@ -67,6 +67,19 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
         {
             base.OnSave();
             _storage.SetString($"Nodes-Object-{Id}", typeof(NodeWithOptions).Namespace + "." + typeof(NodeWithOptions).Name);
+
+            // Save variables
+            var variablesId = new List<float>();
+            foreach (var variable in VariableFields)
+                variablesId.Add(variable.Id);
+            _storage.AddItemFloat($"Nodes-Object-{Id}-Variable-Ids", variablesId);
+
+            foreach (var variable in VariableFields)
+            {
+                _storage.SetFloat($"Nodes-Object-{Id}-Variable-{variable.Id}-Int", variable.IntValue);
+                _storage.SetFloat($"Nodes-Object-{Id}-Variable-{variable.Id}-Float", variable.FloatValue);
+                _storage.SetString($"Nodes-Object-{Id}-Variable-{variable.Id}-String", variable.StringValue);
+            }
         }
 
         public override void Load()
@@ -75,10 +88,28 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
             var nodes = DialogueData.Nodes.FindAll(x => x.ParentNode != null && x.ParentNode.Id == this.Id);
             foreach (var node in nodes)
                 AddNodeOption(node);
+
+            // Load variables
+            VariableFields = new List<VariableFields>();
+            var variablesId = _storage.getItemsFloat($"Nodes-Object-{Id}-Variable-Ids");
+            if (variablesId.Count == 0)
+            {
+                VariableFields = new List<VariableFields>();
+                return;
+            }
+
+            foreach (var variableId in variablesId)
+            {
+                VariableFields variable = new VariableFields();
+                variable.Id = (int)variableId;
+                variable.IntValue = (int)_storage.getItemsFloat($"Nodes-Object-{Id}-Variable-{variable.Id}-Int")[0];
+                variable.FloatValue = _storage.getItemsFloat($"Nodes-Object-{Id}-Variable-{variable.Id}-Float")[0];
+                variable.StringValue = _storage.getItemsString($"Nodes-Object-{Id}-Variable-{variable.Id}-String")[0];
+                VariableFields.Add(variable);
+            }
         }
 
 #if !RELEASE
-        private string _currentVariableFormName;
         public override void DrawInspector()
         {
             base.DrawInspector();
@@ -99,39 +130,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
             if (ImGui.Button("Add a new Option"))
                 CreateAnOption<NodeOptionOutPut>();
 
-            var options =  DialogueData.Fields.GetAllVariablesNames();
-
-            if (options.Length <= 0) return; 
-            bool treeNode = InspectorClass.DrawSeparator("Settings");
-            if (treeNode)
-            {
-                ImGui.Indent();
-
-                foreach (var field in VariableFields)
-                {
-                    switch (field.GetType())
-                    {
-                        case VariableType.INT:
-                            Field.DrawInt(DialogueData.Fields.Variables[field.Id].Name, ref field.IntValue);
-                            break;
-                        case VariableType.FLOAT:
-                            Field.DrawFloat(DialogueData.Fields.Variables[field.Id].Name, ref field.FloatValue);
-                            break;
-                        case VariableType.STRING:
-                            Field.DrawString(DialogueData.Fields.Variables[field.Id].Name, ref field.StringValue);
-                            break;
-                    }
-                }
-
-                Field.DrawStringOptions("Variables", ref _currentVariableFormName, options);
-                if(Buttons.BlueButton("Add field"))
-                {
-                    int id = DialogueData.Fields.GetIdByName(_currentVariableFormName);
-                    VariableFields.Add(new VariableFields() { Id = id });
-                }
-
-                ImGui.Unindent();
-            }
+            DrawVariables();
         }
 #endif
 
@@ -154,5 +153,45 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
             _mainSquareSize = new Vector2(200, 30);
             _mainSquareSize += Vector2.UnitY * NodeOptions.Count * _mainSquareSize.Y;
         }
+
+#if !RELEASE
+        private string _currentVariableFormName;
+        private void DrawVariables()
+        {
+            var options = DialogueData.Fields.GetAllVariablesNames();
+
+            if (options.Length <= 0) return;
+            bool treeNode = InspectorClass.DrawSeparator("Settings");
+            if (treeNode)
+            {
+                ImGui.Indent();
+
+                foreach (var field in VariableFields)
+                {
+                    switch (field.GetType())
+                    {
+                        case VariableType.INT:
+                            Field.DrawInt(DialogueData.Fields.Variables[field.Id].Name, ref field.IntValue);
+                            break;
+                        case VariableType.FLOAT:
+                            Field.DrawFloat(DialogueData.Fields.Variables[field.Id].Name, ref field.FloatValue);
+                            break;
+                        case VariableType.STRING:
+                            Field.DrawString(DialogueData.Fields.Variables[field.Id].Name, ref field.StringValue);
+                            break;
+                    }
+                }
+
+                Field.DrawStringOptions("Variables", ref _currentVariableFormName, options);
+                if (Buttons.BlueButton("Add field"))
+                {
+                    int id = DialogueData.Fields.GetIdByName(_currentVariableFormName);
+                    VariableFields.Add(new VariableFields() { Id = id });
+                }
+
+                ImGui.Unindent();
+            }
+        }
+#endif
     }
 }

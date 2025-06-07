@@ -24,7 +24,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
 
     public class DialogueVariable
     {
-        private Dictionary<int, VariableSettings> _variables = new();
+        private Dictionary<int, VariableSettings> _variables;
 
         public Dictionary<int, VariableSettings> Variables => _variables ??= new();
 

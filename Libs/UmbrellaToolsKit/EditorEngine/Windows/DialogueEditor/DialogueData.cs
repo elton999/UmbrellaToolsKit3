@@ -36,7 +36,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
         
         public static void ClearNodes()
         {
-            _nodes.Clear();
+            _nodes.Clear();   
+            _fields = new DialogueVariable();
             LastNodeId = 0;
             _fields = null;
         }
