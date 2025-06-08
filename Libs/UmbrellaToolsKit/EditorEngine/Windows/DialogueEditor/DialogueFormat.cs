@@ -24,6 +24,21 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
 
         [JsonProperty("nodes")]
         public List<Node> Nodes { get; set; }
+
+        [JsonProperty("variables")]
+        public string[] Variables { get; set; }
+
+        [JsonProperty("VariablesType")]
+        public int[] VariablesType { get; set; }
+        
+        [JsonProperty("VariableTypeList")]
+        public string[] VariableTypeList { get; set; } = new string[]
+        {
+            "NONE",
+            "INT",
+            "FLOAT",
+            "STRING"
+        };
     }
 
     public partial class Node
@@ -42,6 +57,21 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
 
         [JsonProperty("nextNode")]
         public int NextNode { get; set; }
+
+        [JsonProperty("variables")]
+        public VariableList[] Variables { get; set; }
+    }
+
+    public partial class VariableList
+    {
+        [JsonProperty("variables")]
+        public int VariableId { get; set; }
+
+        [JsonProperty("VariableType")]
+        public int VariableType { get; set; }
+
+        [JsonProperty("VariableValue")]
+        public object VariableValue { get; set; }
     }
 
     public partial class DialogueFormat

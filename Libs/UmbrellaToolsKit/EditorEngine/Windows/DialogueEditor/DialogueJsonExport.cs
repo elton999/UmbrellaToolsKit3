@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using UmbrellaToolsKit.EditorEngine.Nodes;
 using UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes;
 
@@ -11,6 +12,9 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
             var dialogue = new DialogueFormat();
             dialogue.Ids = new();
             dialogue.Nodes = new();
+
+            SetVariables(dialogue);
+
             foreach (var basicNode in DialogueData.Nodes)
             {
                 dialogue.Ids.Add(basicNode.Id);
@@ -25,6 +29,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
 
                 SetNextNode(basicNode, node);
                 SetNodeOption(basicNode, node);
+                SetNodeVariables(basicNode, node);
 
                 dialogue.Nodes.Add(node);
             }
@@ -38,6 +43,44 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
             File.WriteAllText(path, dialogue.ToJson());
             Log.Write($"Saved: {path}");
         }
+
+        private static void SetVariables(DialogueFormat dialogue)
+        {
+            var variableNames = new List<string>();
+            foreach (var variable in DialogueData.Fields.Variables)
+                variableNames.Add(variable.Value.Name);
+            dialogue.Variables = variableNames.ToArray();
+
+            var variableTypes = new List<int>();
+            foreach (var variable in DialogueData.Fields.Variables)
+                variableTypes.Add((int)variable.Value.Type);
+            dialogue.VariablesType = variableTypes.ToArray();
+        }
+
+        private static void SetNodeVariables(BasicNode basicNode, Node node)
+        {
+            if (basicNode.VariableFields.Count == 0) return;
+
+            var variables = new List<VariableList>();
+            foreach (var variable in basicNode.VariableFields)
+            {
+                var variableList = new VariableList
+                {
+                    VariableId = variable.Id,
+                    VariableType = (int)variable.GetType(),
+                    VariableValue = variable.GetType() switch
+                    {
+                        VariableType.INT => variable.IntValue,
+                        VariableType.FLOAT => variable.FloatValue,
+                        VariableType.STRING => variable.StringValue,
+                        _ => null
+                    },
+                };
+                variables.Add(variableList);
+            }
+            node.Variables = variables.ToArray();
+        }
+
 
         private static void SetNodeOption(BasicNode basicNode, Node node)
         {
