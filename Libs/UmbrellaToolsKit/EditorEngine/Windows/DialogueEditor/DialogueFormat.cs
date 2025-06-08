@@ -32,7 +32,13 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
         public int[] VariablesType { get; set; }
         
         [JsonProperty("VariableTypeList")]
-        public string[] VariableTypeList { get; set; }
+        public string[] VariableTypeList { get; set; } = new string[]
+        {
+            "NONE",
+            "INT",
+            "FLOAT",
+            "STRING"
+        };
     }
 
     public partial class Node
