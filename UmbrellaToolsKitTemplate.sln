@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.ContentPipeline.Um
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.ImGui", "Libs\Monogame.ImGui\MonoGame.ImGui\MonoGame.ImGui.csproj", "{03105486-F6CE-4241-B4B1-3505D2E14B2D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UmbrellaToolsKit.Lua", "Libs\UmbrellaToolsKit.Lua\UmbrellaToolsKit.Lua.csproj", "{972191E6-F1FB-4F79-B277-72DA2808FBFE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{03105486-F6CE-4241-B4B1-3505D2E14B2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03105486-F6CE-4241-B4B1-3505D2E14B2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03105486-F6CE-4241-B4B1-3505D2E14B2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{972191E6-F1FB-4F79-B277-72DA2808FBFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{972191E6-F1FB-4F79-B277-72DA2808FBFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{972191E6-F1FB-4F79-B277-72DA2808FBFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{972191E6-F1FB-4F79-B277-72DA2808FBFE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +70,7 @@ Global
 		{DA92BF0C-223B-42C3-B655-3880351B0DB2} = {6CA91CF9-80C0-4D6B-BF1D-3FA33AF05417}
 		{797DDADA-0560-4D47-A15C-1C76392D8FF7} = {6CA91CF9-80C0-4D6B-BF1D-3FA33AF05417}
 		{03105486-F6CE-4241-B4B1-3505D2E14B2D} = {6CA91CF9-80C0-4D6B-BF1D-3FA33AF05417}
+		{972191E6-F1FB-4F79-B277-72DA2808FBFE} = {6CA91CF9-80C0-4D6B-BF1D-3FA33AF05417}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E8E47A29-2690-49C9-8A2E-D6EFF596EB0E}
