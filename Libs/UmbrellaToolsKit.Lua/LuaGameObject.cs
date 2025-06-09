@@ -8,24 +8,35 @@ namespace UmbrellaToolsKit.Lua
         private string _scriptText;
         private Script _script;
 
+        DynValue _dynValue;
+        DynValue _startLuaFunction;
+        DynValue _updateLuaFunction;
+        DynValue _updateDateLuaFunction;
+
         public void SetScript(string scriptText)
         {
             try
             {
                 _scriptText = scriptText;
                 _script = new Script();
-                _script.DoString(scriptText);
+                _dynValue = _script.DoString(scriptText);
+
+                _startLuaFunction = _script.Globals.Get("start");
+                _updateLuaFunction = _script.Globals.Get("update");
+                _updateDateLuaFunction = _script.Globals.Get("update_data");
             }
             catch (ScriptRuntimeException ex)
             {
                 Console.WriteLine("Error: {0}", ex.DecoratedMessage);
             }
+            SetAllVariables();
         }
 
         public override void Start()
         {
             base.Start();
-            try{ _script.Call("start"); }
+            if (_startLuaFunction == DynValue.Nil) return;
+            try { _script.Call(_startLuaFunction); }
             catch (ScriptRuntimeException ex)
             {
                 Console.WriteLine("Error: {0}", ex.DecoratedMessage);
@@ -35,7 +46,8 @@ namespace UmbrellaToolsKit.Lua
         public override void Update(float deltaTime)
         {
             base.Update(deltaTime);
-            try { _script.Call("update", deltaTime); }
+            if (_updateLuaFunction == DynValue.Nil) return;
+            try { _script.Call(_updateLuaFunction, deltaTime); }
             catch (ScriptRuntimeException ex)
             {
                 Console.WriteLine("Error: {0}", ex.DecoratedMessage);
@@ -44,22 +56,18 @@ namespace UmbrellaToolsKit.Lua
 
         public override void UpdateData(float deltaTime)
         {
-            try { _script.Call("update_data", deltaTime); }
+            base.UpdateData(deltaTime);
+            if (_updateDateLuaFunction == DynValue.Nil) return;
+            try { _script.Call(_updateDateLuaFunction, deltaTime); }
             catch (ScriptRuntimeException ex)
             {
                 Console.WriteLine("Error: {0}", ex.DecoratedMessage);
             }
-            base.UpdateData(deltaTime);
         }
 
-        public override void Destroy()
+        public void SetAllVariables()
         {
-            try { _script.Call("on_destroy"); }
-            catch (ScriptRuntimeException ex)
-            {
-                Console.WriteLine("Error: {0}", ex.DecoratedMessage);
-            }
-            base.Destroy();
+
         }
     }
 }
