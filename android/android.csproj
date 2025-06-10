@@ -78,6 +78,10 @@
     <PackageReference Include="MonoGame.Framework.Android" Version="3.8.0.1641" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Libs\UmbrellaToolsKit.Lua\UmbrellaToolsKit.Lua.csproj">
+      <Project>{972191e6-f1fb-4f79-b277-72da2808fbfe}</Project>
+      <Name>UmbrellaToolsKit.Lua</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Libs\UmbrellaToolsKit\UmbrellaToolsKit.csproj">
       <Project>{da92bf0c-223b-42c3-b655-3880351b0db2}</Project>
       <Name>UmbrellaToolsKit</Name>
