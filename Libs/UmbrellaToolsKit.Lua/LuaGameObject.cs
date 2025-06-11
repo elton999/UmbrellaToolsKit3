@@ -1,5 +1,8 @@
 ﻿using MoonSharp.Interpreter;
 using System;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using UmbrellaToolsKit.EditorEngine;
 
 namespace UmbrellaToolsKit.Lua
 {
@@ -15,22 +18,24 @@ namespace UmbrellaToolsKit.Lua
 
         public void SetScript(string scriptText)
         {
-            tag += "_lua";
+            tag += $"_{nameof(LuaGameObject)}";
             try
             {
                 _scriptText = scriptText;
                 _script = new Script();
                 SetAllVariables();
+                SetMethods();
                 _dynValue = _script.DoString(scriptText);
 
                 _startLuaFunction = _script.Globals.Get("start");
                 _updateLuaFunction = _script.Globals.Get("update");
                 _updateDateLuaFunction = _script.Globals.Get("update_data");
 
+
             }
             catch (ScriptRuntimeException ex)
             {
-                Console.WriteLine("Error: {0}", ex.DecoratedMessage);
+                Log.Write($"Error: {ex.DecoratedMessage}");
             }
             SetAllVariables();
         }
@@ -42,7 +47,7 @@ namespace UmbrellaToolsKit.Lua
             try { _script.Call(_startLuaFunction); }
             catch (ScriptRuntimeException ex)
             {
-                Console.WriteLine("Error: {0}", ex.DecoratedMessage);
+                Log.Write($"Error: {ex.DecoratedMessage}");
             }
         }
 
@@ -50,13 +55,14 @@ namespace UmbrellaToolsKit.Lua
         {
             base.Update(deltaTime);
             if (_updateLuaFunction == DynValue.Nil) return;
-            try { 
+            try
+            {
                 _script.Call(_updateLuaFunction, deltaTime);
                 GetAllVariables();
             }
             catch (ScriptRuntimeException ex)
             {
-                Console.WriteLine("Error: {0}", ex.DecoratedMessage);
+                Log.Write($"Error: {ex.DecoratedMessage}");
             }
         }
 
@@ -64,30 +70,42 @@ namespace UmbrellaToolsKit.Lua
         {
             base.UpdateData(deltaTime);
             if (_updateDateLuaFunction == DynValue.Nil) return;
-            try {
+            try
+            {
                 _script.Call(_updateDateLuaFunction, deltaTime);
                 GetAllVariables();
             }
             catch (ScriptRuntimeException ex)
             {
-                Console.WriteLine("Error: {0}", ex.DecoratedMessage);
+                Log.Write($"Error: {ex.DecoratedMessage}");
             }
         }
 
-        public void GetAllVariables()
+        private void SetSprite(string spriteName)
         {
-            Origin = new Microsoft.Xna.Framework.Vector2((float)_script.Globals.Get("origin_x").Number, (float)_script.Globals.Get("origin_y").Number);
+            if (string.IsNullOrEmpty(spriteName))
+            {
+                Log.Write($"Error: sprite Not Found");
+                return;
+            }
+            Log.Write($"Loading sprite: {spriteName}");
+            Sprite = Content.Load<Texture2D>(spriteName);
+        }
+
+        private void GetAllVariables()
+        {
+            Origin = new Vector2((float)_script.Globals.Get("origin_x").Number, (float)_script.Globals.Get("origin_y").Number);
 
             Scale = (float)_script.Globals.Get("scale").Number;
             Rotation = (float)_script.Globals.Get("rotation").Number;
             Transparent = (float)_script.Globals.Get("transparent").Number;
 
-            Position = new Microsoft.Xna.Framework.Vector2((float)_script.Globals.Get("pos_x").Number, (float)_script.Globals.Get("pos_y").Number);
+            Position = new Vector2((float)_script.Globals.Get("pos_x").Number, (float)_script.Globals.Get("pos_y").Number);
 
-            size = new Microsoft.Xna.Framework.Point((int)_script.Globals.Get("size_x").Number, (int)_script.Globals.Get("size_y").Number);
+            size = new Point((int)_script.Globals.Get("size_x").Number, (int)_script.Globals.Get("size_y").Number);
         }
 
-        public void SetAllVariables()
+        private void SetAllVariables()
         {
             _script.Globals.Set("pos_x", DynValue.NewNumber(Position.X));
             _script.Globals.Set("pos_y", DynValue.NewNumber(Position.Y));
@@ -101,7 +119,11 @@ namespace UmbrellaToolsKit.Lua
 
             _script.Globals.Set("size_x", DynValue.NewNumber(size.X));
             _script.Globals.Set("size_y", DynValue.NewNumber(size.Y));
+        }
 
+        private void SetMethods()
+        {
+            _script.Globals["set_sprite"] = (Action<string>)SetSprite;
         }
     }
 }
