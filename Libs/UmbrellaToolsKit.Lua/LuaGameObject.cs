@@ -92,6 +92,8 @@ namespace UmbrellaToolsKit.Lua
             Sprite = Content.Load<Texture2D>(spriteName);
         }
 
+        private void SetBody(int posX, int posY, int width, int hight) => Body = new Rectangle(posX, posY, width, hight);
+
         private void GetAllVariables()
         {
             Origin = new Vector2((float)_script.Globals.Get("origin_x").Number, (float)_script.Globals.Get("origin_y").Number);
@@ -124,6 +126,7 @@ namespace UmbrellaToolsKit.Lua
         private void SetMethods()
         {
             _script.Globals["set_sprite"] = (Action<string>)SetSprite;
+            _script.Globals["set_body"] = (Action<int, int, int, int>)SetBody;
         }
     }
 }
