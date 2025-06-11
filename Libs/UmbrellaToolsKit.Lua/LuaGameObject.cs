@@ -31,13 +31,11 @@ namespace UmbrellaToolsKit.Lua
                 _updateLuaFunction = _script.Globals.Get("update");
                 _updateDateLuaFunction = _script.Globals.Get("update_data");
 
-
             }
             catch (ScriptRuntimeException ex)
             {
                 Log.Write($"Error: {ex.DecoratedMessage}");
             }
-            SetAllVariables();
         }
 
         public override void Start()
