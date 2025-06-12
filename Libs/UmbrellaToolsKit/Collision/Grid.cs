@@ -24,7 +24,7 @@ namespace UmbrellaToolsKit.Collision
         public bool checkOverlap(Point size, Vector2 position, ActorComponent realActor, bool checkRamps = true)
         {
             ActorComponent actor = new ActorComponent();
-            actor.size = size;
+            actor.Size = size;
             actor.Position = position;
 
             if (CheckOverlapActor(actor, checkRamps))
@@ -60,7 +60,7 @@ namespace UmbrellaToolsKit.Collision
 
             for (int x = RowGrid; x <= WidthGrid; x++)
                 for (int y = ColumnGrid; y <= HeightGrid; y++)
-                    if (Check(actor.size, actor.Position, new Point(Scene.CellSize), new Vector2(x * Scene.CellSize, y * Scene.CellSize)))
+                    if (Check(actor.Size, actor.Position, new Point(Scene.CellSize), new Vector2(x * Scene.CellSize, y * Scene.CellSize)))
                         rt = CheckRamps(actor, checkRamps, x, y) || Collides.Contains(GridCollides[y][x]) ? true : rt;
 
             return rt;
@@ -133,7 +133,7 @@ namespace UmbrellaToolsKit.Collision
             {
                 for (int y = ColumnGrid; y <= HeightGrid; y++)
                 {
-                    if (!Check(Scene.AllActors[0].size, Scene.AllActors[0].Position,
+                    if (!Check(Scene.AllActors[0].Size, Scene.AllActors[0].Position,
                         new Point(Scene.CellSize),
                         new Vector2(x, y) * Scene.CellSize))
                         continue;

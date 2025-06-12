@@ -14,10 +14,10 @@ namespace UmbrellaToolsKit.Components.Physics
         public Vector2 Position { get => GameObject.Position; set => GameObject.Position = value; }
         public Scene Scene => GameObject.Scene;
 
-        public int Right { get => (int)(Position.X + GameObject.size.X); }
-        public int Left { get => (int)Position.X; }
-        public int Top { get => (int)Position.Y; }
-        public int Bottom { get => (int)(GameObject.Position.Y + GameObject.size.Y); }
+        public int Right => (int)(Position.X + GameObject.size.X);
+        public int Left => (int)Position.X;
+        public int Top => (int)Position.Y;
+        public int Bottom => (int)(GameObject.Position.Y + GameObject.size.Y);
 
         public enum EDGES { TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT };
         public Dictionary<EDGES, bool> EdgesIsCollision = new Dictionary<EDGES, bool> {
@@ -26,7 +26,7 @@ namespace UmbrellaToolsKit.Components.Physics
             { EDGES.BOTTOM_LEFT, false },
             { EDGES.BOTTOM_RIGHT, false },
         };
-        [ShowEditor, Category("Actor")] public Point size = new Point(16, 16);
+        [ShowEditor, Category("Actor")] public Point Size = new Point(16, 16);
         [ShowEditor, Category("Actor")] public bool HasGravity = true;
         [ShowEditor, Category("Actor")] public Vector2 Gravity2D = new Vector2(0, 8);
         [ShowEditor, Category("Actor")] public Vector2 Velocity = new Vector2(0, 0);
@@ -37,7 +37,7 @@ namespace UmbrellaToolsKit.Components.Physics
 
         public override void Start()
         {
-            //Scene.AllActors.Add(this);
+            Scene.AllActors.Add(this);
             base.Start();
         }
 
@@ -156,53 +156,28 @@ namespace UmbrellaToolsKit.Components.Physics
             }
         }
 
-        public bool OverlapCheck(ActorComponent actor) => OverlapCheck(actor.size, actor.Position);
-
-        public bool OverlapCheck(Point size, Vector2 position)
-        {
-            bool AisToTheRightOfB = position.X >= Right;
-            bool AisToTheLeftOfB = position.X + size.X <= Left;
-            bool AisAboveB = position.Y + size.Y <= Top;
-            bool AisBelowB = position.Y >= Bottom;
-            return !(AisToTheRightOfB
-                || AisToTheLeftOfB
-                || AisAboveB
-                || AisBelowB);
-
-        }
-
-        public bool OverlapCheckPixel(ActorComponent actor)
-        {
-            bool AisToTheRightOfB = actor.Left > Right;
-            bool AisToTheLeftOfB = actor.Right < Left;
-            bool AisAboveB = actor.Bottom < Top;
-            bool AisBelowB = actor.Top > Bottom;
-            return !(AisToTheRightOfB
-                || AisToTheLeftOfB
-                || AisAboveB
-                || AisBelowB);
-        }
+        public bool OverlapCheck(ActorComponent actor) => Utils.Collision.OverlapCheck(actor.Size, actor.Position, Size, Position);
 
         private bool CollideAt(List<SolidComponent> solids, Vector2 position)
         {
             bool rt = false;
             foreach (SolidComponent solid in solids)
             {
-                if (solid.Check(size, position, this))
+                if (solid.Check(Size, position, this))
                 {
                     solid.GameObject.OnCollision(GameObject.tag);
                     rt = true;
                 }
             }
-            if (Scene.Grid != null && Scene.Grid.checkOverlap(size, position, this, false))
+            if (Scene.Grid != null && Scene.Grid.checkOverlap(Size, position, this, false))
                 return true;
 
             return rt;
         }
 
-        public virtual bool IsRiding(SolidComponent solid) => solid.Check(size, Position + Vector2.UnitY);
+        public virtual bool IsRiding(SolidComponent solid) => solid.Check(Size, Position + Vector2.UnitY);
 
-        public virtual bool IsRidingGrid(Grid grid) => grid.checkOverlap(size, Position + Vector2.UnitY, this);
+        public virtual bool IsRidingGrid(Grid grid) => grid.checkOverlap(Size, Position + Vector2.UnitY, this);
 
         public virtual void Squish(string tag = null) { }
     }
