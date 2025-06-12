@@ -39,7 +39,7 @@ namespace UmbrellaToolsKit.Components.Physics
 
             Collidable = false;
 
-            List<ActorComponent> riding = GetAllRidingActors();
+            var riding = GetAllRidingActors();
 
             if (moveX != 0)
             {

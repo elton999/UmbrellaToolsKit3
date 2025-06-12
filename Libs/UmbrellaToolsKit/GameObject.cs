@@ -21,7 +21,6 @@ namespace UmbrellaToolsKit
         [ShowEditor, Category("Transform")] public Vector2 Position = Vector2.Zero;
 
         [ShowEditor, Category("Sprite")] public Vector2 Origin = Vector2.Zero;
-        [ShowEditor, Category("Sprite")] public Point size;
         [ShowEditor, Category("Sprite")] public float Scale = 1;
         public Rectangle Body;
         [ShowEditor, Category("Sprite")] public float Rotation = 0;
@@ -95,9 +94,6 @@ namespace UmbrellaToolsKit
             OnDestroy();
         }
         public virtual void OnDestroy() { }
-
-        public virtual Collision.Actor GetActor() => default(Collision.Actor);
-        public virtual Collision.Solid GetSolid() => default(Collision.Solid);
 
         public virtual void restart() { }
 

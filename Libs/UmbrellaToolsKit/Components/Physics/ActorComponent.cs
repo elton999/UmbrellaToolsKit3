@@ -14,10 +14,10 @@ namespace UmbrellaToolsKit.Components.Physics
         public Vector2 Position { get => GameObject.Position; set => GameObject.Position = value; }
         public Scene Scene => GameObject.Scene;
 
-        public int Right => (int)(Position.X + GameObject.size.X);
+        public int Right => (int)(Position.X + Size.X);
         public int Left => (int)Position.X;
         public int Top => (int)Position.Y;
-        public int Bottom => (int)(GameObject.Position.Y + GameObject.size.Y);
+        public int Bottom => (int)(GameObject.Position.Y + Size.Y);
 
         public enum EDGES { TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT };
         public Dictionary<EDGES, bool> EdgesIsCollision = new Dictionary<EDGES, bool> {
