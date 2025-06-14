@@ -34,7 +34,6 @@ namespace UmbrellaToolsKit
             {
                 GameObject gameObject = (GameObject)Activator.CreateInstance(asset.GameObject);
                 gameObject.Position = position;
-                gameObject.size = size;
                 gameObject.Values = values;
                 gameObject.Nodes = nodes;
 
@@ -52,7 +51,6 @@ namespace UmbrellaToolsKit
                 GameObject gameObject = (GameObject)Activator.CreateInstance(asset.GameObject);
                 gameObject.tag = tag;
                 gameObject.Position = position;
-                gameObject.size = size;
                 gameObject.Values = values;
                 gameObject.Nodes = nodes;
                 gameObject.Content = scene.Content;

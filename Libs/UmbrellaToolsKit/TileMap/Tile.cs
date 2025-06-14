@@ -7,6 +7,7 @@ namespace UmbrellaToolsKit.TileMap
     public class Tile : GameObject
     {
         public Boolean BrickColor = false;
+        public Point size;
 
         public override void Draw(SpriteBatch spriteBatch)
         {
