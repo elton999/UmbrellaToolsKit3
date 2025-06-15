@@ -38,6 +38,7 @@ namespace UmbrellaToolsKit
         public CoroutineManagement CoroutineManagement => _coroutineManagement;
 
         public Layers Layer { get => _layer; set => _layer = value; }
+        public Action<SpriteBatch> ExtraDraw { get; set; }
 
         public dynamic Values;
         public List<Vector2> Nodes;
@@ -95,12 +96,11 @@ namespace UmbrellaToolsKit
         }
         public virtual void OnDestroy() { }
 
-        public virtual void restart() { }
-
         public virtual void DrawSprite(SpriteBatch spriteBatch)
         {
             if (Sprite != null)
                 spriteBatch.Draw(Sprite, Position, Body.IsEmpty ? null : Body, SpriteColor * Transparent, Rotation, Origin, Scale, spriteEffect, 0);
+            ExtraDraw?.Invoke(spriteBatch);
         }
 
         public void BeginDraw(SpriteBatch spriteBatch, bool hasCamera = true)
