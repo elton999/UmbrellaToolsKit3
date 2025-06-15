@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 
 namespace UmbrellaToolsKit.Components.ParticlesSystem
@@ -23,5 +24,7 @@ namespace UmbrellaToolsKit.Components.ParticlesSystem
         public float ParticleRadiusSpawn { get; set; }
         public bool ParticleDecreaseScale { get; set; }
         public float ParticleScaleSpeed { get; set; }
+        public Vector2 MinSpawnAre { get; set; }
+        public Vector2 MaxSpawnAre { get; set; }
     }
 }

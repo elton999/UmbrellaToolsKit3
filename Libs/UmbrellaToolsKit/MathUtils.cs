@@ -25,5 +25,12 @@ namespace UmbrellaToolsKit
         public static Vector3 Divide(Vector3 value) => value / 2.0f;
 
         public static Vector2 TruncateVector(Vector2 value) => value.ToPoint().ToVector2();
+
+        public static Vector2 RandomInArea(Vector2 min, Vector2 max, Random rng)
+        {
+            float x = (float)rng.NextDouble() * (max.X - min.X) + min.X;
+            float y = (float)rng.NextDouble() * (max.Y - min.Y) + min.Y;
+            return new Vector2(x, y);
+        }
     }
 }

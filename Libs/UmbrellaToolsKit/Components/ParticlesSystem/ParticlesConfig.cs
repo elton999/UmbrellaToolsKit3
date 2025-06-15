@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using UmbrellaToolsKit.EditorEngine.Attributes;
 
@@ -22,6 +23,8 @@ namespace UmbrellaToolsKit.Components.ParticlesSystem
         [ShowEditor] private bool _particleDecreaseScale;
         [ShowEditor] private float _particleScaleSpeed;
         [ShowEditor] private int _maxRenderParticles;
+        [ShowEditor] private Vector2 _minSpawnAre;
+        [ShowEditor] private Vector2 _maxSpawnAre;
 
         public List<Texture2D> Sprites { get; set; }
         public float EmitterTime { get => _emitterTime; set => _emitterTime = value; }
@@ -39,6 +42,8 @@ namespace UmbrellaToolsKit.Components.ParticlesSystem
         public bool ParticleDecreaseScale { get => _particleDecreaseScale; set => _particleDecreaseScale = value; }
         public float ParticleScaleSpeed { get => _particleScaleSpeed; set => _particleScaleSpeed = value; }
         public int MaxRenderParticles { get => _maxRenderParticles; set => _maxRenderParticles = value; }
+        public Vector2 MinSpawnAre { get => _minSpawnAre; set => _minSpawnAre = value; }
+        public Vector2 MaxSpawnAre { get => _maxSpawnAre; set => _maxSpawnAre = value; }
 
         public IParticle UpdateConfig(IParticle particle)
         {
@@ -58,6 +63,8 @@ namespace UmbrellaToolsKit.Components.ParticlesSystem
             ParticleDecreaseScale = particle.ParticleDecreaseScale;
             ParticleScaleSpeed = particle.ParticleScaleSpeed;
             MaxRenderParticles = particle.MaxRenderParticles;
+            MinSpawnAre = particle.MinSpawnAre;
+            MaxSpawnAre = particle.MaxSpawnAre;
 
             return this;
         }

@@ -25,16 +25,20 @@ namespace UmbrellaToolsKit.Components.ParticlesSystem
 
         public void SetPartileConfig(IParticle particleConfig) => _particleConfig = _particlesConfigDebug.UpdateConfig(particleConfig);
 
+        [Button]
         public void UpdateParticleSettings() => _particleConfig = _particlesConfigDebug;
 
+        [Button]
         public void Restart() => _timer = _particleConfig.EmitterTime;
 
+        [Button]
         public void Play()
         {
             _isPlaying = true;
             Restart();
         }
 
+        [Button]
         public void Pause() => _isPlaying = false;
 
         public override void Start() => GameObject.ExtraDraw += DrawParticles;
@@ -92,6 +96,7 @@ namespace UmbrellaToolsKit.Components.ParticlesSystem
             var particle = (ParticleRender)_pool.GetObject();
 
             particle.Position = GameObject.Position + _particleConfig.ParticleRadiusSpawn * velocityDirection * (float)random.NextDouble();
+            particle.Position += MathUtils.RandomInArea(_particleConfig.MinSpawnAre, _particleConfig.MaxSpawnAre, random);
             particle.Scale = (float)random.NextDouble() * _particleConfig.ParticleMaxScale;
             particle.Angle = MathHelper.ToRadians((float)random.NextDouble() * _particleConfig.ParticleAngle / 100f);
             particle.Transparent = _particleConfig.ParticleTransparent;

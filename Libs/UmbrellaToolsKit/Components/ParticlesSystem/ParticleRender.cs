@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using UmbrellaToolsKit.EditorEngine;
 using UmbrellaToolsKit.Interfaces;
 
 namespace UmbrellaToolsKit.Components.ParticlesSystem
