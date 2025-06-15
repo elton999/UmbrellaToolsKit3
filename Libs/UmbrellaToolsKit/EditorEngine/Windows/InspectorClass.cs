@@ -5,8 +5,8 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Reflection;
+using UmbrellaToolsKit.EditorEngine.Attributes;
 using UmbrellaToolsKit.Utils;
 
 namespace UmbrellaToolsKit.EditorEngine.Windows
@@ -128,7 +128,6 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                         obj.Value = boolValue;
                         break;
                 }
-                return;
             }
 
             if (obj.Value is IList)

@@ -25,6 +25,12 @@ namespace UmbrellaToolsKit.Utils
             list.Add(value);
         }
 
+        public static void AddIfNew<T>(this List<T> list, T item)
+        {
+            if (!list.Contains(item))
+                list.Add(item);
+        }
+
         public static void RemoveAtSafe(this IList list, int index)
         {
             if (index < 0 || index >= list.Count) return;

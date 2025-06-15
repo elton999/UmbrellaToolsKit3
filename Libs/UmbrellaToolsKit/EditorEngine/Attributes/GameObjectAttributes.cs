@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UmbrellaToolsKit
+namespace UmbrellaToolsKit.EditorEngine.Attributes
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, Inherited = false)]
     public class ShowEditorAttribute : Attribute
