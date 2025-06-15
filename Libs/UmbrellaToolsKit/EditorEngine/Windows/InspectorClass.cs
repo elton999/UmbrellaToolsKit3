@@ -1,4 +1,5 @@
 ﻿#if !RELEASE
+using Eto.Forms;
 using ImGuiNET;
 #endif
 using Microsoft.Xna.Framework;
@@ -73,6 +74,12 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
             foreach (var field in fieldsWithoutCategories)
                 SetField(field, obj);
+
+            foreach (MethodInfo mInfo in type.GetRuntimeMethods())
+                foreach (var attr in mInfo.CustomAttributes)
+                    if(attr.AttributeType == typeof(ButtonAttribute))
+                        if (Fields.Buttons.BlueButton(mInfo.Name))
+                            mInfo.Invoke(obj, null);
 #endif
         }
 
