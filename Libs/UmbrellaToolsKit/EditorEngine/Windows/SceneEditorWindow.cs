@@ -33,7 +33,6 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         public void SetAsMainWindow()
         {
 #if !RELEASE
-            //EditorMain.OnDrawOverLayer += RenderEditorView;
             EditorArea.OnDrawWindow += ShowWindow;
 #endif
         }
@@ -41,7 +40,6 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         public void RemoveAsMainWindow()
         {
 #if !RELEASE
-            //EditorMain.OnDrawOverLayer -= RenderEditorView;
             EditorArea.OnDrawWindow -= ShowWindow;
 #endif
         }
@@ -119,14 +117,6 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             float backBuffer_Position_x = _windowPosition.X;
             float backBuffer_Position_y = _windowPosition.Y;
 
-            /*_gameManagement.SceneManagement.MainScene.DrawBuffer(
-                _gameManagement.SpriteBatch,
-                backBuffer_scale,
-                backBuffer_Position_x,
-                backBuffer_Position_y
-            );*/
-            //var texture = _gameManagement.SceneManagement.MainScene.Content.Load<Texture2D>("Sprites/mario");
-            //var sceneId = ImGuiRenderer.BindTexture(texture);
             if (_bufferSceneID.ToInt32() == 0)
                 _bufferSceneID = ImGuiRenderer.BindTexture(_gameManagement.SceneManagement.MainScene.SceneRendered);
             ImGui.Image(_bufferSceneID, _gameManagement.SceneManagement.MainScene.SceneRendered.Bounds.Size.ToVector2().ToNumericVector2() * backBuffer_scale);
