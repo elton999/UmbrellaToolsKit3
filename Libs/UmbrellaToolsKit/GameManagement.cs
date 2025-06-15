@@ -25,6 +25,7 @@ namespace UmbrellaToolsKit
         public SceneManagement SceneManagement;
         public SpriteBatch SpriteBatch;
         public Game Game;
+        public EditorMain Editor => _editor;
 
         public static event Action OnGameUpdateData;
 
