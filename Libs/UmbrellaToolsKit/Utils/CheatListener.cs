@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UmbrellaToolsKit.Input;
 using UmbrellaToolsKit.EditorEngine;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework;
 
 namespace UmbrellaToolsKit.Utils
 {

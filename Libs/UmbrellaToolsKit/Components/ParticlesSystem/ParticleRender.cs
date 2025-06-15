@@ -1,9 +1,10 @@
-using System;
+﻿using System;
 using Microsoft.Xna.Framework;
+using UmbrellaToolsKit.Interfaces;
 
-namespace UmbrellaToolsKit.ParticlesSystem
+namespace UmbrellaToolsKit.Components.ParticlesSystem
 {
-    public class Particle : GameObject
+    public class ParticleRender : GameObject, IPoolable
     {
         public float LifeTime = 10000f;
         public Vector2 Velocity = new Vector2(0, 1);
@@ -11,10 +12,16 @@ namespace UmbrellaToolsKit.ParticlesSystem
         public bool DecreaseScale = false;
         public float DecreaseScaleSpeed = 10.0f;
 
-        public override void Start()
+        public void Reset()
         {
+            if (Sprite == null) return;
             var spriteSize = new Vector2(Sprite.Width, Sprite.Height);
             Origin = -MathUtils.Divide(spriteSize);
+        }
+
+        public override void Start()
+        {
+            Reset();
             base.Start();
         }
 

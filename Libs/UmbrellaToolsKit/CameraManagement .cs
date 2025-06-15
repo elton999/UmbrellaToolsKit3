@@ -50,7 +50,7 @@ namespace UmbrellaToolsKit
 
         public void CheckActorAndSolids()
         {
-            Collision.Actor _actorCamera = new Collision.Actor();
+            /*Collision.Actor _actorCamera = new Collision.Actor();
             _actorCamera.size = Scene.Sizes;
             _actorCamera.Position = new Vector2(Position.X - Origin.X, Position.Y - Origin.Y);
             List<Collision.Actor> _actorsList = new List<Collision.Actor>();
@@ -60,7 +60,7 @@ namespace UmbrellaToolsKit
                 if (actor.overlapCheck(_actorCamera))
                     actor.IsVisible();
                 else
-                    actor.IsNotvisible();
+                    actor.IsNotvisible();*/
         }
 
         public bool UseLevelLimits = true;

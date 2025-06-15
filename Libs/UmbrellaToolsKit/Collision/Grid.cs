@@ -4,6 +4,7 @@ using System.Linq;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using UmbrellaToolsKit.Components.Physics;
 
 namespace UmbrellaToolsKit.Collision
 {
@@ -20,16 +21,16 @@ namespace UmbrellaToolsKit.Collision
             Transparent = 0.5f;
         }
 
-        public bool checkOverlap(Point size, Vector2 position, Actor ActorReal, bool checkRamps = true)
+        public bool checkOverlap(Point size, Vector2 position, ActorComponent realActor, bool checkRamps = true)
         {
-            Actor actor = new Actor();
-            actor.size = size;
+            ActorComponent actor = new ActorComponent();
+            actor.Size = size;
             actor.Position = position;
 
-            if (checkOverlapActor(actor, checkRamps))
+            if (CheckOverlapActor(actor, checkRamps))
             {
-                ActorReal.EdgesIsCollision.Clear();
-                ActorReal.EdgesIsCollision = actor.EdgesIsCollision;
+                realActor.EdgesIsCollision.Clear();
+                realActor.EdgesIsCollision = actor.EdgesIsCollision;
                 return true;
             }
             return false;
@@ -40,15 +41,15 @@ namespace UmbrellaToolsKit.Collision
         int ColumnGrid;
         int HeightGrid;
 
-        public bool checkOverlapActor(Actor actor = null, bool checkRamps = true)
+        public bool CheckOverlapActor(ActorComponent actor = null, bool checkRamps = true)
         {
             // setting false edges collision to false
             actor.SetFalseAllEdgeCollision();
 
-            RowGrid = getCell(actor.Left - Origin.X);
-            WidthGrid = getCell(actor.Right - Origin.X);
-            ColumnGrid = getCell(actor.Top - Origin.Y);
-            HeightGrid = getCell(actor.Bottom - Origin.Y);
+            RowGrid = GetCell(actor.Left - Origin.X);
+            WidthGrid = GetCell(actor.Right - Origin.X);
+            ColumnGrid = GetCell(actor.Top - Origin.Y);
+            HeightGrid = GetCell(actor.Bottom - Origin.Y);
 
             RowGrid = RowGrid < 0 ? 0 : RowGrid;
             ColumnGrid = ColumnGrid < 0 ? 0 : ColumnGrid;
@@ -59,13 +60,13 @@ namespace UmbrellaToolsKit.Collision
 
             for (int x = RowGrid; x <= WidthGrid; x++)
                 for (int y = ColumnGrid; y <= HeightGrid; y++)
-                    if (check(actor.size, actor.Position, new Point(Scene.CellSize), new Vector2(x * Scene.CellSize, y * Scene.CellSize)))
-                        rt = _checkRamps(actor, checkRamps, x, y) || Collides.Contains(GridCollides[y][x]) ? true : rt;
+                    if (Check(actor.Size, actor.Position, new Point(Scene.CellSize), new Vector2(x * Scene.CellSize, y * Scene.CellSize)))
+                        rt = CheckRamps(actor, checkRamps, x, y) || Collides.Contains(GridCollides[y][x]) ? true : rt;
 
             return rt;
         }
 
-        private bool _checkRamps(Actor actor, bool checkRamps, int x, int y)
+        private bool CheckRamps(ActorComponent actor, bool checkRamps, int x, int y)
         {
             if (CollidesRamps.Count() == 0) return false;
 
@@ -77,17 +78,17 @@ namespace UmbrellaToolsKit.Collision
             // ramp right bottom check
             if (CollidesRamps[0] == GridCollides[y][x])
                 if (actor.Bottom - Origin.Y - (y * Scene.CellSize) > (Scene.CellSize - ((actor.Right - Origin.X) - x * Scene.CellSize)))
-                    rt = actor.EdgesIsCollision[Actor.EDGES.BOTTOM_RIGHT] = true;
+                    rt = actor.EdgesIsCollision[ActorComponent.EDGES.BOTTOM_RIGHT] = true;
 
             // ramp right bottom check
             if (CollidesRamps[1] == GridCollides[y][x])
                 if (actor.Bottom - Origin.Y - (y * Scene.CellSize) > (((actor.Left - Origin.X) - x * Scene.CellSize)))
-                    rt = actor.EdgesIsCollision[Actor.EDGES.BOTTOM_LEFT] = true;
+                    rt = actor.EdgesIsCollision[ActorComponent.EDGES.BOTTOM_LEFT] = true;
 
             return rt;
         }
 
-        public bool check(Point size1, Vector2 position1, Point size2, Vector2 position2)
+        public bool Check(Point size1, Vector2 position1, Point size2, Vector2 position2)
         {
             bool AisToTheRightOfB = position1.X - Origin.X >= position2.X + size2.X;
             bool AisToTheLeftOfB = position1.X - Origin.X + size1.X <= position2.X;
@@ -100,20 +101,20 @@ namespace UmbrellaToolsKit.Collision
                 || AisBelowB);
         }
 
-        public List<Actor> GetAllRidingActors()
+        public List<ActorComponent> GetAllRidingActors()
         {
-            var actors = new List<Actor>();
+            var actors = new List<ActorComponent>();
             int i = 0;
             while (i < Scene.AllActors.Count)
             {
-                if (Scene.AllActors[i].isRidingGrid(this))
+                if (Scene.AllActors[i].IsRidingGrid(this))
                     actors.Add(Scene.AllActors[i]);
                 i++;
             }
             return actors;
         }
 
-        public int getCell(float position) => (int)(position / Scene.CellSize);
+        public int GetCell(float position) => (int)(position / Scene.CellSize);
 
         public override void Dispose()
         {
@@ -132,7 +133,7 @@ namespace UmbrellaToolsKit.Collision
             {
                 for (int y = ColumnGrid; y <= HeightGrid; y++)
                 {
-                    if (!check(Scene.AllActors[0].size, Scene.AllActors[0].Position,
+                    if (!Check(Scene.AllActors[0].Size, Scene.AllActors[0].Position,
                         new Point(Scene.CellSize),
                         new Vector2(x, y) * Scene.CellSize))
                         continue;

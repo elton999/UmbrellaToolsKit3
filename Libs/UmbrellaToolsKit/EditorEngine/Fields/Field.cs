@@ -1,67 +1,34 @@
 ﻿#if !RELEASE
 using ImGuiNET;
-using MonoGame.ImGui.Extensions;
 #endif
-using Microsoft.Xna.Framework;
 using UmbrellaToolsKit.Utils;
 using System;
 using System.Collections;
 using UmbrellaToolsKit.EditorEngine.Windows;
+using System.Numerics;
 
 namespace UmbrellaToolsKit.EditorEngine.Fields
 {
 	public class Field
 	{
 		public static void DrawVector(string name, ref Vector2 vector)
-		{
+        {
 #if !RELEASE
-			if (ImGui.BeginTable($"##{name}", 3))
-			{
-				ImGui.TableNextColumn();
-				ImGui.TextUnformatted(name);
-				ImGui.TableNextColumn();
-				ImGui.PushStyleColor(ImGuiCol.FrameBg, new System.Numerics.Vector4(1, 0, 0, 0.5f));
-				ImGui.InputFloat("x", ref vector.X);
-				ImGui.PopStyleColor();
-				ImGui.TableNextColumn();
-				ImGui.PushStyleColor(ImGuiCol.FrameBg, new System.Numerics.Vector4(0, 1, 0, 0.5f));
-				ImGui.InputFloat("y", ref vector.Y);
-				ImGui.PopStyleColor();
-				ImGui.EndTable();
-			}
+            ImGui.InputFloat2(name, ref vector);
 #endif
-		}
+        }
 
 		public static void DrawVector(string name, ref Vector3 vector)
 		{
 #if !RELEASE
-			if (ImGui.BeginTable($"##{name}", 4))
-			{
-				ImGui.TableNextColumn();
-				ImGui.TextUnformatted(name);
-				ImGui.TableNextColumn();
-				ImGui.PushStyleColor(ImGuiCol.FrameBg, new System.Numerics.Vector4(1, 0, 0, 0.5f));
-				ImGui.InputFloat("x", ref vector.X);
-				ImGui.PopStyleColor();
-				ImGui.TableNextColumn();
-				ImGui.PushStyleColor(ImGuiCol.FrameBg, new System.Numerics.Vector4(0, 1, 0, 0.5f));
-				ImGui.InputFloat("y", ref vector.Y);
-				ImGui.PopStyleColor();
-				ImGui.TableNextColumn();
-				ImGui.PushStyleColor(ImGuiCol.FrameBg, new System.Numerics.Vector4(0, 0, 1, 0.5f));
-				ImGui.InputFloat("z", ref vector.Z);
-				ImGui.PopStyleColor();
-				ImGui.EndTable();
-			}
+            ImGui.InputFloat3(name, ref vector);
 #endif
-		}
+        }
 
 		public static void DrawFloat(string name, ref float value)
 		{
 #if !RELEASE
-			TableFormatBegin(name);
-			ImGui.InputFloat(string.Empty, ref value);
-			TableFormatEnd();
+			ImGui.InputFloat(name, ref value);
 #endif
 		}
 
@@ -74,10 +41,8 @@ namespace UmbrellaToolsKit.EditorEngine.Fields
 		public static void DrawString(string name, ref string value)
 		{
 #if !RELEASE
-			TableFormatBegin(name);
 			if (String.IsNullOrEmpty(value)) value = string.Empty;
-			ImGui.InputText(string.Empty, ref value, 255);
-			TableFormatEnd();
+			ImGui.InputText(name, ref value, 255);
 #endif
 		}
 
@@ -86,7 +51,7 @@ namespace UmbrellaToolsKit.EditorEngine.Fields
 #if !RELEASE
 			TableFormatBegin(name, 1);
 			if (String.IsNullOrEmpty(value)) value = string.Empty;
-			ImGui.InputTextMultiline(string.Empty, ref value, 500, (Vector2.One * 500).ToNumericVector2(), ImGuiInputTextFlags.EnterReturnsTrue);
+			ImGui.InputTextMultiline(string.Empty, ref value, 500, (Vector2.One * 500), ImGuiInputTextFlags.EnterReturnsTrue);
 			TableFormatEnd();
 #endif
 		}
@@ -104,10 +69,9 @@ namespace UmbrellaToolsKit.EditorEngine.Fields
 		public static void DrawStringOptions(string name, ref string value, string[] options)
 		{
 #if !RELEASE
-			TableFormatBegin(name);
 			if (String.IsNullOrEmpty(value)) value = string.Empty;
 
-			if (ImGui.BeginCombo(string.Empty, value, ImGuiComboFlags.HeightLarge | ImGuiComboFlags.HeightLargest))
+			if (ImGui.BeginCombo(name, value, ImGuiComboFlags.HeightLarge | ImGuiComboFlags.HeightLargest))
 			{
 				for (int optionIndex = 0; optionIndex < options.Length; optionIndex++)
 				{
@@ -117,7 +81,6 @@ namespace UmbrellaToolsKit.EditorEngine.Fields
 				}
 				ImGui.EndCombo();
 			}
-			TableFormatEnd();
 #endif
 		}
 
@@ -126,13 +89,15 @@ namespace UmbrellaToolsKit.EditorEngine.Fields
 #if !RELEASE
 			int listCount = value.IsValid() ? value.Count : 0;
 
-			if (!ImGui.TreeNode(name, $"{name} ({listCount})")) return;
+			if (ImGui.TreeNode(name, $"{name} ({listCount})"))
+			{
+                DrawListFields(name, value);
 
-			DrawListFields(name, value);
-
-			if (ImGui.Button("add new item")) value.AddNewItem();
+                if (ImGui.Button("add new item")) value.AddNewItem();
+				ImGui.Unindent();
+            }
 #endif
-		}
+        }
 
 #if !RELEASE
 		private static void DrawListFields(string name, IList value)

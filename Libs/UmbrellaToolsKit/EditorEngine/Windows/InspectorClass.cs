@@ -1,12 +1,14 @@
 ﻿#if !RELEASE
+using Eto.Forms;
 using ImGuiNET;
 #endif
 using Microsoft.Xna.Framework;
+using MonoGame.ImGui.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Reflection;
+using UmbrellaToolsKit.EditorEngine.Attributes;
 using UmbrellaToolsKit.Utils;
 
 namespace UmbrellaToolsKit.EditorEngine.Windows
@@ -27,6 +29,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             {typeof(float), 2},
             {typeof(string), 3},
             {typeof(bool), 4},
+            {typeof(int), 5},
 
         };
 
@@ -73,13 +76,19 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
             foreach (var field in fieldsWithoutCategories)
                 SetField(field, obj);
+
+            foreach (MethodInfo mInfo in type.GetRuntimeMethods())
+                foreach (var attr in mInfo.CustomAttributes)
+                    if(attr.AttributeType == typeof(ButtonAttribute))
+                        if (Fields.Buttons.BlueButtonLarge(AttributesHelper.FormatName(mInfo.Name)))
+                            mInfo.Invoke(obj, null);
 #endif
         }
 
 #if !RELEASE
         public static void SetField(FieldInfo field, object obj)
         {
-            var fieldSettings = new InspectorField() { Name = field.Name, Value = field.GetValue(obj), Type = field.FieldType };
+            var fieldSettings = new InspectorField() { Name = AttributesHelper.FormatName(field.Name), Value = field.GetValue(obj), Type = field.FieldType };
             DrawField(fieldSettings);
             field.SetValue(obj, fieldSettings.Value);
         }
@@ -103,14 +112,14 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                 switch (TypeDict[obj.Type])
                 {
                     case 0:
-                        var vector2 = (Vector2)obj.Value;
+                        var vector2 = ((Vector2)obj.Value).ToNumericVector2();
                         Fields.Field.DrawVector(obj.Name, ref vector2);
-                        obj.Value = vector2;
+                        obj.Value = vector2.ToXnaVector2();
                         break;
                     case 1:
-                        var vector3 = (Vector3)obj.Value;
+                        var vector3 = ((Vector3)obj.Value).ToNumericVector3();
                         Fields.Field.DrawVector(obj.Name, ref vector3);
-                        obj.Value = vector3;
+                        obj.Value = vector3.ToXnaVector3();
                         break;
                     case 2:
                         var floatValue = (float)obj.Value;
@@ -127,8 +136,12 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                         Fields.Field.DrawBoolean(obj.Name, ref boolValue);
                         obj.Value = boolValue;
                         break;
+                    case 5:
+                        var intValue = (int)obj.Value;
+                        Fields.Field.DrawInt(obj.Name, ref intValue);
+                        obj.Value = intValue;
+                        break;
                 }
-                return;
             }
 
             if (obj.Value is IList)

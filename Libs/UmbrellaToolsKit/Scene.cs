@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
-using UmbrellaToolsKit.Collision;
 using UmbrellaToolsKit.Utils;
+using UmbrellaToolsKit.Components.Physics;
+using UmbrellaToolsKit.Collision;
 
 namespace UmbrellaToolsKit
 {
@@ -33,8 +34,8 @@ namespace UmbrellaToolsKit
         public List<GameObject> Backgrounds = new List<GameObject>();
 
         // Collision
-        public List<Solid> AllSolids = new List<Solid>();
-        public List<Actor> AllActors = new List<Actor>();
+        public List<SolidComponent> AllSolids = new List<SolidComponent>();
+        public List<ActorComponent> AllActors = new List<ActorComponent>();
         public Grid Grid;
         public int CellSize = 8;
         public bool PixelArt = true;

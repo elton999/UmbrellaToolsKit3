@@ -1,18 +1,25 @@
 ﻿#if !RELEASE
 using ImGuiNET;
+using MonoGame.ImGui;
 #endif
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
+using MonoGame.ImGui.Extensions;
 
 namespace UmbrellaToolsKit.EditorEngine.Windows
 {
     public class SceneEditorWindow : IWindowEditable
     {
         private GameManagement _gameManagement;
+        private System.IntPtr _bufferSceneID;
+
         public GameManagement GameManagement => _gameManagement;
         public GameObject GameObjectSelected;
         public List<string> Logs = new List<string>();
+#if !RELEASE
+        public ImGuiRenderer ImGuiRenderer => _gameManagement.Editor.ImGuiRenderer;
+#endif
 
         public SceneEditorWindow(GameManagement gameManagement)
         {
@@ -26,7 +33,6 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         public void SetAsMainWindow()
         {
 #if !RELEASE
-            EditorMain.OnDrawOverLayer += RenderEditorView;
             EditorArea.OnDrawWindow += ShowWindow;
 #endif
         }
@@ -34,7 +40,6 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         public void RemoveAsMainWindow()
         {
 #if !RELEASE
-            EditorMain.OnDrawOverLayer -= RenderEditorView;
             EditorArea.OnDrawWindow -= ShowWindow;
 #endif
         }
@@ -91,6 +96,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.Begin("Game (Edit Mode) (Playing)");
             ImGui.SetWindowFontScale(1.2f);
 
+            RenderEditorView();
+
             _windowPosition = ImGui.GetWindowPos();
             _windowSize = ImGui.GetWindowSize();
             _windowPosition += new System.Numerics.Vector2(0, 40f);
@@ -110,12 +117,9 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             float backBuffer_Position_x = _windowPosition.X;
             float backBuffer_Position_y = _windowPosition.Y;
 
-            _gameManagement.SceneManagement.MainScene.DrawBuffer(
-                _gameManagement.SpriteBatch,
-                backBuffer_scale,
-                backBuffer_Position_x,
-                backBuffer_Position_y
-            );
+            if (_bufferSceneID.ToInt32() == 0)
+                _bufferSceneID = ImGuiRenderer.BindTexture(_gameManagement.SceneManagement.MainScene.SceneRendered);
+            ImGui.Image(_bufferSceneID, _gameManagement.SceneManagement.MainScene.SceneRendered.Bounds.Size.ToVector2().ToNumericVector2() * backBuffer_scale);
         }
 
         private void ShowConsole(uint bottom)
