@@ -115,7 +115,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                 SaveFile(_buildPath + _currentPathFile, _currentObject);
             }
 
-            InspectorClass.DrawAllFields(_currentObject);
+            ((GameSettingsProperty)_currentObject).DrawFields();
         }
 
         private object GetInstanceByType(Type type)

@@ -1,4 +1,5 @@
 using System;
+using UmbrellaToolsKit.EditorEngine.Windows;
 using UmbrellaToolsKit.Storage;
 using UmbrellaToolsKit.Storage.Integrations;
 
@@ -30,5 +31,7 @@ namespace UmbrellaToolsKit.EditorEngine
             if (property is T) return (T)property;
             return (T)Activator.CreateInstance(typeof(T));
         }
+
+        public virtual void DrawFields() => InspectorClass.DrawAllFields(this);
     }
 }
