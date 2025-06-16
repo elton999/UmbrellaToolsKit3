@@ -178,19 +178,19 @@ namespace UmbrellaToolsKit
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             //UI update
-            for (int i = UI.Count - 1; i >= 0; i--)
+            for (int index = UI.Count - 1; index >= 0; index--)
             {
-                UI[i].Update(deltaTime);
-                UI[i].CoroutineManagement.Update(gameTime);
+                UI[index].Update(deltaTime);
+                UI[index].CoroutineManagement.Update(gameTime);
             }
 
-            for (int i = layers.Count - 1; i >= 0; i--)
+            for (int layerIndex = layers.Count - 1; layerIndex >= 0; layerIndex--)
             {
-                for (int e = layers[i].Count - 1; e >= 0; e--)
+                for (int componentIndex = layers[layerIndex].Count - 1; componentIndex >= 0; componentIndex--)
                 {
-                    if (layers[i][e].Components != null)
+                    if (layers[layerIndex][componentIndex].Components != null)
                     {
-                        var component = layers[i][e].Components;
+                        var component = layers[layerIndex][componentIndex].Components;
                         while (component != null)
                         {
                             component.Update(deltaTime);
@@ -199,27 +199,43 @@ namespace UmbrellaToolsKit
                     }
                     try
                     {
-                        layers[i][e].Update(deltaTime);
-                        layers[i][e].CoroutineManagement.Update(gameTime);
+                        layers[layerIndex][componentIndex].Update(deltaTime);
+                        layers[layerIndex][componentIndex].CoroutineManagement.Update(gameTime);
                     }
                     catch { }
+                }
+            }
+
+            for (int layerIndex = layers.Count - 1; layerIndex >= 0; layerIndex--)
+            {
+                for (int componentIndex = layers[layerIndex].Count - 1; componentIndex >= 0; componentIndex--)
+                {
+                    if (layers[layerIndex][componentIndex].Components != null)
+                    {
+                        var component = layers[layerIndex][componentIndex].Components;
+                        while (component != null)
+                        {
+                            component.AfterUpdate(deltaTime);
+                            component = component.Next;
+                        }
+                    }
                 }
             }
 
             deltaTimerData += deltaTime;
             if (deltaTimerData >= MathUtils.MillisecondsToSeconds(updateDataTime))
             {
-                for (int i = layers.Count - 1; i >= 0; i--)
+                for (int layerIndex = layers.Count - 1; layerIndex >= 0; layerIndex--)
                 {
-                    for (int e = layers[i].Count - 1; e >= 0; e--)
+                    for (int componentIndex = layers[layerIndex].Count - 1; componentIndex >= 0; componentIndex--)
                     {
 
                         if (Camera != null)
                             Camera.update(deltaTimerData);
 
-                        if (layers[i][e].Components != null)
+                        if (layers[layerIndex][componentIndex].Components != null)
                         {
-                            var component = layers[i][e].Components;
+                            var component = layers[layerIndex][componentIndex].Components;
                             while (component != null)
                             {
                                 component.UpdateData(deltaTimerData);
@@ -228,7 +244,7 @@ namespace UmbrellaToolsKit
                         }
                         try
                         {
-                            layers[i][e].UpdateData(deltaTimerData);
+                            layers[layerIndex][componentIndex].UpdateData(deltaTimerData);
                         }
                         catch { }
                     }

@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 namespace UmbrellaToolsKit.Interfaces
 {
-    public interface IComponent : Interfaces.IUpdatable, IUpdatableData
+    public interface IComponent : Interfaces.IUpdatable, IUpdatableData, IAfterUpdatable
     {
         IComponent Next { get; set; }
         GameObject GameObject { get; set; }

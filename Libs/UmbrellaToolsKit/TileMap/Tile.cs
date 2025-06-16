@@ -33,7 +33,7 @@ namespace UmbrellaToolsKit.TileMap
                         this.Rotation,
                         this.Origin,
                         this.Scale,
-                        this.spriteEffect, 0
+                        this.SpriteEffect, 0
                     );
                 }
             }

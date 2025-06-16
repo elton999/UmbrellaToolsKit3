@@ -25,7 +25,7 @@ namespace UmbrellaToolsKit
         public Rectangle Body;
         [ShowEditor, Category("Sprite")] public float Rotation = 0;
         public Color SpriteColor = Color.White;
-        public SpriteEffects spriteEffect = SpriteEffects.None;
+        public SpriteEffects SpriteEffect = SpriteEffects.None;
         public Texture2D Sprite;
         [ShowEditor, Category("Sprite")] public float Transparent = 1f;
 
@@ -99,7 +99,7 @@ namespace UmbrellaToolsKit
         public virtual void DrawSprite(SpriteBatch spriteBatch)
         {
             if (Sprite != null)
-                spriteBatch.Draw(Sprite, Position, Body.IsEmpty ? null : Body, SpriteColor * Transparent, Rotation, Origin, Scale, spriteEffect, 0);
+                spriteBatch.Draw(Sprite, Position, Body.IsEmpty ? null : Body, SpriteColor * Transparent, Rotation, Origin, Scale, SpriteEffect, 0);
             ExtraDraw?.Invoke(spriteBatch);
         }
 
