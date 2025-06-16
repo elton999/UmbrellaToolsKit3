@@ -20,14 +20,14 @@ namespace UmbrellaToolsKit
         public bool RemoveFromScene { get => _removeFromScene; set => _removeFromScene = value; }
         [ShowEditor, Category("Transform")] public Vector2 Position = Vector2.Zero;
 
-        [ShowEditor, Category("Sprite")] public Vector2 Origin = Vector2.Zero;
-        [ShowEditor, Category("Sprite")] public float Scale = 1;
+        public Vector2 Origin = Vector2.Zero;
+        public float Scale = 1;
         public Rectangle Body;
-        [ShowEditor, Category("Sprite")] public float Rotation = 0;
+        public float Rotation = 0;
         public Color SpriteColor = Color.White;
         public SpriteEffects SpriteEffect = SpriteEffects.None;
         public Texture2D Sprite;
-        [ShowEditor, Category("Sprite")] public float Transparent = 1f;
+        public float Transparent = 1f;
 
         public string tag = "gameObject";
         public string Tag { get => tag; set => tag = value; }
