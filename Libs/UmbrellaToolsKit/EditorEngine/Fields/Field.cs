@@ -14,19 +14,26 @@ namespace UmbrellaToolsKit.EditorEngine.Fields
 		public static void DrawVector(string name, ref Vector2 vector)
         {
 #if !RELEASE
-			ImGui.Text(name);
-            ImGui.PushItemWidth(0.25f * ImGui.GetWindowSize().X);
-            
-			ImGui.SameLine();
-			ImGui.PushStyleColor(ImGuiCol.FrameBg, new Vector4(1.0f, 0.0f, 0.0f, 0.5f));
-            ImGui.InputFloat("x", ref vector.X);
-            ImGui.PopStyleColor();
+            if (ImGui.BeginTable($"##{name}", 3))
+            {
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted(name);
 
-            ImGui.SameLine();
-            ImGui.PushStyleColor(ImGuiCol.FrameBg, new Vector4(0.0f, 1.0f, 0.0f, 0.5f));
-            ImGui.InputFloat("y", ref vector.Y);
-			ImGui.PopStyleColor();
-			ImGui.PopItemWidth();
+                ImGui.TableNextColumn();
+                ImGui.PushItemWidth(0.5f * ImGui.GetColumnWidth());
+                ImGui.PushStyleColor(ImGuiCol.FrameBg, new Vector4(1, 0, 0, 0.5f));
+                ImGui.InputFloat("x", ref vector.X);
+                ImGui.PopStyleColor();
+				ImGui.PopItemWidth();
+
+                ImGui.TableNextColumn();
+                ImGui.PushItemWidth(0.5f * ImGui.GetColumnWidth());
+                ImGui.PushStyleColor(ImGuiCol.FrameBg, new Vector4(0, 1, 0, 0.5f));
+                ImGui.InputFloat("y", ref vector.Y);
+                ImGui.PopStyleColor();
+                ImGui.PopItemWidth();
+                ImGui.EndTable();
+            }
 #endif
         }
 

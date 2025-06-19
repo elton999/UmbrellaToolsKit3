@@ -5,6 +5,7 @@ using System.Data.SqlTypes;
 
 namespace UmbrellaToolsKit.Components.Sprite
 {
+    [System.Serializable]
     public class Sprite : INullable
     {
         private Rectangle _body;

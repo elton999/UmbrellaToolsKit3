@@ -78,8 +78,6 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.EndChild();
             ImGui.SameLine();
 
-            ImGui.End();
-
             ShowGameObjectProprieties(right);
             ShowSceneLayers(left);
             ShowEditorView(iddock);

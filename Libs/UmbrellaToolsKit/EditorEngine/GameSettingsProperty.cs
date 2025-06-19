@@ -32,6 +32,6 @@ namespace UmbrellaToolsKit.EditorEngine
             return (T)Activator.CreateInstance(typeof(T));
         }
 
-        public virtual void DrawFields() => InspectorClass.DrawAllFields(this);
+        public virtual void DrawFields(EditorMain editorMain) => InspectorClass.DrawAllFields(this);
     }
 }
