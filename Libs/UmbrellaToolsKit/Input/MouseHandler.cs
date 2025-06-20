@@ -76,6 +76,8 @@ namespace UmbrellaToolsKit.Input
 
         public static bool ButtonMiddleOneReleased => ButtonMiddleReleased && _instance._buttonMiddleLastState == ButtonState.Pressed;
 
+        public static float ScrollValue => (float)Mouse.GetState().ScrollWheelValue;
+
         public static Vector2 Position => Mouse.GetState().Position.ToVector2();
 
         internal void setInputData()

@@ -149,7 +149,6 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                     SaveFile(_buildPath + pathFile, instance);
                     return instance;
                 }
-
                 return GameSettingsProperty.GetProperty(_buildPath + pathFile, type);
             }
 

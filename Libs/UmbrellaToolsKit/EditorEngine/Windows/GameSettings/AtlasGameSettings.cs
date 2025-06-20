@@ -1,13 +1,17 @@
 ﻿using ImGuiNET;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using MonoGame.ImGui;
 using MonoGame.ImGui.Extensions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UmbrellaToolsKit.EditorEngine.Attributes;
+using UmbrellaToolsKit.Input;
 
 namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
 {
-    [GameSettingsProperty(nameof(InputGameSettings), "/Content/")]
+    [GameSettingsProperty(nameof(AtlasGameSettings), "/Content/")]
     public class AtlasGameSettings : GameSettingsProperty
     {
         [System.Serializable]
@@ -21,11 +25,30 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
         [System.Serializable]
         public class SpriteAtlas
         {
+            private Texture2D _texture;
+            private System.IntPtr _bufferID;
             [ShowEditor] public string Path;
             [ShowEditor] public List<SpriteBody> Sprites = new();
+            public bool HasAreadyLoad => _texture != null;
+
+            public void SetTexture(Texture2D texture) => _texture = texture;
+
+            public void SetBuffer(ImGuiRenderer imGuiRenderer)
+            {
+                if (_bufferID.ToInt32() > 0) return;
+                _bufferID = imGuiRenderer.BindTexture(_texture);
+            }
+
+            public System.IntPtr GetTextureBuffer() => _bufferID;
+
+            public Texture2D GetTexture() => _texture;
         }
 
         private SpriteAtlas _currentSprite;
+        private float _zoom = 1.0f;
+        private const float _zoomFactor = 0.3f;
+        private float _currentZoomFactor = 1.0f;
+        private float _previousScrollValue = MouseHandler.ScrollValue;
 
         [ShowEditor] public List<SpriteAtlas> Atlas = new();
 
@@ -54,6 +77,12 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
             {
                 foreach (var sprite in Atlas)
                 {
+                    if (!sprite.HasAreadyLoad)
+                    {
+                        sprite.SetTexture(editorMain.GameManagement.Game.Content.Load<Texture2D>(sprite.Path));
+                        sprite.SetBuffer(editorMain.ImGuiRenderer);
+                    }
+
                     if (ImGui.Selectable(sprite.Path, _currentSprite == sprite, ImGuiSelectableFlags.None, new System.Numerics.Vector2(0, 30.0f)))
                     {
                         _currentSprite = sprite;
@@ -64,21 +93,34 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
                 ImGui.SetWindowFontScale(1.2f);
                 if (Fields.Buttons.BlueButtonLarge("add Sprite"))
                 {
+                    LoadingWindow.Begin();
                     var openFileDialog = OpenFileDialogue.OpenFileDialog("Import Image", "Sprite", ".xnb");
                     if (OpenFileDialogue.SaveFileDialog(openFileDialog))
                     {
-                        Atlas.Add(new SpriteAtlas()
+                        var sprite = new SpriteAtlas()
                         {
-                            Path = openFileDialog.FileName.Replace(".xnb", "").Replace(Directory.GetCurrentDirectory()+@"\", "")
-                        });
+                            Path = openFileDialog.FileName.Replace(".xnb", "").Replace(Directory.GetCurrentDirectory() + @"\Content\", "")
+                        };
+                        sprite.SetTexture(editorMain.GameManagement.Game.Content.Load<Texture2D>(sprite.Path));
+                        sprite.SetBuffer(editorMain.ImGuiRenderer);
+                        Atlas.Add(sprite);
                     }
+                    LoadingWindow.End();
                 }
             }
             ImGui.End();
 
             ImGui.SetNextWindowDockID(idSpriteView, ImGuiCond.Once);
-            ImGui.Begin("Sprite View");
+            ImGui.Begin("Sprite View", ImGuiWindowFlags.NoScrollbar);
             {
+                if (MouseHandler.ScrollValue > _previousScrollValue)
+                    _currentZoomFactor += _zoomFactor;
+                if (MouseHandler.ScrollValue < _previousScrollValue)
+                    _currentZoomFactor -= _zoomFactor;
+
+                _currentZoomFactor = Math.Max(0.1f, _currentZoomFactor);
+                _previousScrollValue = MouseHandler.ScrollValue;
+
                 var drawList = ImGui.GetWindowDrawList();
                 var windowPosition = ImGui.GetWindowPos();
                 var windowSize = ImGui.GetWindowSize();
@@ -89,6 +131,13 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
                     windowSize.ToXnaVector2(),
                     Color.DarkGray
                 );
+
+                if (_currentSprite != null)
+                {
+                    var size = new System.Numerics.Vector2(_currentSprite.GetTexture().Width, _currentSprite.GetTexture().Height);
+                    ImGui.Image(_currentSprite.GetTextureBuffer(), size * _currentZoomFactor);
+                }
+
             }
             ImGui.End();
         }

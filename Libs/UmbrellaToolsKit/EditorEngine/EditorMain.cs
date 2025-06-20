@@ -27,11 +27,11 @@ namespace UmbrellaToolsKit.EditorEngine
         private bool _showEditor = false;
         private bool _showEditorKeyUp = true;
 
-        public static event Action OnDrawOverLayer;
-
+        public GameManagement GameManagement => _gameManagement;
 #if !RELEASE
         public ImGuiRenderer ImGuiRenderer => _imGUIRenderer;
 #endif
+        public static event Action OnDrawOverLayer;
 
         public EditorMain(Game game, GameManagement gameManagement)
         {

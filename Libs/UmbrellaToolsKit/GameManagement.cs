@@ -58,6 +58,7 @@ namespace UmbrellaToolsKit
             SceneManagement.Draw(spriteBatch);
             _editor.Draw(gameTime);
             OnGameUpdateData?.Invoke();
+            LoadingWindow.Draw();
         }
     }
 }
