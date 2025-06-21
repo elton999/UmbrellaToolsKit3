@@ -111,7 +111,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
             ImGui.End();
 
             ImGui.SetNextWindowDockID(idSpriteView, ImGuiCond.Once);
-            ImGui.Begin("Sprite View", ImGuiWindowFlags.NoScrollbar);
+            ImGui.Begin("Sprite View", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoMouseInputs);
             {
                 if (MouseHandler.ScrollValue > _previousScrollValue)
                     _currentZoomFactor += _zoomFactor;
@@ -129,12 +129,22 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
                     drawList,
                     windowPosition.ToXnaVector2(),
                     windowSize.ToXnaVector2(),
-                    Color.DarkGray
+                    Color.Black
                 );
 
                 if (_currentSprite != null)
                 {
                     var size = new System.Numerics.Vector2(_currentSprite.GetTexture().Width, _currentSprite.GetTexture().Height);
+                    var position = windowPosition + windowSize* 0.5f - size * _currentZoomFactor * 0.5f;
+
+                    Primitives.Square.Draw(
+                        drawList,
+                        position.ToXnaVector2(),
+                        size.ToXnaVector2() * _currentZoomFactor,
+                        Color.Fuchsia
+                    );
+
+                    ImGui.SetCursorPos(windowSize * 0.5f - size * _currentZoomFactor * 0.5f);
                     ImGui.Image(_currentSprite.GetTextureBuffer(), size * _currentZoomFactor);
                 }
 
