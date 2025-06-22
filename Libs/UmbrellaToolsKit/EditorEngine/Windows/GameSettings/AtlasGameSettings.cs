@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UmbrellaToolsKit.EditorEngine.Attributes;
-using UmbrellaToolsKit.Input;
 
 namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
 {
@@ -20,6 +19,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
             [ShowEditor] public string Name;
             [ShowEditor] public Vector2 Position;
             [ShowEditor] public Vector2 Size;
+
+            public Rectangle GetRectangle() => new Rectangle(Position.ToPoint(), Size.ToPoint());
         }
 
         [System.Serializable]
@@ -45,10 +46,19 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
         }
 
         private SpriteAtlas _currentSprite;
+
         private float _zoom = 1.0f;
-        private const float _zoomFactor = 0.3f;
-        private float _currentZoomFactor = 1.0f;
-        private float _previousScrollValue = MouseHandler.ScrollValue;
+        private readonly float _zoomStep = 0.1f;
+        private readonly float _minZoom = 0.1f;
+        private readonly float _maxZoom = 32f;
+        private System.Numerics.Vector2 _scrollOffset = System.Numerics.Vector2.Zero;
+
+        private bool isSelecting = false;
+        private System.Numerics.Vector2 selectionStart;
+        private System.Numerics.Vector2 selectionEnd;
+        private SpriteBody _currentSpriteSelect = null;
+        private SpriteBody _currentSriteHover = null;
+
 
         [ShowEditor] public List<SpriteAtlas> Atlas = new();
 
@@ -111,44 +121,119 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
             ImGui.End();
 
             ImGui.SetNextWindowDockID(idSpriteView, ImGuiCond.Once);
-            ImGui.Begin("Sprite View", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoMouseInputs);
+            ImGui.Begin("Sprite View",
+             ImGuiWindowFlags.NoScrollbar |
+             ImGuiWindowFlags.NoMove);
+
+            ImGuiIOPtr io = ImGui.GetIO();
+
+            System.Numerics.Vector2 mouseScreen = io.MousePos;
+            System.Numerics.Vector2 contentStart = ImGui.GetCursorScreenPos();
+
+            if (ImGui.IsWindowHovered(ImGuiHoveredFlags.AllowWhenBlockedByActiveItem))
             {
-                if (MouseHandler.ScrollValue > _previousScrollValue)
-                    _currentZoomFactor += _zoomFactor;
-                if (MouseHandler.ScrollValue < _previousScrollValue)
-                    _currentZoomFactor -= _zoomFactor;
-
-                _currentZoomFactor = Math.Max(0.1f, _currentZoomFactor);
-                _previousScrollValue = MouseHandler.ScrollValue;
-
-                var drawList = ImGui.GetWindowDrawList();
-                var windowPosition = ImGui.GetWindowPos();
-                var windowSize = ImGui.GetWindowSize();
-
-                Primitives.Square.Draw(
-                    drawList,
-                    windowPosition.ToXnaVector2(),
-                    windowSize.ToXnaVector2(),
-                    Color.Black
-                );
-
-                if (_currentSprite != null)
+                float wheel = io.MouseWheel;
+                if (wheel != 0)
                 {
-                    var size = new System.Numerics.Vector2(_currentSprite.GetTexture().Width, _currentSprite.GetTexture().Height);
-                    var position = windowPosition + windowSize* 0.5f - size * _currentZoomFactor * 0.5f;
+                    float oldZoom = _zoom;
 
-                    Primitives.Square.Draw(
-                        drawList,
-                        position.ToXnaVector2(),
-                        size.ToXnaVector2() * _currentZoomFactor,
-                        Color.Fuchsia
-                    );
+                    _zoom = MathHelper.Clamp(_zoom + wheel * _zoomStep, _minZoom, _maxZoom);
+                    System.Numerics.Vector2 mouseRel = mouseScreen - contentStart;
+                    _scrollOffset = (mouseRel + _scrollOffset) * (_zoom / oldZoom) - mouseRel;
+                }
+            }
 
-                    ImGui.SetCursorPos(windowSize * 0.5f - size * _currentZoomFactor * 0.5f);
-                    ImGui.Image(_currentSprite.GetTextureBuffer(), size * _currentZoomFactor);
+            bool isPanning = ImGui.IsWindowHovered() && ImGui.IsMouseDown(ImGuiMouseButton.Middle);
+            if (isPanning) _scrollOffset -= io.MouseDelta;
+
+            ImDrawListPtr drawList = ImGui.GetWindowDrawList();
+            System.Numerics.Vector2 contentStartPos = ImGui.GetCursorScreenPos();
+
+            System.Numerics.Vector2 winPos = ImGui.GetWindowPos();
+            System.Numerics.Vector2 winSize = ImGui.GetWindowSize();
+            drawList.AddRectFilled(winPos, winPos + winSize,
+                                   ImGui.GetColorU32(ImGuiCol.WindowBg));
+
+            if (_currentSprite != null)
+            {
+                var tex = _currentSprite.GetTexture();
+                System.Numerics.Vector2 texSize = new(tex.Width, tex.Height);
+                System.Numerics.Vector2 drawSize = texSize * _zoom;
+                System.Numerics.Vector2 topLeft = contentStartPos - _scrollOffset;
+
+                uint borderColor = ImGui.ColorConvertFloat4ToU32(new System.Numerics.Vector4(1, 0, 1, 1));
+                drawList.AddRect(topLeft, topLeft + drawSize, borderColor);
+
+                ImGui.SetCursorScreenPos(topLeft);
+                ImGui.Image(_currentSprite.GetTextureBuffer(), drawSize);
+
+                var mouseLocal = (mouseScreen - contentStart + _scrollOffset) / _zoom;
+                _currentSriteHover = null;
+
+                foreach (var sprite in _currentSprite.Sprites)
+                    if (sprite.GetRectangle().Intersects(new Rectangle(mouseLocal.ToXnaVector2().ToPoint(), new Point(1, 1))))
+                        _currentSriteHover = sprite;
+
+                if (ImGui.IsWindowHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Left) && _currentSriteHover != null)
+                    _currentSpriteSelect = _currentSriteHover;
+
+                if (ImGui.IsMouseReleased(ImGuiMouseButton.Left) && _currentSpriteSelect != null && _currentSriteHover == null)
+                    _currentSpriteSelect = null;
+
+                if (ImGui.IsWindowHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Left) && _currentSpriteSelect == null)
+                {
+                    isSelecting = true;
+                    selectionStart = mouseLocal;
+                    selectionEnd = mouseLocal;
                 }
 
+                if (isSelecting && ImGui.IsMouseDown(ImGuiMouseButton.Left) && _currentSpriteSelect == null)
+                    selectionEnd = mouseLocal;
+
+                if (isSelecting && ImGui.IsMouseReleased(ImGuiMouseButton.Left) && _currentSpriteSelect == null)
+                {
+                    isSelecting = false;
+
+                    topLeft = new System.Numerics.Vector2(
+                        Math.Min(selectionStart.X, selectionEnd.X),
+                        Math.Min(selectionStart.Y, selectionEnd.Y)
+                    );
+                    var bottomRight = new System.Numerics.Vector2(
+                        Math.Max(selectionStart.X, selectionEnd.X),
+                        Math.Max(selectionStart.Y, selectionEnd.Y)
+                    );
+                    topLeft = topLeft.ToXnaVector2().ToPoint().ToVector2().ToNumericVector2();
+                    bottomRight = bottomRight.ToXnaVector2().ToPoint().ToVector2().ToNumericVector2();
+
+                    var size = bottomRight - topLeft;
+
+                    _currentSprite.Sprites.Add(new SpriteBody() { Position = topLeft.ToXnaVector2().ToPoint().ToVector2(), Size = size.ToXnaVector2().ToPoint().ToVector2() });
+                }
+
+                if (isSelecting)
+                {
+                    var topLeftScreen = contentStart - _scrollOffset + selectionStart * _zoom;
+                    var bottomRightScreen = contentStart - _scrollOffset + selectionEnd * _zoom;
+
+                    var rectMin = new System.Numerics.Vector2(Math.Min(topLeftScreen.X, bottomRightScreen.X), Math.Min(topLeftScreen.Y, bottomRightScreen.Y));
+                    var rectMax = new System.Numerics.Vector2(Math.Max(topLeftScreen.X, bottomRightScreen.X), Math.Max(topLeftScreen.Y, bottomRightScreen.Y));
+
+                    drawList.AddRect(rectMin, rectMax, ImGui.ColorConvertFloat4ToU32(new System.Numerics.Vector4(0, 0.6f, 1, 1)), 0, 0, 2.0f);
+                }
+
+                foreach (var sprite in _currentSprite.Sprites)
+                {
+                    var rectStart = contentStart - _scrollOffset + sprite.Position.ToNumericVector2() * _zoom;
+                    var rectEnd = rectStart + sprite.Size.ToNumericVector2() * _zoom;
+
+                    var borderColorSpriteDefault = new System.Numerics.Vector4(0, 1, 0, 1);
+                    var borderColorHover = new System.Numerics.Vector4(1, 1, 1, 1);
+                    var borderColorSprite = sprite == _currentSpriteSelect || sprite == _currentSriteHover ? borderColorHover : borderColorSpriteDefault;
+
+                    drawList.AddRect(rectStart, rectEnd, ImGui.ColorConvertFloat4ToU32(borderColorSprite), 0, 0, 1.5f);
+                }
             }
+
             ImGui.End();
         }
     }
