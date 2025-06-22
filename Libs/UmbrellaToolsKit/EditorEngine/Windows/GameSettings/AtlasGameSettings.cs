@@ -177,7 +177,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
                 if (ImGui.IsWindowHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Left) && _currentSriteHover != null)
                     _currentSpriteSelect = _currentSriteHover;
 
-                if (ImGui.IsMouseReleased(ImGuiMouseButton.Left) && _currentSpriteSelect != null && _currentSriteHover == null)
+                if (ImGui.IsWindowHovered() && ImGui.IsMouseReleased(ImGuiMouseButton.Left) && _currentSpriteSelect != null && _currentSriteHover == null)
                     _currentSpriteSelect = null;
 
                 if (ImGui.IsWindowHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Left) && _currentSpriteSelect == null)
@@ -234,6 +234,16 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
                 }
             }
 
+            ImGui.End();
+
+            ImGui.SetNextWindowDockID(idSpriteBody, ImGuiCond.Once);
+            ImGui.Begin("Sprite Data");
+            {
+                if (_currentSpriteSelect != null)
+                {
+                    InspectorClass.DrawAllFields(_currentSpriteSelect);
+                }
+            }
             ImGui.End();
         }
     }
