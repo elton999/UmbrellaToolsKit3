@@ -1,12 +1,13 @@
 ﻿using ImGuiNET;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.ImGui;
-using MonoGame.ImGui.Extensions;
 using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Collections.Generic;
+using MonoGame.ImGui.Extensions;
+using MonoGame.ImGui;
 using UmbrellaToolsKit.EditorEngine.Attributes;
+using UmbrellaToolsKit.Interfaces;
 
 namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
 {
@@ -14,25 +15,32 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
     public class AtlasGameSettings : GameSettingsProperty
     {
         [System.Serializable]
-        public class SpriteBody
+        public class SpriteBody : ISprite
         {
-            [ShowEditor] public string Name;
-            [ShowEditor] public Vector2 Position;
-            [ShowEditor] public Vector2 Size;
+            private Texture2D _texture;
+            [ShowEditor] private string _name;
+            [ShowEditor] private Vector2 _position;
+            [ShowEditor] private Vector2 _size;
+
+            public string Name {get => _name; set => _name = value; }
+            public Vector2 Position { get => _position; set => _position = value; }
+            public Vector2 Size { get => _size; set => _size = value; }
 
             public Rectangle GetRectangle() => new Rectangle(Position.ToPoint(), Size.ToPoint());
+
+            public void SetTexture(Texture2D texture) => _texture = texture;
+
+            public Texture2D GetTexture() => _texture;
         }
 
         [System.Serializable]
-        public class SpriteAtlas
+        public class SpriteAtlas : ITexture
         {
             private Texture2D _texture;
-            private System.IntPtr _bufferID;
+            private IntPtr _bufferID;
             [ShowEditor] public string Path;
-            [ShowEditor] public List<SpriteBody> Sprites = new();
+            [ShowEditor] public List<ISprite> Sprites = new();
             public bool HasAreadyLoad => _texture != null;
-
-            public void SetTexture(Texture2D texture) => _texture = texture;
 
             public void SetBuffer(ImGuiRenderer imGuiRenderer)
             {
@@ -40,7 +48,9 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
                 _bufferID = imGuiRenderer.BindTexture(_texture);
             }
 
-            public System.IntPtr GetTextureBuffer() => _bufferID;
+            public IntPtr GetTextureBuffer() => _bufferID;
+
+            public void SetTexture(Texture2D texture) => _texture = texture;
 
             public Texture2D GetTexture() => _texture;
         }
@@ -56,9 +66,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
         private bool isSelecting = false;
         private System.Numerics.Vector2 selectionStart;
         private System.Numerics.Vector2 selectionEnd;
-        private SpriteBody _currentSpriteSelect = null;
-        private SpriteBody _currentSriteHover = null;
-
+        private ISprite _currentSpriteSelect = null;
+        private ISprite _currentSriteHover = null;
 
         [ShowEditor] public List<SpriteAtlas> Atlas = new();
 
@@ -122,8 +131,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
 
             ImGui.SetNextWindowDockID(idSpriteView, ImGuiCond.Once);
             ImGui.Begin("Sprite View",
-             ImGuiWindowFlags.NoScrollbar |
-             ImGuiWindowFlags.NoMove);
+             ImGuiWindowFlags.NoScrollbar);
 
             ImGuiIOPtr io = ImGui.GetIO();
 
@@ -242,6 +250,9 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
                 if (_currentSpriteSelect != null)
                 {
                     InspectorClass.DrawAllFields(_currentSpriteSelect);
+                    if (Fields.Buttons.RedButton("Delete"))
+                        if (_currentSprite.Sprites.Remove(_currentSpriteSelect))
+                            _currentSpriteSelect = null;
                 }
             }
             ImGui.End();

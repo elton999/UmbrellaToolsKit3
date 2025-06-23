@@ -2,12 +2,14 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Data.SqlTypes;
+using UmbrellaToolsKit.Interfaces;
 
 namespace UmbrellaToolsKit.Components.Sprite
 {
     [System.Serializable]
-    public class Sprite : INullable
+    public class Sprite : ISprite, INullable
     {
+        private string _name;
         private Rectangle _body;
         private string _path;
         private Texture2D _texture;
@@ -27,7 +29,10 @@ namespace UmbrellaToolsKit.Components.Sprite
         }
 
         public Texture2D Texture { get { return _texture; } set { _texture = value; } }
-        
+
+        public string Name { get => _name; set => _name = value; }
+        public Vector2 Position { get => _body.Location.ToVector2(); set => _body.Location = value.ToPoint(); }
+        public Vector2 Size { get => _body.Size.ToVector2(); set => _body.Size = value.ToPoint(); }
 
         public Sprite(ContentManager content, string path, Rectangle body)
         {
@@ -44,9 +49,12 @@ namespace UmbrellaToolsKit.Components.Sprite
             LoadSprite();
         }
 
-        private void LoadSprite()
-        {
-            _content.Load<Texture2D>(_path);
-        }
+        public void SetTexture(Texture2D texture) => _texture = texture;
+
+        public Texture2D GetTexture() => _texture;
+
+        public Rectangle GetRectangle() => Body;
+
+        private void LoadSprite() => _content.Load<Texture2D>(_path);
     }
 }
