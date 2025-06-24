@@ -215,7 +215,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
 
                     var size = bottomRight - topLeft;
 
-                    _currentSprite.Sprites.Add(new SpriteBody() { Position = topLeft.ToXnaVector2().ToPoint().ToVector2(), Size = size.ToXnaVector2().ToPoint().ToVector2() });
+                    string spriteName = $"{_currentSprite.Path} : {_currentSprite.Sprites.Count}";
+                    _currentSprite.Sprites.Add(new SpriteBody() { Name = spriteName, Position = topLeft.ToXnaVector2().ToPoint().ToVector2(), Size = size.ToXnaVector2().ToPoint().ToVector2() });
                 }
 
                 if (isSelecting)
