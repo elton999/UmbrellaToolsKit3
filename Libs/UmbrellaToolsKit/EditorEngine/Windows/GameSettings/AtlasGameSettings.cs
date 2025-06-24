@@ -227,7 +227,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
                     var rectMin = new System.Numerics.Vector2(Math.Min(topLeftScreen.X, bottomRightScreen.X), Math.Min(topLeftScreen.Y, bottomRightScreen.Y));
                     var rectMax = new System.Numerics.Vector2(Math.Max(topLeftScreen.X, bottomRightScreen.X), Math.Max(topLeftScreen.Y, bottomRightScreen.Y));
 
-                    drawList.AddRect(rectMin, rectMax, ImGui.ColorConvertFloat4ToU32(new System.Numerics.Vector4(0, 0.6f, 1, 1)), 0, 0, 2.0f);
+                    drawList.AddRect(rectMin, rectMax, ImGui.ColorConvertFloat4ToU32(new System.Numerics.Vector4(0, 0.6f, 1, 1)), 0, ImDrawFlags.None, 2.0f);
                 }
 
                 foreach (var sprite in _currentSprite.Sprites)
@@ -235,11 +235,26 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
                     var rectStart = contentStart - _scrollOffset + sprite.Position.ToNumericVector2() * _zoom;
                     var rectEnd = rectStart + sprite.Size.ToNumericVector2() * _zoom;
 
+                    var corners = new System.Numerics.Vector2[]
+                    {
+                        rectStart,
+                        new (rectEnd.X, rectStart.Y),
+                        new (rectStart.X, rectEnd.Y),
+                        rectEnd
+                    };
+
                     var borderColorSpriteDefault = new System.Numerics.Vector4(0, 1, 0, 1);
                     var borderColorHover = new System.Numerics.Vector4(1, 1, 1, 1);
                     var borderColorSprite = sprite == _currentSpriteSelect || sprite == _currentSriteHover ? borderColorHover : borderColorSpriteDefault;
 
-                    drawList.AddRect(rectStart, rectEnd, ImGui.ColorConvertFloat4ToU32(borderColorSprite), 0, 0, 1.5f);
+                    drawList.AddRect(rectStart, rectEnd, ImGui.ColorConvertFloat4ToU32(borderColorSprite), 0, ImDrawFlags.None, 1.5f);
+
+                    if (_currentSpriteSelect == sprite)
+                    {
+                        var cornerSquareSize = new System.Numerics.Vector2(2, 2) * _zoom;
+                        foreach (var corner in corners)
+                            drawList.AddRectFilled(corner - cornerSquareSize, corner + cornerSquareSize, ImGui.ColorConvertFloat4ToU32(borderColorSprite));
+                    }
                 }
             }
 
