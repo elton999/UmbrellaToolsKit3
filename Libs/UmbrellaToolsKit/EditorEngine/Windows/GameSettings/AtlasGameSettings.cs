@@ -210,13 +210,13 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
                         Math.Max(selectionStart.X, selectionEnd.X),
                         Math.Max(selectionStart.Y, selectionEnd.Y)
                     );
-                    topLeft = topLeft.ToXnaVector2().ToPoint().ToVector2().ToNumericVector2();
-                    bottomRight = bottomRight.ToXnaVector2().ToPoint().ToVector2().ToNumericVector2();
+                    topLeft = topLeft.ToXnaVector2().Truncate().ToNumericVector2();
+                    bottomRight = bottomRight.ToXnaVector2().Truncate().ToNumericVector2();
 
                     var size = bottomRight - topLeft;
 
                     string spriteName = $"{_currentSprite.Path} : {_currentSprite.Sprites.Count}";
-                    _currentSprite.Sprites.Add(new SpriteBody() { Name = spriteName, Position = topLeft.ToXnaVector2().ToPoint().ToVector2(), Size = size.ToXnaVector2().ToPoint().ToVector2() });
+                    _currentSprite.Sprites.Add(new SpriteBody() { Name = spriteName, Position = topLeft.ToXnaVector2(), Size = size.ToXnaVector2() });
                 }
 
                 if (isSelecting)
@@ -263,8 +263,22 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
             ImGui.SetNextWindowDockID(idSpriteBody, ImGuiCond.Once);
             ImGui.Begin("Sprite Data");
             {
+                drawList = ImGui.GetWindowDrawList();
                 if (_currentSpriteSelect != null)
                 {
+                    var spriteViewSize = new System.Numerics.Vector2(ImGui.GetWindowWidth(), ImGui.GetWindowWidth());
+                    var windowPos = ImGui.GetWindowPos();
+                    uint backgroundColor = ImGui.ColorConvertFloat4ToU32(new System.Numerics.Vector4(1, 1, 1, 1));
+
+                    drawList.AddRect(windowPos, windowPos + spriteViewSize, backgroundColor);
+                    var uv0 = _currentSpriteSelect.Position / _currentSprite.GetTexture().Bounds.Size.ToVector2();
+                    var uv1 = uv0 + _currentSpriteSelect.Size / _currentSprite.GetTexture().Bounds.Size.ToVector2();
+
+                    float spritePreViewScale = _currentSpriteSelect.Size.X > _currentSpriteSelect.Size.Y ? spriteViewSize.X / _currentSpriteSelect.Size.X : spriteViewSize.Y / _currentSpriteSelect.Size.Y;
+                    drawList.AddImage(_currentSprite.GetTextureBuffer(), windowPos, windowPos + _currentSpriteSelect.Size.ToNumericVector2() * spritePreViewScale, uv0.ToNumericVector2(), uv1.ToNumericVector2());
+
+                    ImGui.Dummy(spriteViewSize);
+
                     InspectorClass.DrawAllFields(_currentSpriteSelect);
                     if (Fields.Buttons.RedButton("Delete"))
                         if (_currentSprite.Sprites.Remove(_currentSpriteSelect))
