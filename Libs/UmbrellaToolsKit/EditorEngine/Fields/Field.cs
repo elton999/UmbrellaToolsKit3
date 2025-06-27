@@ -14,24 +14,39 @@ namespace UmbrellaToolsKit.EditorEngine.Fields
 		public static void DrawVector(string name, ref Vector2 vector)
         {
 #if !RELEASE
-            if (ImGui.BeginTable($"##{name}", 3))
+            const float kWeightName = 0.30f;
+            const float kWeightVal = 0.35f;
+
+            if (ImGui.BeginTable($"##vec{name}", 3, ImGuiTableFlags.SizingStretchSame))
             {
+                ImGui.TableSetupColumn("##n", ImGuiTableColumnFlags.WidthStretch, kWeightName);
+                ImGui.TableSetupColumn("##x", ImGuiTableColumnFlags.WidthStretch, kWeightVal);
+                ImGui.TableSetupColumn("##y", ImGuiTableColumnFlags.WidthStretch, kWeightVal);
+                ImGui.TableNextRow();
+
                 ImGui.TableNextColumn();
                 ImGui.TextUnformatted(name);
 
                 ImGui.TableNextColumn();
-                ImGui.PushItemWidth(0.5f * ImGui.GetColumnWidth());
-                ImGui.PushStyleColor(ImGuiCol.FrameBg, new Vector4(1, 0, 0, 0.5f));
-                ImGui.InputFloat("x", ref vector.X);
-                ImGui.PopStyleColor();
-				ImGui.PopItemWidth();
+                {
+                    float inner = ImGui.GetColumnWidth()
+                                - ImGui.GetStyle().CellPadding.X * 2;
+                    ImGui.SetNextItemWidth(inner);
+                    ImGui.PushStyleColor(ImGuiCol.FrameBg, new Vector4(1, 0, 0, 0.5f));
+                    ImGui.InputFloat($"##{name}_x", ref vector.X);
+                    ImGui.PopStyleColor();
+                }
 
                 ImGui.TableNextColumn();
-                ImGui.PushItemWidth(0.5f * ImGui.GetColumnWidth());
-                ImGui.PushStyleColor(ImGuiCol.FrameBg, new Vector4(0, 1, 0, 0.5f));
-                ImGui.InputFloat("y", ref vector.Y);
-                ImGui.PopStyleColor();
-                ImGui.PopItemWidth();
+                {
+                    float inner = ImGui.GetColumnWidth()
+                                - ImGui.GetStyle().CellPadding.X * 2;
+                    ImGui.SetNextItemWidth(inner);
+                    ImGui.PushStyleColor(ImGuiCol.FrameBg, new Vector4(0, 1, 0, 0.5f));
+                    ImGui.InputFloat($"##{name}_y", ref vector.Y);
+                    ImGui.PopStyleColor();
+                }
+
                 ImGui.EndTable();
             }
 #endif

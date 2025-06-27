@@ -121,8 +121,9 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                 SaveFile(_projectPath + _currentPathFile, _currentObject);
                 SaveFile(_buildPath + _currentPathFile, _currentObject);
             }
-
+            ImGui.BeginChild("Game Settings Fields");
             ((GameSettingsProperty)_currentObject).DrawFields(_editorMain);
+            ImGui.EndChild();
         }
 
         private object GetInstanceByType(Type type)

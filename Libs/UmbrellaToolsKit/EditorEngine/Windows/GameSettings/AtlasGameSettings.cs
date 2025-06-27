@@ -263,19 +263,21 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
             ImGui.SetNextWindowDockID(idSpriteBody, ImGuiCond.Once);
             ImGui.Begin("Sprite Data");
             {
+                ImGui.BeginChild("sprite data");
                 drawList = ImGui.GetWindowDrawList();
                 if (_currentSpriteSelect != null)
                 {
-                    var spriteViewSize = new System.Numerics.Vector2(ImGui.GetWindowWidth(), ImGui.GetWindowWidth());
+                    float windowWidth = 120.0f;
+                    var spriteViewSize = new System.Numerics.Vector2(windowWidth, windowWidth);
                     var windowPos = ImGui.GetWindowPos();
                     uint backgroundColor = ImGui.ColorConvertFloat4ToU32(new System.Numerics.Vector4(1, 1, 1, 1));
 
-                    drawList.AddRect(windowPos, windowPos + spriteViewSize, backgroundColor);
                     var uv0 = _currentSpriteSelect.Position / _currentSprite.GetTexture().Bounds.Size.ToVector2();
                     var uv1 = uv0 + _currentSpriteSelect.Size / _currentSprite.GetTexture().Bounds.Size.ToVector2();
 
                     float spritePreViewScale = _currentSpriteSelect.Size.X > _currentSpriteSelect.Size.Y ? spriteViewSize.X / _currentSpriteSelect.Size.X : spriteViewSize.Y / _currentSpriteSelect.Size.Y;
                     drawList.AddImage(_currentSprite.GetTextureBuffer(), windowPos, windowPos + _currentSpriteSelect.Size.ToNumericVector2() * spritePreViewScale, uv0.ToNumericVector2(), uv1.ToNumericVector2());
+                    drawList.AddRect(windowPos, windowPos + _currentSpriteSelect.Size.ToNumericVector2() * spritePreViewScale, backgroundColor);
 
                     ImGui.Dummy(spriteViewSize);
 
@@ -284,6 +286,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
                         if (_currentSprite.Sprites.Remove(_currentSpriteSelect))
                             _currentSpriteSelect = null;
                 }
+                ImGui.EndChild();
             }
             ImGui.End();
         }
