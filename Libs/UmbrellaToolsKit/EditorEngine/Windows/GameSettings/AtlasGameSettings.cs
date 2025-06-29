@@ -21,16 +21,39 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
             [ShowEditor] private string _name;
             [ShowEditor] private Vector2 _position;
             [ShowEditor] private Vector2 _size;
+            [ShowEditor] private string _id;
+
 
             public string Name {get => _name; set => _name = value; }
             public Vector2 Position { get => _position; set => _position = value; }
             public Vector2 Size { get => _size; set => _size = value; }
+            public string Id
+            {
+                get
+                {
+                    SetId();
+                    return _id;
+                }
+                set
+                {
+                    if (string.IsNullOrEmpty(value)) SetId();
+                    else _id = value;
+                }
+
+            }
+
 
             public Rectangle GetRectangle() => new Rectangle(Position.ToPoint(), Size.ToPoint());
 
             public void SetTexture(Texture2D texture) => _texture = texture;
 
             public Texture2D GetTexture() => _texture;
+
+            private void SetId()
+            {
+                if (string.IsNullOrEmpty(_id))
+                    _id = Guid.NewGuid().ToString();
+            }
         }
 
         [System.Serializable]
@@ -102,7 +125,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
                         sprite.SetBuffer(editorMain.ImGuiRenderer);
                     }
 
-                    if (ImGui.Selectable(sprite.Path, _currentSprite == sprite, ImGuiSelectableFlags.None, new System.Numerics.Vector2(0, 30.0f)))
+                    if (ImGui.Selectable(sprite.Path, _currentSprite == sprite, ImGuiSelectableFlags.None, new(0, 30.0f)))
                     {
                         _currentSprite = sprite;
                     }
@@ -140,7 +163,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
             if (ImGui.IsWindowHovered(ImGuiHoveredFlags.AllowWhenBlockedByActiveItem))
             {
                 float wheel = io.MouseWheel;
-                if (wheel != 0)
+                if (wheel != 0.0f)
                 {
                     float oldZoom = _zoom;
 
