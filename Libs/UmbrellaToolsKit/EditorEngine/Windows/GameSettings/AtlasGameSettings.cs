@@ -130,13 +130,12 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
             ImGui.End();
 
             ImGui.SetNextWindowDockID(idSpriteView, ImGuiCond.Once);
-            ImGui.Begin("Sprite View",
-             ImGuiWindowFlags.NoScrollbar);
+            ImGui.Begin("Sprite View", ImGuiWindowFlags.NoScrollbar);
 
-            ImGuiIOPtr io = ImGui.GetIO();
+            var io = ImGui.GetIO();
 
-            System.Numerics.Vector2 mouseScreen = io.MousePos;
-            System.Numerics.Vector2 contentStart = ImGui.GetCursorScreenPos();
+            var mouseScreen = io.MousePos;
+            var contentStart = ImGui.GetCursorScreenPos();
 
             if (ImGui.IsWindowHovered(ImGuiHoveredFlags.AllowWhenBlockedByActiveItem))
             {
@@ -146,7 +145,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
                     float oldZoom = _zoom;
 
                     _zoom = MathHelper.Clamp(_zoom + wheel * _zoomStep, _minZoom, _maxZoom);
-                    System.Numerics.Vector2 mouseRel = mouseScreen - contentStart;
+                    var mouseRel = mouseScreen - contentStart;
                     _scrollOffset = (mouseRel + _scrollOffset) * (_zoom / oldZoom) - mouseRel;
                 }
             }
@@ -154,11 +153,11 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
             bool isPanning = ImGui.IsWindowHovered() && ImGui.IsMouseDown(ImGuiMouseButton.Middle);
             if (isPanning) _scrollOffset -= io.MouseDelta;
 
-            ImDrawListPtr drawList = ImGui.GetWindowDrawList();
-            System.Numerics.Vector2 contentStartPos = ImGui.GetCursorScreenPos();
+            var drawList = ImGui.GetWindowDrawList();
+            var contentStartPos = ImGui.GetCursorScreenPos();
 
-            System.Numerics.Vector2 winPos = ImGui.GetWindowPos();
-            System.Numerics.Vector2 winSize = ImGui.GetWindowSize();
+            var winPos = ImGui.GetWindowPos();
+            var winSize = ImGui.GetWindowSize();
             drawList.AddRectFilled(winPos, winPos + winSize,
                                    ImGui.GetColorU32(ImGuiCol.WindowBg));
 
@@ -166,10 +165,10 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
             {
                 var tex = _currentSprite.GetTexture();
                 System.Numerics.Vector2 texSize = new(tex.Width, tex.Height);
-                System.Numerics.Vector2 drawSize = texSize * _zoom;
-                System.Numerics.Vector2 topLeft = contentStartPos - _scrollOffset;
+                var drawSize = texSize * _zoom;
+                var topLeft = contentStartPos - _scrollOffset;
 
-                uint borderColor = ImGui.ColorConvertFloat4ToU32(new System.Numerics.Vector4(1, 0, 1, 1));
+                uint borderColor = ImGui.ColorConvertFloat4ToU32(new(1, 0, 1, 1));
                 drawList.AddRect(topLeft, topLeft + drawSize, borderColor);
 
                 ImGui.SetCursorScreenPos(topLeft);
@@ -227,7 +226,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
                     var rectMin = new System.Numerics.Vector2(Math.Min(topLeftScreen.X, bottomRightScreen.X), Math.Min(topLeftScreen.Y, bottomRightScreen.Y));
                     var rectMax = new System.Numerics.Vector2(Math.Max(topLeftScreen.X, bottomRightScreen.X), Math.Max(topLeftScreen.Y, bottomRightScreen.Y));
 
-                    drawList.AddRect(rectMin, rectMax, ImGui.ColorConvertFloat4ToU32(new System.Numerics.Vector4(0, 0.6f, 1, 1)), 0, ImDrawFlags.None, 2.0f);
+                    drawList.AddRect(rectMin, rectMax, ImGui.ColorConvertFloat4ToU32(new(0, 0.6f, 1, 1)), 0, ImDrawFlags.None, 2.0f);
                 }
 
                 foreach (var sprite in _currentSprite.Sprites)
@@ -270,7 +269,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
                     float windowWidth = 120.0f;
                     var spriteViewSize = new System.Numerics.Vector2(windowWidth, windowWidth);
                     var windowPos = ImGui.GetWindowPos();
-                    uint backgroundColor = ImGui.ColorConvertFloat4ToU32(new System.Numerics.Vector4(1, 1, 1, 1));
+                    uint backgroundColor = ImGui.ColorConvertFloat4ToU32(new(1, 1, 1, 1));
 
                     var uv0 = _currentSpriteSelect.Position / _currentSprite.GetTexture().Bounds.Size.ToVector2();
                     var uv1 = uv0 + _currentSpriteSelect.Size / _currentSprite.GetTexture().Bounds.Size.ToVector2();
