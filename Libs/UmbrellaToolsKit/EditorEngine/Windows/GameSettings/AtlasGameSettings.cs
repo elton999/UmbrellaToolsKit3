@@ -298,10 +298,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
                     var uv1 = uv0 + _currentSpriteSelect.Size / _currentSprite.GetTexture().Bounds.Size.ToVector2();
 
                     float spritePreViewScale = _currentSpriteSelect.Size.X > _currentSpriteSelect.Size.Y ? spriteViewSize.X / _currentSpriteSelect.Size.X : spriteViewSize.Y / _currentSpriteSelect.Size.Y;
-                    drawList.AddImage(_currentSprite.GetTextureBuffer(), windowPos, windowPos + _currentSpriteSelect.Size.ToNumericVector2() * spritePreViewScale, uv0.ToNumericVector2(), uv1.ToNumericVector2());
-                    drawList.AddRect(windowPos, windowPos + _currentSpriteSelect.Size.ToNumericVector2() * spritePreViewScale, backgroundColor);
+                    ImGui.Image(_currentSprite.GetTextureBuffer(), spriteViewSize, uv0.ToNumericVector2(), uv1.ToNumericVector2());
 
-                    ImGui.Dummy(spriteViewSize);
 
                     InspectorClass.DrawAllFields(_currentSpriteSelect);
                     if (Fields.Buttons.RedButton("Delete"))
