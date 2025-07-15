@@ -14,7 +14,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
     [GameSettingsProperty(nameof(AtlasGameSettings), "/Content/")]
     public class AtlasGameSettings : GameSettingsProperty
     {
-        [System.Serializable]
+        [Serializable]
         public class SpriteBody : ISprite
         {
             private Texture2D _texture;
@@ -39,9 +39,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
                     if (string.IsNullOrEmpty(value)) SetId();
                     else _id = value;
                 }
-
             }
-
 
             public Rectangle GetRectangle() => new Rectangle(Position.ToPoint(), Size.ToPoint());
 
@@ -56,7 +54,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
             }
         }
 
-        [System.Serializable]
+        [Serializable]
         public class SpriteAtlas : ITexture
         {
             private Texture2D _texture;
@@ -306,6 +304,10 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
                         if (_currentSprite.Sprites.Remove(_currentSpriteSelect))
                             _currentSpriteSelect = null;
                 }
+
+                if (_currentSpriteSelect == null && _currentSprite != null)
+                    if (Fields.Buttons.RedButton("Delete All selections"))
+                        _currentSprite.Sprites.Clear();
                 ImGui.EndChild();
             }
             ImGui.End();
