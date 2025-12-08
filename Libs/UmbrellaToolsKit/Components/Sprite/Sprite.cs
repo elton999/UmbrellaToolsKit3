@@ -15,7 +15,7 @@ namespace UmbrellaToolsKit.Components.Sprite
         private Texture2D _texture;
         private ContentManager _content;
 
-        public  bool IsNull => _texture == null;
+        public bool IsNull => _texture == null;
 
         public Rectangle Body
         {
@@ -33,6 +33,7 @@ namespace UmbrellaToolsKit.Components.Sprite
         public string Name { get => _name; set => _name = value; }
         public Vector2 Position { get => _body.Location.ToVector2(); set => _body.Location = value.ToPoint(); }
         public Vector2 Size { get => _body.Size.ToVector2(); set => _body.Size = value.ToPoint(); }
+        public string Path { get => _path; set => _path = value; }
 
         public Sprite(ContentManager content, string path, Rectangle body)
         {
@@ -55,6 +56,6 @@ namespace UmbrellaToolsKit.Components.Sprite
 
         public Rectangle GetRectangle() => Body;
 
-        private void LoadSprite() => _content.Load<Texture2D>(_path);
+        private void LoadSprite() => _texture = _content.Load<Texture2D>(_path);
     }
 }

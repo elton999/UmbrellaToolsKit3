@@ -22,11 +22,13 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
             [ShowEditor] private Vector2 _position;
             [ShowEditor] private Vector2 _size;
             [ShowEditor] private string _id;
+            private string _path;
 
 
-            public string Name {get => _name; set => _name = value; }
+            public string Name { get => _name; set => _name = value; }
             public Vector2 Position { get => _position; set => _position = value; }
             public Vector2 Size { get => _size; set => _size = value; }
+            public string Path { get => _path; set => _path = value; }
             public string Id
             {
                 get
@@ -91,6 +93,21 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
         private ISprite _currentSriteHover = null;
 
         [ShowEditor] public List<SpriteAtlas> Atlas = new();
+
+        public bool TryGetSpriteByName(string name, out ISprite sprite)
+        {
+            foreach (var atlas in Atlas)
+            {
+                foreach (var spriteBody in atlas.Sprites)
+                {
+                    sprite = spriteBody;
+                    return true;
+                }
+            }
+
+            sprite = null;
+            return false;
+        }
 
         public override void DrawFields(EditorMain editorMain)
         {
@@ -236,7 +253,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
                     var size = bottomRight - topLeft;
 
                     string spriteName = $"{_currentSprite.Path} : {_currentSprite.Sprites.Count}";
-                    _currentSprite.Sprites.Add(new SpriteBody() { Name = spriteName, Position = topLeft.ToXnaVector2(), Size = size.ToXnaVector2() });
+                    _currentSprite.Sprites.Add(new SpriteBody() { Name = spriteName, Position = topLeft.ToXnaVector2(), Size = size.ToXnaVector2(), Path = _currentSprite.Path });
                 }
 
                 if (isSelecting)
