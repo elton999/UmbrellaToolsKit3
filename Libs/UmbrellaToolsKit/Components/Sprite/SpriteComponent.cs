@@ -24,13 +24,13 @@ namespace UmbrellaToolsKit.Components.Sprite
             var atlas = GameSettingsProperty.GetProperty<AtlasGameSettings>(@"Content/AtlasGameSettings");
             if (atlas.TryGetSpriteByName(spriteName, out var sprite))
             {
-                Log.Write($"[SpriteComponent] creating sprite: path : {sprite.Path} rectangle: {sprite.GetRectangle()}" + spriteName);
+                Log.Write($"[{nameof(SpriteComponent)}] creating sprite: path : {sprite.Path} rectangle: {sprite.GetRectangle()}" + spriteName);
                 var spriteData = new Sprite(GameObject.Content, sprite.Path, sprite.GetRectangle());
                 SetSprite(spriteData);
                 return;
             }
 
-            Log.Write("[SpriteComponent] Sprite not found in atlas: " + spriteName);
+            Log.Write($"[{nameof(SpriteComponent)}] Sprite not found in atlas: " + spriteName);
         }
 
         public void SetSprite(Sprite sprite)
