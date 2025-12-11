@@ -221,13 +221,10 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings.Atlas
                 {
                     float windowWidth = 120.0f;
                     var spriteViewSize = new System.Numerics.Vector2(windowWidth, windowWidth);
-                    var windowPos = ImGui.GetWindowPos();
-                    uint backgroundColor = ImGui.ColorConvertFloat4ToU32(new(1, 1, 1, 1));
 
                     var uv0 = _currentSpriteSelect.Position / _currentSprite.GetTexture().Bounds.Size.ToVector2();
                     var uv1 = uv0 + _currentSpriteSelect.Size / _currentSprite.GetTexture().Bounds.Size.ToVector2();
 
-                    float spritePreViewScale = _currentSpriteSelect.Size.X > _currentSpriteSelect.Size.Y ? spriteViewSize.X / _currentSpriteSelect.Size.X : spriteViewSize.Y / _currentSpriteSelect.Size.Y;
                     ImGui.Image(_currentSprite.GetTextureBuffer(), spriteViewSize, uv0.ToNumericVector2(), uv1.ToNumericVector2());
 
 
@@ -243,33 +240,43 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings.Atlas
                         _currentSprite.Sprites.Clear();
 
                     ImGui.Separator();
-
-                    Fields.Field.DrawVector("Grid Size", ref _gridSettings);
-                    if (Fields.Buttons.BlueButton("Create Grid"))
-                    {
-                        _currentSprite.Sprites.Clear();
-                        Vector2 SpriteSize = new Vector2(_currentSprite.GetTexture().Width / _gridSettings.X, _currentSprite.GetTexture().Height / _gridSettings.Y);
-                        for (float y = 0; y < _gridSettings.Y; y++)
-                        {
-                            for (float x = 0; x < _gridSettings.X; x++)
-                            {
-                                string spriteName = $"{_currentSprite.Path.Replace("\\", "/")} : {_currentSprite.Sprites.Count}";
-                                _currentSprite.Sprites.Add(
-                                    new AtlasGameSettings.SpriteBody()
-                                    {
-                                        Name = spriteName,
-                                        Position = new Vector2(x * SpriteSize.X, y * SpriteSize.Y),
-                                        Size = SpriteSize,
-                                        Path = _currentSprite.Path
-                                    });
-                            }
-                        }
-                    }
+                    DrawGridSettings();
                 }
 
                 ImGui.EndChild();
             }
             ImGui.End();
+        }
+
+        private void DrawGridSettings()
+        {
+            Fields.Field.DrawVector("Grid Size", ref _gridSettings);
+            if (Fields.Buttons.BlueButton("Create Grid"))
+                BuildGrid();
+        }
+
+        private void BuildGrid()
+        {
+            _currentSprite.Sprites.Clear();
+            float spriteWidth = _currentSprite.GetTexture().Width / _gridSettings.X;
+            float spriteHeight = _currentSprite.GetTexture().Height / _gridSettings.Y;
+            Vector2 SpriteSize = new Vector2(spriteWidth, spriteHeight);
+
+            for (float y = 0; y < _gridSettings.Y; y++)
+            {
+                for (float x = 0; x < _gridSettings.X; x++)
+                {
+                    string spriteName = $"{_currentSprite.Path.Replace("\\", "/")} : {_currentSprite.Sprites.Count}";
+                    _currentSprite.Sprites.Add(
+                        new AtlasGameSettings.SpriteBody()
+                        {
+                            Name = spriteName,
+                            Position = new Vector2(x * SpriteSize.X, y * SpriteSize.Y),
+                            Size = SpriteSize,
+                            Path = _currentSprite.Path
+                        });
+                }
+            }
         }
     }
 }
