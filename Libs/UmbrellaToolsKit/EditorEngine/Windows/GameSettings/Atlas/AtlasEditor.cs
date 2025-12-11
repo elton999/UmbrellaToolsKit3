@@ -5,8 +5,6 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using MonoGame.ImGui.Extensions;
-using MonoGame.ImGui;
-using UmbrellaToolsKit.EditorEngine.Attributes;
 using UmbrellaToolsKit.Interfaces;
 
 namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings.Atlas
@@ -217,7 +215,6 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings.Atlas
             ImGui.Begin("Sprite Data");
             {
                 ImGui.BeginChild("sprite data");
-                drawList = ImGui.GetWindowDrawList();
                 if (_currentSpriteSelect != null)
                 {
                     float windowWidth = 120.0f;
