@@ -1,4 +1,5 @@
 using System;
+using UmbrellaToolsKit.EditorEngine.Windows;
 using UmbrellaToolsKit.Storage;
 using UmbrellaToolsKit.Storage.Integrations;
 
@@ -16,7 +17,7 @@ namespace UmbrellaToolsKit.EditorEngine
             object property = SaveIntegration.Get(pathFile, type);
             timer.End();
 
-            Log.Write($"[{nameof(GameSettingsProperty)}] reading: {pathFile}, timer: {timer.GetTotalSeconds()}");
+            // Log.Write($"[{nameof(GameSettingsProperty)}] reading: {pathFile}, timer: {timer.GetTotalSeconds()}");
             if (property.GetType() == type) return property;
             return Activator.CreateInstance(type);
         }
@@ -30,5 +31,7 @@ namespace UmbrellaToolsKit.EditorEngine
             if (property is T) return (T)property;
             return (T)Activator.CreateInstance(typeof(T));
         }
+
+        public virtual void DrawFields(EditorMain editorMain) => InspectorClass.DrawAllFields(this);
     }
 }

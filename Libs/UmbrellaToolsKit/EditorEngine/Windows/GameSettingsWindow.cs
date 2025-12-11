@@ -22,6 +22,9 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
         private string _projectPath => _buildPath + "/../../../../Project";
         private string _buildPath => Environment.CurrentDirectory;
+        private Type _currentType;
+
+        private EditorMain _editorMain;
 
         public GameManagement GameManagement => _gameManagement;
         public IEnumerable<Type> AllSettingsData
@@ -39,13 +42,14 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             }
         }
 
-        public GameSettingsWindow(GameManagement gameManagement)
+        public GameSettingsWindow(GameManagement gameManagement, EditorMain editorMain)
         {
             _gameManagement = gameManagement;
             _allSettingsData = AllSettingsData;
 
             BarEdtior.OnSwitchEditorWindow += RemoveAsMainWindow;
             BarEdtior.OnOpenGameSettingsEditor += SetAsMainWindow;
+            _editorMain = editorMain;
         }
 
         public void SetAsMainWindow()
@@ -70,13 +74,13 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
             var dockSize = new System.Numerics.Vector2(0, 0);
 
-            ImGui.BeginChild("left", new System.Numerics.Vector2(ImGui.GetMainViewport().Size.X * 0.2f, 0));
+            ImGui.BeginChild("left", new System.Numerics.Vector2(ImGui.GetMainViewport().Size.X * 0.15f, 0));
             ImGui.SetWindowFontScale(1.2f);
             ImGui.DockSpace(leftID, dockSize);
             ImGui.EndChild();
             ImGui.SameLine();
 
-            ImGui.BeginChild("right", new System.Numerics.Vector2(ImGui.GetMainViewport().Size.X * 0.8f, 0));
+            ImGui.BeginChild("right", new System.Numerics.Vector2(ImGui.GetMainViewport().Size.X * 0.85f, 0));
             ImGui.SetWindowFontScale(1.2f);
             ImGui.DockSpace(rightID, dockSize);
             ImGui.EndChild();
@@ -101,8 +105,11 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         {
             foreach (var type in _allSettingsData)
             {
-                if (ImGui.Selectable(type.Name))
+                if (ImGui.Selectable(AttributesHelper.FormatName(type.Name), type == _currentType))
+                {
+                    _currentType = type;
                     _currentObject = GetInstanceByType(type);
+                }
             }
         }
 
@@ -114,8 +121,9 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                 SaveFile(_projectPath + _currentPathFile, _currentObject);
                 SaveFile(_buildPath + _currentPathFile, _currentObject);
             }
-
-            InspectorClass.DrawAllFields(_currentObject);
+            ImGui.BeginChild("Game Settings Fields");
+            ((GameSettingsProperty)_currentObject).DrawFields(_editorMain);
+            ImGui.EndChild();
         }
 
         private object GetInstanceByType(Type type)
@@ -142,7 +150,6 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                     SaveFile(_buildPath + pathFile, instance);
                     return instance;
                 }
-
                 return GameSettingsProperty.GetProperty(_buildPath + pathFile, type);
             }
 

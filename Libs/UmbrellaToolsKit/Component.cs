@@ -20,6 +20,8 @@ namespace UmbrellaToolsKit
         public virtual void Update(float deltaTime) { }
         public virtual void UpdateData(float deltaTime) { }
 
+        public virtual void AfterUpdate(float deltaTime) { }
+
         public void Add(IComponent component)
         {
             if (Next != null)
