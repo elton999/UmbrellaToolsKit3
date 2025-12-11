@@ -62,14 +62,6 @@ namespace UmbrellaToolsKit.EditorEngine
 
                     ImGui.EndMenu();
                 }
-
-                if (ImGui.BeginMenu("Help"))
-                {
-                    if (ImGui.MenuItem("Imgui helper"))
-                        isShowingImguiDemo = true;
-
-                    ImGui.EndMenu();
-                }
                 
                 ImGui.BeginTable("##positionBar", 4);
                 ImGui.TableNextColumn();

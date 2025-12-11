@@ -47,4 +47,9 @@
     <ProjectReference Include="..\Libs\UmbrellaToolsKit\UmbrellaToolsKit.csproj" />
   </ItemGroup>
   <Import Project="..\Project\Project.projitems" Label="Shared" />
+
+  <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
+    <Message Text="Restoring dotnet tools" Importance="High" />
+    <Exec Command="dotnet tool restore" />
+  </Target>
 </Project>

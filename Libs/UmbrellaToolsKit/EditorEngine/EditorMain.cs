@@ -27,11 +27,11 @@ namespace UmbrellaToolsKit.EditorEngine
         private bool _showEditor = false;
         private bool _showEditorKeyUp = true;
 
-        public static event Action OnDrawOverLayer;
-
+        public GameManagement GameManagement => _gameManagement;
 #if !RELEASE
         public ImGuiRenderer ImGuiRenderer => _imGUIRenderer;
 #endif
+        public static event Action OnDrawOverLayer;
 
         public EditorMain(Game game, GameManagement gameManagement)
         {
@@ -45,7 +45,7 @@ namespace UmbrellaToolsKit.EditorEngine
 
             _sceneEditor = new Windows.SceneEditorWindow(_gameManagement);
             _dialogueEditor = new Windows.DialogueEditorWindow(_gameManagement);
-            _gameSettingsEditor = new Windows.GameSettingsWindow(_gameManagement);
+            _gameSettingsEditor = new Windows.GameSettingsWindow(_gameManagement, this);
         }
 
         public void Draw(GameTime gameTime)

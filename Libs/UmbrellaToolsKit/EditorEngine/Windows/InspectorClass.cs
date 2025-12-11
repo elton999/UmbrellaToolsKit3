@@ -79,7 +79,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
             foreach (MethodInfo mInfo in type.GetRuntimeMethods())
                 foreach (var attr in mInfo.CustomAttributes)
-                    if(attr.AttributeType == typeof(ButtonAttribute))
+                    if (attr.AttributeType == typeof(ButtonAttribute))
                         if (Fields.Buttons.BlueButtonLarge(AttributesHelper.FormatName(mInfo.Name)))
                             mInfo.Invoke(obj, null);
 #endif
@@ -155,6 +155,17 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             if (obj.Value is Enum)
             {
                 Fields.Field.DrawEnum(obj.Name, obj.Type, ref obj.Value);
+                return;
+            }
+
+            if (obj.Value is Components.Sprite.Sprite)
+            {
+                var spriteRef = (Components.Sprite.Sprite)obj.Value;
+                Fields.Field.DrawSprite(obj.Name, spriteRef, out var sprite);
+                if (sprite != null && sprite.Name != spriteRef.Name)
+                    Log.Write($"[{nameof(InspectorClass)}] sprite selected: " + sprite?.Name);
+                if (sprite != null)
+                    obj.Value = sprite;
                 return;
             }
 

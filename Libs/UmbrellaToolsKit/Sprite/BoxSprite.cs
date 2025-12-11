@@ -29,7 +29,7 @@ namespace UmbrellaToolsKit.Sprite
                         this.Rotation,
                         this.Origin,
                         this.Scale,
-                        this.spriteEffect,
+                        this.SpriteEffect,
                         1f
                         );
         }

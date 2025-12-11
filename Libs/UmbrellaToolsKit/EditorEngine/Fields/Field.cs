@@ -6,24 +6,60 @@ using System;
 using System.Collections;
 using UmbrellaToolsKit.EditorEngine.Windows;
 using System.Numerics;
+using UmbrellaToolsKit.EditorEngine.Windows.GameSettings;
+using System.Collections.Generic;
 
 namespace UmbrellaToolsKit.EditorEngine.Fields
 {
 	public class Field
 	{
 		public static void DrawVector(string name, ref Vector2 vector)
-        {
+		{
 #if !RELEASE
-            ImGui.InputFloat2(name, ref vector);
+			const float kWeightName = 0.30f;
+			const float kWeightVal = 0.35f;
+
+			if (ImGui.BeginTable($"##vec{name}", 3, ImGuiTableFlags.SizingStretchSame))
+			{
+				ImGui.TableSetupColumn("##n", ImGuiTableColumnFlags.WidthStretch, kWeightName);
+				ImGui.TableSetupColumn("##x", ImGuiTableColumnFlags.WidthStretch, kWeightVal);
+				ImGui.TableSetupColumn("##y", ImGuiTableColumnFlags.WidthStretch, kWeightVal);
+				ImGui.TableNextRow();
+
+				ImGui.TableNextColumn();
+				ImGui.TextUnformatted(name);
+
+				ImGui.TableNextColumn();
+				{
+					float inner = ImGui.GetColumnWidth()
+								- ImGui.GetStyle().CellPadding.X * 2;
+					ImGui.SetNextItemWidth(inner);
+					ImGui.PushStyleColor(ImGuiCol.FrameBg, new Vector4(1, 0, 0, 0.5f));
+					ImGui.InputFloat($"##{name}_x", ref vector.X);
+					ImGui.PopStyleColor();
+				}
+
+				ImGui.TableNextColumn();
+				{
+					float inner = ImGui.GetColumnWidth()
+								- ImGui.GetStyle().CellPadding.X * 2;
+					ImGui.SetNextItemWidth(inner);
+					ImGui.PushStyleColor(ImGuiCol.FrameBg, new Vector4(0, 1, 0, 0.5f));
+					ImGui.InputFloat($"##{name}_y", ref vector.Y);
+					ImGui.PopStyleColor();
+				}
+
+				ImGui.EndTable();
+			}
 #endif
-        }
+		}
 
 		public static void DrawVector(string name, ref Vector3 vector)
 		{
 #if !RELEASE
-            ImGui.InputFloat3(name, ref vector);
+			ImGui.InputFloat3(name, ref vector);
 #endif
-        }
+		}
 
 		public static void DrawFloat(string name, ref float value)
 		{
@@ -66,6 +102,35 @@ namespace UmbrellaToolsKit.EditorEngine.Fields
 #endif
 		}
 
+		public static void DrawSprite(string name, Components.Sprite.Sprite spriteRef, out Components.Sprite.Sprite sprite)
+		{
+#if !RELEASE
+			sprite = null;
+			var property = GameSettingsProperty.GetProperty<AtlasGameSettings>(@"Content/AtlasGameSettings");
+			var spriteList = new List<string>();
+
+			foreach (var atlas in property.Atlas)
+			{
+				foreach (var spriteBody in atlas.Sprites)
+				{
+					spriteList.Add(spriteBody.Name);
+				}
+			}
+
+			string spriteName = spriteRef != null ? spriteRef.Name : string.Empty;
+			DrawStringOptions(name, ref spriteName, spriteList.ToArray());
+
+			if (spriteName != string.Empty && spriteRef != null && spriteName != spriteRef.Name)
+			{
+				if (property.TryGetSpriteByName(spriteName, out var spriteValue))
+				{
+					sprite = new Components.Sprite.Sprite(spriteValue.Name, spriteValue.Path, spriteValue.GetRectangle());
+					Log.Write(sprite.Name);
+				}
+			}
+#endif
+		}
+
 		public static void DrawStringOptions(string name, ref string value, string[] options)
 		{
 #if !RELEASE
@@ -91,13 +156,13 @@ namespace UmbrellaToolsKit.EditorEngine.Fields
 
 			if (ImGui.TreeNode(name, $"{name} ({listCount})"))
 			{
-                DrawListFields(name, value);
+				DrawListFields(name, value);
 
-                if (ImGui.Button("add new item")) value.AddNewItem();
+				if (ImGui.Button("add new item")) value.AddNewItem();
 				ImGui.Unindent();
-            }
+			}
 #endif
-        }
+		}
 
 #if !RELEASE
 		private static void DrawListFields(string name, IList value)
