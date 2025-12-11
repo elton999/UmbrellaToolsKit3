@@ -55,8 +55,8 @@ namespace Project
 
 ```csharp
 var sprite = new GameObject();
-            _gameManagement.SceneManagement.MainScene.AddGameObject(sprite, Layers.MIDDLEGROUND);
-            sprite.AddComponent<SpriteComponent>().SetAtlas("Sprites/boss : 0");
+_gameManagement.SceneManagement.MainScene.AddGameObject(sprite, Layers.MIDDLEGROUND);
+sprite.AddComponent<SpriteComponent>().SetAtlas("Sprites/boss : 0");
 ```
 
 ### Aseprite
