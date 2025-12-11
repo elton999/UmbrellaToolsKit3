@@ -85,8 +85,11 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
             {
                 foreach (var spriteBody in atlas.Sprites)
                 {
-                    sprite = spriteBody;
-                    return true;
+                    if (spriteBody.Name == name)
+                    {
+                        sprite = spriteBody;
+                        return true;
+                    }
                 }
             }
 
@@ -121,8 +124,6 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
             ImDrawListPtr drawList;
             atlasEditor.DrawSpriteView(idSpriteView, out drawList);
             atlasEditor.DrawSpriteData(idSpriteBody, drawList);
-
-
         }
     }
 }

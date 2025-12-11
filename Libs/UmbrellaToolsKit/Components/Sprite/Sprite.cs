@@ -43,10 +43,23 @@ namespace UmbrellaToolsKit.Components.Sprite
             LoadSprite();
         }
 
+        public Sprite(string name, string path, Rectangle body)
+        {
+            _name = name;
+            _path = path;
+            _body = body;
+        }
+
         public Sprite(ContentManager content, string path)
         {
             _content = content;
             _path = path;
+            LoadSprite();
+        }
+
+        public void SetContentManager(ContentManager content)
+        {
+            _content = content;
             LoadSprite();
         }
 

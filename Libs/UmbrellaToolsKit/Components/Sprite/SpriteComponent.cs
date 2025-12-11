@@ -1,19 +1,26 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using UmbrellaToolsKit.EditorEngine;
+using UmbrellaToolsKit.EditorEngine.Attributes;
 using UmbrellaToolsKit.EditorEngine.Windows.GameSettings;
 
 namespace UmbrellaToolsKit.Components.Sprite
 {
     public class SpriteComponent : Component
     {
-        private Sprite _sprite;
-        private Vector2 _origin;
-        private float _transparent = 1.0f;
-        private SpriteEffects _spriteEffect = SpriteEffects.None;
+        [ShowEditor] private string _tempSprite = string.Empty;
+        [ShowEditor] private Sprite _sprite;
+        [ShowEditor] private Vector2 _origin;
+        [ShowEditor] private float _transparent = 1.0f;
+        [ShowEditor] private SpriteEffects _spriteEffect = SpriteEffects.None;
 
         public override void AfterUpdate(float deltaTime)
         {
+            if (_sprite != null && _tempSprite != _sprite.Name)
+            {
+                SetSprite(_sprite);
+            }
+
             UpdateSprite();
         }
 
@@ -25,7 +32,7 @@ namespace UmbrellaToolsKit.Components.Sprite
             if (atlas.TryGetSpriteByName(spriteName, out var sprite))
             {
                 Log.Write($"[{nameof(SpriteComponent)}] creating sprite: path : {sprite.Path} rectangle: {sprite.GetRectangle()}" + spriteName);
-                var spriteData = new Sprite(GameObject.Content, sprite.Path, sprite.GetRectangle());
+                var spriteData = new Sprite(sprite.Name, sprite.Path, sprite.GetRectangle());
                 SetSprite(spriteData);
                 return;
             }
@@ -36,7 +43,8 @@ namespace UmbrellaToolsKit.Components.Sprite
         public void SetSprite(Sprite sprite)
         {
             _sprite = sprite;
-            UpdateSprite();
+            _tempSprite = sprite.Name;
+            _sprite.SetContentManager(GameObject.Content);
         }
 
         private void UpdateSprite()

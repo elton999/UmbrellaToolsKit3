@@ -253,7 +253,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings.Atlas
                         {
                             for (float x = 0; x < _gridSettings.X; x++)
                             {
-                                string spriteName = $"{_currentSprite.Path} : {_currentSprite.Sprites.Count}";
+                                string spriteName = $"{_currentSprite.Path.Replace("\\", "/")} : {_currentSprite.Sprites.Count}";
                                 _currentSprite.Sprites.Add(
                                     new AtlasGameSettings.SpriteBody()
                                     {

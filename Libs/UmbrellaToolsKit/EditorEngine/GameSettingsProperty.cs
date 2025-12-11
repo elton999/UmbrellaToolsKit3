@@ -17,7 +17,7 @@ namespace UmbrellaToolsKit.EditorEngine
             object property = SaveIntegration.Get(pathFile, type);
             timer.End();
 
-            Log.Write($"[{nameof(GameSettingsProperty)}] reading: {pathFile}, timer: {timer.GetTotalSeconds()}");
+            // Log.Write($"[{nameof(GameSettingsProperty)}] reading: {pathFile}, timer: {timer.GetTotalSeconds()}");
             if (property.GetType() == type) return property;
             return Activator.CreateInstance(type);
         }
