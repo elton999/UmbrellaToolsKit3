@@ -49,6 +49,16 @@ namespace Project
     }
 }
 ```
+
+### Render an sprite
+<img src="https://raw.githubusercontent.com/elton999/UmbrellaToolsKit3/main/Concept/atlas_editor.png" width="100%" />
+
+```csharp
+var sprite = new GameObject();
+            _gameManagement.SceneManagement.MainScene.AddGameObject(sprite, Layers.MIDDLEGROUND);
+            sprite.AddComponent<SpriteComponent>().SetAtlas("Sprites/boss : 0");
+```
+
 ### Aseprite
 [Aseprite](https://www.aseprite.org) is a pixel art animation software. You can import its files using the steps below:
 
