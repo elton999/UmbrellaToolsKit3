@@ -25,6 +25,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings.Atlas
         private ISprite _currentSpriteSelect = null;
         private ISprite _currentSriteHover = null;
 
+        private System.Numerics.Vector2 _gridSettings = new System.Numerics.Vector2(4, 4);
+
         public void DrawSpriteList(uint dockId, EditorMain editorMain, List<AtlasGameSettings.SpriteAtlas> atlas)
         {
             ImGui.SetNextWindowDockID(dockId, ImGuiCond.Once);
@@ -236,8 +238,35 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings.Atlas
                 }
 
                 if (_currentSpriteSelect == null && _currentSprite != null)
+                {
                     if (Fields.Buttons.RedButton("Delete All selections"))
                         _currentSprite.Sprites.Clear();
+
+                    ImGui.Separator();
+
+                    Fields.Field.DrawVector("Grid Size", ref _gridSettings);
+                    if (Fields.Buttons.BlueButton("Create Grid"))
+                    {
+                        _currentSprite.Sprites.Clear();
+                        Vector2 SpriteSize = new Vector2(_currentSprite.GetTexture().Width / _gridSettings.X, _currentSprite.GetTexture().Height / _gridSettings.Y);
+                        for (float y = 0; y < _gridSettings.Y; y++)
+                        {
+                            for (float x = 0; x < _gridSettings.X; x++)
+                            {
+                                string spriteName = $"{_currentSprite.Path} : {_currentSprite.Sprites.Count}";
+                                _currentSprite.Sprites.Add(
+                                    new AtlasGameSettings.SpriteBody()
+                                    {
+                                        Name = spriteName,
+                                        Position = new Vector2(x * SpriteSize.X, y * SpriteSize.Y),
+                                        Size = SpriteSize,
+                                        Path = _currentSprite.Path
+                                    });
+                            }
+                        }
+                    }
+                }
+
                 ImGui.EndChild();
             }
             ImGui.End();
