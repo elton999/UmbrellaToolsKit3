@@ -49,6 +49,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
                 _position = value;
             }
         }
+
         public Vector2 MainSquareSize { get => _mainSquareSize; }
         public Vector2 SelectedNodeSize { get => MainSquareSize + Vector2.One * 4; }
         public Vector2 SelectedNodePosition { get => Position - Vector2.One * 2f; }
@@ -70,6 +71,13 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public static event Action<BasicNode> OnSelectNode;
         public static event Action<BasicNode> OnDestroyNode;
         public static BasicNode currentSelectedNode;
+
+        public const string ID_KEY = "Id";
+        public const string NAME_KEY = "n-";
+        public const string CONTENT_KEY = "c-";
+        public const string POS_VECTOR_X_KEY = "pos-v-x-";
+        public const string POS_VECTOR_Y_KEY = "pos-v-y-";
+        public const string PARENT_NODE_KEY = "p-";
 
         public BasicNode(Load storage, int id, string name, Vector2 position)
         {
@@ -100,7 +108,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 
         public void MoveNode()
         {
-            if (currentSelectedNode != this && currentSelectedNode != null) return;
+            if (currentSelectedNode != this && currentSelectedNode is not null) return;
 
             if (MouseHandler.ButtonLeftOneClick)
             {
@@ -127,16 +135,15 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 #endif
         public virtual void OnDelete()
         {
-            _storage.AddItemFloat("Id", Id);
-            _storage.DeleteNode($"name-{Id}");
-            _storage.DeleteNode($"content-{Id}");
-            _storage.DeleteNode($"position-{Id}-vector-x");
-            _storage.DeleteNode($"position-{Id}-vector-y");
-            _storage.DeleteNode($"sprite-{Id}");
+            _storage.AddItemFloat(ID_KEY, Id);
+            _storage.DeleteNode(NAME_KEY + Id);
+            _storage.DeleteNode(CONTENT_KEY + Id);
+            _storage.DeleteNode(POS_VECTOR_X_KEY + Id);
+            _storage.DeleteNode(POS_VECTOR_Y_KEY + Id);
 
-            var ids = _storage.getItemsFloat("Id");
+            var ids = _storage.getItemsFloat(ID_KEY);
             ids.Remove(Id);
-            _storage.AddItemFloat("Id", ids);
+            _storage.AddItemFloat(ID_KEY, ids);
 
             DialogueData.RemoveNode(this);
             OnDestroyNode?.Invoke(this);
@@ -152,16 +159,16 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 
         public virtual void Load()
         {
-            _name = _storage.getItemsString($"name-{Id}")[0];
-            var contents = _storage.getItemsString($"content-{Id}");
+            _name = _storage.getItemsString(NAME_KEY + Id)[0];
+            var contents = _storage.getItemsString(CONTENT_KEY + Id);
             if (contents.Count > 0)
                 _content = contents[0];
 
-            float x = _storage.getItemsFloat($"position-{Id}-vector-x")[0];
-            float y = _storage.getItemsFloat($"position-{Id}-vector-y")[0];
+            float x = _storage.getItemsFloat(POS_VECTOR_X_KEY + Id)[0];
+            float y = _storage.getItemsFloat(POS_VECTOR_Y_KEY + Id)[0];
             _position = new Vector2(x, y);
 
-            var parentsNode = _storage.getItemsFloat($"parent-{Id}");
+            var parentsNode = _storage.getItemsFloat(PARENT_NODE_KEY + Id);
             if (parentsNode.Count > 0)
             {
                 INode parentNode = DialogueData.Nodes.FindAll(x => x.Id == (int)parentsNode[0])[0];
@@ -171,12 +178,12 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 
         public virtual void OnSave()
         {
-            _storage.SetString($"name-{Id}", Name);
-            _storage.SetString($"content-{Id}", Content);
-            _storage.SetFloat($"position-{Id}-vector-x", Position.X);
-            _storage.SetFloat($"position-{Id}-vector-y", Position.Y);
+            _storage.SetString(NAME_KEY + Id, Name);
+            _storage.SetString(CONTENT_KEY + Id, Content);
+            _storage.SetFloat(POS_VECTOR_X_KEY + Id, Position.X);
+            _storage.SetFloat(POS_VECTOR_Y_KEY + Id, Position.Y);
             if (ParentNode is not null)
-                _storage.SetFloat($"parent-{Id}", ParentNode.Id);
+                _storage.SetFloat(PARENT_NODE_KEY + Id, ParentNode.Id);
         }
 
 #if !RELEASE
