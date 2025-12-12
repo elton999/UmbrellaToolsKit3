@@ -90,7 +90,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.SameLine();
 
             ImGui.SetNextWindowDockID(leftID, ImGuiCond.Once);
-            if(ImGui.Begin("Fields"))
+            if (ImGui.Begin("Fields"))
             {
                 ImGui.SetWindowFontScale(1.2f);
                 ShowFieldsSettings();
@@ -98,7 +98,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.End();
 
             ImGui.SetNextWindowDockID(leftID, ImGuiCond.Once);
-            if(ImGui.Begin("Item props"))
+            if (ImGui.Begin("Item props"))
             {
                 ImGui.SetWindowFontScale(1.2f);
                 if (SelectedNode != null) ShowNodeInfo();
@@ -127,11 +127,19 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             var cachedNodes = new List<BasicNode>(DialogueData.Nodes);
             foreach (var node in cachedNodes)
             {
-                if (direction.Length() > 0)
-                    node.Position = node.Position - direction;
+                bool isChildNode = node.ParentNode is not null;
 
-                if (direction.Length() == 0 && LastDirection.Length() > 0)
-                    node.Position = node.Position - LastDirection;
+                if (direction.Length() > 0 && !isChildNode)
+                {
+                    Vector2 nodePosition = -direction;
+                    SetNodePosition(node, nodePosition);
+                }
+
+                if (direction.Length() == 0 && LastDirection.Length() > 0 && !isChildNode)
+                {
+                    Vector2 nodePosition = -LastDirection;
+                    SetNodePosition(node, nodePosition);
+                }
 
                 if (!IsConnecting)
                     node.Update();
@@ -141,8 +149,11 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
                 node.Draw(drawList);
 
-                if (direction.Length() > 0)
-                    node.Position = node.Position + direction;
+                if (direction.Length() > 0 && !isChildNode)
+                {
+                    Vector2 nodePosition = direction;
+                    SetNodePosition(node, nodePosition);
+                }
             }
 
             LastDirection = direction;
@@ -158,6 +169,19 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
             ImGui.End();
 #endif
+        }
+
+        private static void SetNodePosition(BasicNode node, Vector2 nodePosition)
+        {
+            node.Position = node.Position + nodePosition;
+            if (node is INodeInPutle nodeInPutle)
+            {
+                foreach (var childNode in nodeInPutle.NodesConnectionOut)
+                {
+                    if (childNode.Node.ParentNode != node) continue;
+                    childNode.Node.Position = childNode.Node.Position + nodePosition;
+                }
+            }
         }
 #if !RELEASE
         private static void DrawBackground(ImDrawListPtr drawList, System.Numerics.Vector2 windowPosition, System.Numerics.Vector2 windowSize)

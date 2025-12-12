@@ -49,7 +49,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         {
             base.Load();
             var connections = _storage.getItemsFloat($"Nodes-Connection-Out-{Id}");
-            foreach(var connection in connections)
+            foreach (var connection in connections)
             {
                 var node = DialogueData.Nodes.FindAll(x => x.Id == (int)connection)[0] as INodeOutPutle;
                 AddNodeConnection(node);
