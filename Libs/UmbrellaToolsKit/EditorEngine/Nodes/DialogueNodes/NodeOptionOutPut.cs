@@ -8,7 +8,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
 {
     public class NodeOptionOutPut : NodeOutPut
     {
-        protected override string className => typeof(NodeOptionOutPut).Namespace + "." + typeof(NodeOptionOutPut).Name;
+        protected override string _className => typeof(NodeOptionOutPut).Namespace + "." + typeof(NodeOptionOutPut).Name;
 
         public NodeOptionOutPut(Load storage, int id, string name, Vector2 position) : base(storage, id, name, position)
         {

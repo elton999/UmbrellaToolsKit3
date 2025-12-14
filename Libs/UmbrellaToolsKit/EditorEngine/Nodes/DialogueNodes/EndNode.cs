@@ -13,6 +13,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
             _mainSquareSize = new Vector2(100, 30);
         }
 
-        protected override string className => typeof(EndNode).Namespace + "." + typeof(EndNode).Name;
+        protected override string _className => typeof(EndNode).Namespace + "." + typeof(EndNode).Name;
     }
 }

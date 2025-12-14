@@ -23,7 +23,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         private int _index = 0;
         private INode _parentNode;
 
-        protected abstract string className { get; }
+        protected abstract string _className { get; }
 
         private Vector2 _position;
         protected string _name;
@@ -72,7 +72,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
 
         public static event Action<BasicNode> OnSelectNode;
         public static event Action<BasicNode> OnDestroyNode;
-        public static BasicNode currentSelectedNode;
+        public static BasicNode CurrentSelectedNode;
 
         public const string ID_KEY = "Id";
         public const string NAME_KEY = "n-";
@@ -105,18 +105,18 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             if (MouseHandler.ButtonLeftReleased) CanMoveNode = false;
 
             if (CanMoveNode) MoveNode();
-            else if (currentSelectedNode == this) currentSelectedNode = null;
+            else if (CurrentSelectedNode == this) CurrentSelectedNode = null;
         }
 
         public void MoveNode()
         {
-            if (currentSelectedNode != this && currentSelectedNode is not null) return;
+            if (CurrentSelectedNode != this && CurrentSelectedNode is not null) return;
 
             if (MouseHandler.ButtonLeftOneClick)
             {
                 MousePosition = MouseHandler.Position;
                 NodePositionOnClick = Position;
-                currentSelectedNode = this;
+                CurrentSelectedNode = this;
                 OnSelectNode?.Invoke(this);
             }
 
@@ -188,7 +188,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             _storage.SetFloat(POS_VECTOR_X_KEY + Id, Position.X);
             _storage.SetFloat(POS_VECTOR_Y_KEY + Id, Position.Y);
 
-            _storage.SetString($"Nodes-Object-{Id}", className);
+            _storage.SetString($"Nodes-Object-{Id}", _className);
 
             if (ParentNode is not null)
                 _storage.SetFloat(PARENT_NODE_KEY + Id, ParentNode.Id);

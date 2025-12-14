@@ -12,7 +12,7 @@ using UmbrellaToolsKit.Storage;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
 {
-    public class NodeWithOptions : NodeInPut, INodeOptions<BasicNode>
+    public abstract class NodeWithOptions : NodeInPut, INodeOptions<BasicNode>
     {
         private List<BasicNode> _nodeOptions;
         private Vector2 _optionSize => Vector2.UnitY * 30;
@@ -25,7 +25,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
 
         public List<BasicNode> NodeOptions { get => _nodeOptions; }
 
-        protected override string className => typeof(NodeWithOptions).Namespace + "." + typeof(NodeWithOptions).Name;
+        protected override string _className => typeof(NodeWithOptions).Namespace + "." + typeof(NodeWithOptions).Name;
 
         public void AddNodeOption(BasicNode node)
         {
