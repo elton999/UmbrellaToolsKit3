@@ -28,7 +28,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
                 node.Options = new();
 
                 SetNextNode(basicNode, node);
-                SetNodeOption(basicNode, node);
+                SetDialogueNode(basicNode, node);
+                SetSpriteNode(basicNode, node);
                 SetNodeVariables(basicNode, node);
 
                 dialogue.Nodes.Add(node);
@@ -82,12 +83,21 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
         }
 
 
-        private static void SetNodeOption(BasicNode basicNode, Node node)
+        private static void SetDialogueNode(BasicNode basicNode, Node node)
         {
-            if (basicNode is not NodeWithOptions) return;
+            if (basicNode is not DialogueNode) return;
 
-            var nodeWithOptions = (NodeWithOptions)basicNode;
-            foreach (var nodeOption in nodeWithOptions.NodeOptions)
+            var dialogueNode = (DialogueNode)basicNode;
+            foreach (var nodeOption in dialogueNode.NodeOptions)
+                node.Options.Add(nodeOption.Id);
+        }
+
+        private static void SetSpriteNode(BasicNode basicNode, Node node)
+        {
+            if (basicNode is not SpriteNode) return;
+
+            var spriteNode = (SpriteNode)basicNode;
+            foreach (var nodeOption in spriteNode.NodeOptions)
                 node.Options.Add(nodeOption.Id);
         }
 

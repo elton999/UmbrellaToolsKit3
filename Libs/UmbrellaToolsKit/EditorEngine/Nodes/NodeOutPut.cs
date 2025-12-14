@@ -11,7 +11,7 @@ using UmbrellaToolsKit.Input;
 using UmbrellaToolsKit.Storage;
 namespace UmbrellaToolsKit.EditorEngine.Nodes
 {
-    public class NodeOutPut : BasicNode, INodeOutPutle
+    public abstract class NodeOutPut : BasicNode, INodeOutPutle
     {
         public NodeOutPut(Load storage, int id, string name, Vector2 position) : base(storage, id, name, position)
         {
@@ -47,7 +47,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         {
             base.OnSave();
             SaveConnections();
-            _storage.SetString($"Nodes-Object-{Id}", typeof(NodeOutPut).Namespace + "." + typeof(NodeOutPut).Name);
         }
 
         public override void Load()

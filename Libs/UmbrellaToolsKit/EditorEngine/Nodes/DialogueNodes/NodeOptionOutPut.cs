@@ -8,6 +8,8 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
 {
     public class NodeOptionOutPut : NodeOutPut
     {
+        protected override string _className => typeof(NodeOptionOutPut).Namespace + "." + typeof(NodeOptionOutPut).Name;
+
         public NodeOptionOutPut(Load storage, int id, string name, Vector2 position) : base(storage, id, name, position)
         {
             IsDraggableNode = false;
@@ -26,7 +28,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
         public override void OnDelete()
         {
             base.OnDelete();
-            _storage.DeleteNode($"Nodes-Object-{Id}");
 
             foreach (var node in NodesConnectionIn)
                 node.NodesConnectionOut.Remove(this);
@@ -35,11 +36,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
             Disconnecting();
         }
 
-        public override void OnSave()
-        {
-            base.OnSave();
-            _storage.SetString($"Nodes-Object-{Id}", typeof(NodeOptionOutPut).Namespace + "." + typeof(NodeOptionOutPut).Name);
-        }
 #if !RELEASE
         public override void Draw(ImDrawListPtr imDraw)
         {

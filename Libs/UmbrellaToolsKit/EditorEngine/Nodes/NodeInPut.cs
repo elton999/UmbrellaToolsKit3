@@ -11,7 +11,7 @@ using UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes
 {
-    public class NodeInPut : BasicNode, INodeInPutle
+    public abstract class NodeInPut : BasicNode, INodeInPutle
     {
         public NodeInPut(Load storage, int id, string name, Vector2 position) : base(storage, id, name, position)
         {
@@ -39,17 +39,11 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         }
 #endif
 
-        public override void OnSave()
-        {
-            SaveConnections();
-            base.OnSave();
-        }
-
         public override void Load()
         {
             base.Load();
             var connections = _storage.getItemsFloat($"Nodes-Connection-Out-{Id}");
-            foreach(var connection in connections)
+            foreach (var connection in connections)
             {
                 var node = DialogueData.Nodes.FindAll(x => x.Id == (int)connection)[0] as INodeOutPutle;
                 AddNodeConnection(node);
