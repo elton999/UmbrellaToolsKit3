@@ -11,7 +11,7 @@ using UmbrellaToolsKit.Storage;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes
 {
-    public class NodeInPutAndOutPut : BasicNode, INodeInPutle, INodeOutPutle
+    public abstract class NodeInPutAndOutPut : BasicNode, INodeInPutle, INodeOutPutle
     {
         private bool _isConnecting = false;
 
@@ -52,7 +52,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         public override void OnSave()
         {
             base.OnSave();
-            
+
             SaveConnections();
         }
 #if !RELEASE

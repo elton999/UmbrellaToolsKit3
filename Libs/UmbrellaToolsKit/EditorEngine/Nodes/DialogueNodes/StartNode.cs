@@ -12,16 +12,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
             _mainSquareSize = new Vector2(100, 30);
         }
 
-        public override void OnSave()
-        {
-            base.OnSave();
-            _storage.SetString($"Nodes-Object-{Id}", typeof(StartNode).Namespace + "." + typeof(StartNode).Name);
-        }
-
-        public override void OnDelete()
-        {
-            base.OnDelete();
-            _storage.DeleteNode($"Nodes-Object-{Id}");
-        }
+        protected override string className => typeof(StartNode).Namespace + "." + typeof(StartNode).Name;
     }
 }

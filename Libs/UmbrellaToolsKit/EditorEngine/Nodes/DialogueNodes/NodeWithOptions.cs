@@ -25,6 +25,8 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
 
         public List<BasicNode> NodeOptions { get => _nodeOptions; }
 
+        protected override string className => typeof(NodeWithOptions).Namespace + "." + typeof(NodeWithOptions).Name;
+
         public void AddNodeOption(BasicNode node)
         {
             if (_nodeOptions.Contains(node)) return;
@@ -66,7 +68,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
         public override void OnSave()
         {
             base.OnSave();
-            _storage.SetString($"Nodes-Object-{Id}", typeof(NodeWithOptions).Namespace + "." + typeof(NodeWithOptions).Name);
 
             // Save variables
             var variablesId = new List<float>();
@@ -137,7 +138,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
         public override void OnDelete()
         {
             base.OnDelete();
-            _storage.DeleteNode($"Nodes-Object-{Id}");
 
             foreach (var node in NodesConnectionOut)
                 node.NodesConnectionIn.Remove(this);

@@ -11,7 +11,7 @@ using UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes
 {
-    public class NodeInPut : BasicNode, INodeInPutle
+    public abstract class NodeInPut : BasicNode, INodeInPutle
     {
         public NodeInPut(Load storage, int id, string name, Vector2 position) : base(storage, id, name, position)
         {
@@ -38,12 +38,6 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             imDraw.AddCircleFilled(InPosition.ToNumericVector2(), 5f, Color.Yellow.PackedValue);
         }
 #endif
-
-        public override void OnSave()
-        {
-            SaveConnections();
-            base.OnSave();
-        }
 
         public override void Load()
         {

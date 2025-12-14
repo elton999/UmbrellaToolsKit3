@@ -14,7 +14,7 @@ using System.Collections.Generic;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes
 {
-    public class BasicNode : INode
+    public abstract class BasicNode : INode
     {
         protected Load _storage;
         protected Vector2 _titleSize = new Vector2(200, 30);
@@ -22,6 +22,8 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
         protected bool _isDraggableNode = true;
         private int _index = 0;
         private INode _parentNode;
+
+        protected abstract string className { get; }
 
         private Vector2 _position;
         protected string _name;
@@ -145,8 +147,11 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             ids.Remove(Id);
             _storage.AddItemFloat(ID_KEY, ids);
 
+            _storage.DeleteNode($"Nodes-Object-{Id}");
+
             DialogueData.RemoveNode(this);
             OnDestroyNode?.Invoke(this);
+
 
             DialogueEditorWindow.OnSave -= SaveNode;
         }
@@ -182,6 +187,9 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes
             _storage.SetString(CONTENT_KEY + Id, Content);
             _storage.SetFloat(POS_VECTOR_X_KEY + Id, Position.X);
             _storage.SetFloat(POS_VECTOR_Y_KEY + Id, Position.Y);
+
+            _storage.SetString($"Nodes-Object-{Id}", className);
+
             if (ParentNode is not null)
                 _storage.SetFloat(PARENT_NODE_KEY + Id, ParentNode.Id);
         }
