@@ -1,9 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
+using UmbrellaToolsKit.EditorEngine.Attributes;
 using UmbrellaToolsKit.Storage;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
 {
+    [NodeImplementation("DialogueNodes")]
     public class EndNode : NodeInPut
     {
         public EndNode(Load storage, int id, string name, Vector2 position) : base(storage, id, "End", position)

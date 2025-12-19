@@ -1,8 +1,10 @@
 using Microsoft.Xna.Framework;
+using UmbrellaToolsKit.EditorEngine.Attributes;
 using UmbrellaToolsKit.Storage;
 
 namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
 {
+    [NodeImplementation("DialogueNodes")]
     public class SpriteNode : NodeWithOptions
     {
         private Components.Sprite.Sprite _sprite = new Components.Sprite.Sprite(string.Empty, string.Empty, new Rectangle());
