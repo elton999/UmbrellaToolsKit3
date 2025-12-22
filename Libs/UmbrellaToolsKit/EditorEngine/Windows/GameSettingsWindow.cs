@@ -27,20 +27,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         private EditorMain _editorMain;
 
         public GameManagement GameManagement => _gameManagement;
-        public IEnumerable<Type> AllSettingsData
-        {
-            get
-            {
-                Assembly currentAssembly = Assembly.GetExecutingAssembly();
-                Assembly projectAssembly = Assembly.GetEntryAssembly();
-                Type gameSettingsType = typeof(GameSettingsPropertyAttribute);
-
-                List<Type> types = AttributesHelper.GetTypesWithAttribute(currentAssembly, gameSettingsType).ToList();
-                types.AddRange(AttributesHelper.GetTypesWithAttribute(projectAssembly, gameSettingsType));
-
-                return types;
-            }
-        }
+        public IEnumerable<Type> AllSettingsData => AttributesHelper.GetTypesWithAttribute(typeof(GameSettingsPropertyAttribute));
 
         public GameSettingsWindow(GameManagement gameManagement, EditorMain editorMain)
         {
