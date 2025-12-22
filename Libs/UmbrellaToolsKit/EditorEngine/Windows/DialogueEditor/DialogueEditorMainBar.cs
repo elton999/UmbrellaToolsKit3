@@ -5,6 +5,9 @@ using UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes;
 using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
 using Microsoft.Xna.Framework;
 using System;
+using UmbrellaToolsKit.EditorEngine.Attributes;
+using System.Collections.Generic;
+using UmbrellaToolsKit.EditorEngine.Nodes;
 
 namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
 {
@@ -67,28 +70,22 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
 
             if (ImGui.BeginMenu("Nodes"))
             {
-                if (ImGui.MenuItem("Add Start Node"))
-                {
-                    var node = new StartNode(_dialogueEditorWindow.Storage, DialogueData.GetNewNodeId(), null, Vector2.One * 500f);
-                    DialogueData.AddNode(node);
-                }
+                IEnumerable<Type> types = AttributesHelper.GetTypesWithAttribute(typeof(NodeImplementationAttribute));
 
-                if (ImGui.MenuItem("Add End Node"))
+                foreach (var nodeClassType in types)
                 {
-                    var node = new EndNode(_dialogueEditorWindow.Storage, DialogueData.GetNewNodeId(), null, Vector2.One * 500f);
-                    DialogueData.AddNode(node);
-                }
+                    var propertyAttribute = nodeClassType.GetCustomAttributesData();
+                    var arguments = propertyAttribute[0].ConstructorArguments;
+                    string nodeTypeName = (string)arguments[0].Value;
 
-                if (ImGui.MenuItem("Add Dialogue Node"))
-                {
-                    var node = new DialogueNode(_dialogueEditorWindow.Storage, DialogueData.GetNewNodeId(), "Dialogue Node", Vector2.One * 500f);
-                    DialogueData.AddNode(node);
-                }
+                    if (nodeTypeName != "DialogueNodes") continue;
 
-                if (ImGui.MenuItem("Add Sprite Node"))
-                {
-                    var node = new SpriteNode(_dialogueEditorWindow.Storage, DialogueData.GetNewNodeId(), "Sprite Node", Vector2.One * 500f);
-                    DialogueData.AddNode(node);
+                    if (ImGui.MenuItem($"Add {AttributesHelper.FormatName(nodeClassType.Name)}"))
+                    {
+                        var node = (BasicNode)Activator.CreateInstance(nodeClassType, new object[] { _dialogueEditorWindow.Storage, DialogueData.GetNewNodeId(), null, Vector2.One * 500f });
+                        DialogueData.AddNode(node);
+                    }
+
                 }
 
                 ImGui.EndMenu();
