@@ -14,7 +14,7 @@ namespace UmbrellaToolsKit.EditorEngine
 #if !RELEASE
         public ImGuiRenderer _imGUIRenderer;
 #endif
-        private BarEdtior _mainBarEditor;
+        private BarEditor _mainBarEditor;
         private EditorArea _editorArea;
 
         private GameManagement _gameManagement;
@@ -40,7 +40,7 @@ namespace UmbrellaToolsKit.EditorEngine
 #if !RELEASE
             _imGUIRenderer = new ImGuiRenderer(game).Initialize().RebuildFontAtlas();
 #endif
-            _mainBarEditor = new BarEdtior();
+            _mainBarEditor = new BarEditor();
             _editorArea = new EditorArea();
 
             _sceneEditor = new Windows.SceneEditorWindow(_gameManagement);

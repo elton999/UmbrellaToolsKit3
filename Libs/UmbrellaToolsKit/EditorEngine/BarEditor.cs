@@ -8,7 +8,7 @@ using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
 
 namespace UmbrellaToolsKit.EditorEngine
 {
-    public class BarEdtior
+    public class BarEditor
     {
         private string projectName = Assembly.GetCallingAssembly().GetName().Name;
         private bool isShowingImguiDemo = false;

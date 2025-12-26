@@ -23,8 +23,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
         public SceneEditorWindow(GameManagement gameManagement)
         {
-            BarEdtior.OnSwitchEditorWindow += RemoveAsMainWindow;
-            BarEdtior.OnOpenMainEditor += SetAsMainWindow;
+            BarEditor.OnSwitchEditorWindow += RemoveAsMainWindow;
+            BarEditor.OnOpenMainEditor += SetAsMainWindow;
             _gameManagement = gameManagement;
             Log.OnLog += Logs.Add;
             Log.OnLog += System.Console.WriteLine;
