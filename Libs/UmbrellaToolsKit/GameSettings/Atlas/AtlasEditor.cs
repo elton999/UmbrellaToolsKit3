@@ -6,8 +6,9 @@ using System.IO;
 using System.Collections.Generic;
 using MonoGame.ImGui.Extensions;
 using UmbrellaToolsKit.Interfaces;
+using UmbrellaToolsKit.EditorEngine.Windows;
 
-namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings.Atlas
+namespace UmbrellaToolsKit.EditorEngine.GameSettings.Atlas
 {
     public class AtlasEditor
     {

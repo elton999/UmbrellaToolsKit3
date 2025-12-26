@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using MonoGame.ImGui;
 using UmbrellaToolsKit.EditorEngine.Attributes;
 using UmbrellaToolsKit.Interfaces;
-using UmbrellaToolsKit.EditorEngine.Windows.GameSettings.Atlas;
+using UmbrellaToolsKit.EditorEngine.GameSettings.Atlas;
 
-namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
+namespace UmbrellaToolsKit.EditorEngine.GameSettings
 {
     [GameSettingsProperty(nameof(AtlasGameSettings), "/Content/")]
     public class AtlasGameSettings : GameSettingsProperty
