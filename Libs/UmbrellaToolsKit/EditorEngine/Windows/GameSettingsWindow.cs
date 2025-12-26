@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
 using UmbrellaToolsKit.EditorEngine.Attributes;
@@ -27,28 +25,15 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         private EditorMain _editorMain;
 
         public GameManagement GameManagement => _gameManagement;
-        public IEnumerable<Type> AllSettingsData
-        {
-            get
-            {
-                Assembly currentAssembly = Assembly.GetExecutingAssembly();
-                Assembly projectAssembly = Assembly.GetEntryAssembly();
-                Type gameSettingsType = typeof(GameSettingsPropertyAttribute);
-
-                List<Type> types = AttributesHelper.GetTypesWithAttribute(currentAssembly, gameSettingsType).ToList();
-                types.AddRange(AttributesHelper.GetTypesWithAttribute(projectAssembly, gameSettingsType));
-
-                return types;
-            }
-        }
+        public IEnumerable<Type> AllSettingsData => AttributesHelper.GetTypesWithAttribute(typeof(GameSettingsPropertyAttribute));
 
         public GameSettingsWindow(GameManagement gameManagement, EditorMain editorMain)
         {
             _gameManagement = gameManagement;
             _allSettingsData = AllSettingsData;
 
-            BarEdtior.OnSwitchEditorWindow += RemoveAsMainWindow;
-            BarEdtior.OnOpenGameSettingsEditor += SetAsMainWindow;
+            BarEditor.OnSwitchEditorWindow += RemoveAsMainWindow;
+            BarEditor.OnOpenGameSettingsEditor += SetAsMainWindow;
             _editorMain = editorMain;
         }
 

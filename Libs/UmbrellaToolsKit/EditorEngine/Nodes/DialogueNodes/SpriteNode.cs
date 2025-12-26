@@ -12,7 +12,7 @@ namespace UmbrellaToolsKit.EditorEngine.Nodes.DialogueNodes
 
         protected override string _className => typeof(SpriteNode).Namespace + "." + typeof(SpriteNode).Name;
 
-        public SpriteNode(Load storage, int id, string name, Vector2 position) : base(storage, id, name, position)
+        public SpriteNode(Load storage, int id, string name, Vector2 position) : base(storage, id, "Sprite Node", position)
         { }
 
 #if !RELEASE

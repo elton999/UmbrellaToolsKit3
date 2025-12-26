@@ -11,6 +11,7 @@ using UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor;
 using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
 using UmbrellaToolsKit.Input;
 using UmbrellaToolsKit.EditorEngine.Fields;
+using UmbrellaToolsKit.EditorEngine.Attributes;
 
 namespace UmbrellaToolsKit.EditorEngine.Windows
 {
@@ -20,12 +21,16 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
         private VariableSettings _variableSettings;
 
+        private string _currentNodeName;
+
         private GameManagement _gameManagement;
         public GameManagement GameManagement => _gameManagement;
 
         public Storage.Load Storage => _storage;
 
         public BasicNode SelectedNode;
+
+        public string CurrentNodeName => _currentNodeName;
 
         public INodeOutPutle NodeStartConnection;
         public bool IsConnecting = false;
@@ -40,8 +45,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         {
             _gameManagement = gameManagement;
 
-            BarEdtior.OnSwitchEditorWindow += RemoveAsMainWindow;
-            BarEdtior.OnOpenDialogueEditor += SetAsMainWindow;
+            BarEditor.OnSwitchEditorWindow += RemoveAsMainWindow;
+            BarEditor.OnOpenDialogueEditor += SetAsMainWindow;
 
             OnStartConnecting += StartLineConnection;
             BasicNode.OnSelectNode += SelectNode;
@@ -58,14 +63,20 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             LoadNodes();
         }
 
+        public void SetAsMainWindow(string nodeName)
+        {
+            _currentNodeName = nodeName;
+            SetAsMainWindow();
+        }
+
         public void SetAsMainWindow()
         {
-            BarEdtior.AdicionalBar = new DialogueEditorMainBar(this);
+            BarEditor.AdditionalBar = new DialogueEditorMainBar(this);
             EditorArea.OnDrawWindow += ShowWindow;
         }
         public void RemoveAsMainWindow()
         {
-            BarEdtior.AdicionalBar = null;
+            BarEditor.AdditionalBar = null;
             EditorArea.OnDrawWindow -= ShowWindow;
         }
 
@@ -106,7 +117,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.End();
 
             ImGui.SetNextWindowDockID(rightID, ImGuiCond.Once);
-            ImGui.Begin("Dialogue Editor");
+            ImGui.Begin($"{AttributesHelper.FormatName(CurrentNodeName)} Editor");
             ImGui.SetWindowFontScale(1.2f);
 
             var drawList = ImGui.GetWindowDrawList();
@@ -183,6 +194,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                 }
             }
         }
+
 #if !RELEASE
         private static void DrawBackground(ImDrawListPtr drawList, System.Numerics.Vector2 windowPosition, System.Numerics.Vector2 windowSize)
         {
@@ -210,8 +222,10 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             }
         }
 #endif
+
         public void Save(string filename)
         {
+#if !RELEASE
             _storage ??= new Storage.Load(filename);
             _storage.SetFilename(filename);
 
@@ -232,6 +246,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             _storage.AddItemFloat("Ids", ids);
 
             OnSave?.Invoke();
+#endif
         }
 
         public void ShowNodeInfo()
@@ -310,22 +325,27 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             }
         }
 #endif
+
         private void StartLineConnection(INodeOutPutle node)
         {
+#if !RELEASE
             NodeStartConnection = node;
             IsConnecting = true;
+#endif
         }
 
         private void ClearNodes()
         {
+#if !RELEASE
             DialogueData.ClearNodes();
             SelectedNode = null;
+#endif
         }
 
         private void LoadNodes()
         {
+#if !RELEASE
             ClearNodes();
-            DialogueData.ClearNodes();
 
             var fieldsCount = _storage.getItemsString("Fields-Name").Count;
             for (int i = 0; i < fieldsCount; i++)
@@ -360,6 +380,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
             foreach (var node in DialogueData.Nodes)
                 node.Load();
+#endif
         }
     }
 }
