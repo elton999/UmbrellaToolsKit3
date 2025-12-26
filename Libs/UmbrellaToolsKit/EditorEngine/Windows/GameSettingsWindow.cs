@@ -34,8 +34,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             _gameManagement = gameManagement;
             _allSettingsData = AllSettingsData;
 
-            BarEdtior.OnSwitchEditorWindow += RemoveAsMainWindow;
-            BarEdtior.OnOpenGameSettingsEditor += SetAsMainWindow;
+            BarEditor.OnSwitchEditorWindow += RemoveAsMainWindow;
+            BarEditor.OnOpenGameSettingsEditor += SetAsMainWindow;
             _editorMain = editorMain;
         }
 

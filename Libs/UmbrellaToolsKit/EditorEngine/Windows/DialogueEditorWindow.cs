@@ -20,6 +20,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
         private VariableSettings _variableSettings;
 
+        private string _currentNode;
+
         private GameManagement _gameManagement;
         public GameManagement GameManagement => _gameManagement;
 
@@ -40,8 +42,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         {
             _gameManagement = gameManagement;
 
-            BarEdtior.OnSwitchEditorWindow += RemoveAsMainWindow;
-            BarEdtior.OnOpenDialogueEditor += SetAsMainWindow;
+            BarEditor.OnSwitchEditorWindow += RemoveAsMainWindow;
+            BarEditor.OnOpenDialogueEditor += SetAsMainWindow;
 
             OnStartConnecting += StartLineConnection;
             BasicNode.OnSelectNode += SelectNode;
@@ -60,12 +62,12 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
         public void SetAsMainWindow()
         {
-            BarEdtior.AdicionalBar = new DialogueEditorMainBar(this);
+            BarEditor.AdditionalBar = new DialogueEditorMainBar(this);
             EditorArea.OnDrawWindow += ShowWindow;
         }
         public void RemoveAsMainWindow()
         {
-            BarEdtior.AdicionalBar = null;
+            BarEditor.AdditionalBar = null;
             EditorArea.OnDrawWindow -= ShowWindow;
         }
 
@@ -183,6 +185,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
                 }
             }
         }
+
 #if !RELEASE
         private static void DrawBackground(ImDrawListPtr drawList, System.Numerics.Vector2 windowPosition, System.Numerics.Vector2 windowSize)
         {
@@ -210,8 +213,10 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             }
         }
 #endif
+
         public void Save(string filename)
         {
+#if !RELEASE
             _storage ??= new Storage.Load(filename);
             _storage.SetFilename(filename);
 
@@ -232,6 +237,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             _storage.AddItemFloat("Ids", ids);
 
             OnSave?.Invoke();
+#endif
         }
 
         public void ShowNodeInfo()
@@ -310,22 +316,27 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             }
         }
 #endif
+
         private void StartLineConnection(INodeOutPutle node)
         {
+#if !RELEASE
             NodeStartConnection = node;
             IsConnecting = true;
+#endif
         }
 
         private void ClearNodes()
         {
+#if !RELEASE
             DialogueData.ClearNodes();
             SelectedNode = null;
+#endif
         }
 
         private void LoadNodes()
         {
+#if !RELEASE
             ClearNodes();
-            DialogueData.ClearNodes();
 
             var fieldsCount = _storage.getItemsString("Fields-Name").Count;
             for (int i = 0; i < fieldsCount; i++)
@@ -360,6 +371,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
             foreach (var node in DialogueData.Nodes)
                 node.Load();
+#endif
         }
     }
 }

@@ -19,7 +19,7 @@ namespace UmbrellaToolsKit.EditorEngine
 
         public static event Action OnSwitchEditorWindow;
 
-        public static IBarEditor AdicionalBar;
+        public static IBarEditor AdditionalBar;
 
 
         public void Draw(GameTime gameTime)
@@ -29,8 +29,8 @@ namespace UmbrellaToolsKit.EditorEngine
 
             if (ImGui.BeginMainMenuBar())
             {
-                if (AdicionalBar is IBarEditor)
-                    AdicionalBar.Draw();
+                if (AdditionalBar is IBarEditor)
+                    AdditionalBar.Draw();
 
                 if (ImGui.BeginMenu("Window"))
                 {
@@ -62,7 +62,7 @@ namespace UmbrellaToolsKit.EditorEngine
 
                     ImGui.EndMenu();
                 }
-                
+
                 ImGui.BeginTable("##positionBar", 4);
                 ImGui.TableNextColumn();
                 ImGui.TableNextColumn();
