@@ -73,18 +73,15 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor
 
                 foreach (var nodeClassType in types)
                 {
-                    var propertyAttribute = nodeClassType.GetCustomAttributesData();
-                    var arguments = propertyAttribute[0].ConstructorArguments;
-                    string nodeTypeName = (string)arguments[0].Value;
-
-                    if (nodeTypeName != "DialogueNodes") continue;
-
-                    if (ImGui.MenuItem($"Add {AttributesHelper.FormatName(nodeClassType.Name)}"))
+                    if (AttributesHelper.TryGetConstructorArgumentsValue(nodeClassType, "name", out var args))
                     {
-                        var node = (BasicNode)Activator.CreateInstance(nodeClassType, new object[] { _dialogueEditorWindow.Storage, DialogueData.GetNewNodeId(), null, Vector2.One * 500f });
-                        DialogueData.AddNode(node);
+                        if (!string.Equals((string)args, _dialogueEditorWindow.CurrentNodeName)) continue;
+                        if (ImGui.MenuItem($"Add {AttributesHelper.FormatName(nodeClassType.Name)}"))
+                        {
+                            var node = (BasicNode)Activator.CreateInstance(nodeClassType, new object[] { _dialogueEditorWindow.Storage, DialogueData.GetNewNodeId(), null, Vector2.One * 500f });
+                            DialogueData.AddNode(node);
+                        }
                     }
-
                 }
 
                 ImGui.EndMenu();

@@ -11,6 +11,7 @@ using UmbrellaToolsKit.EditorEngine.Windows.DialogueEditor;
 using UmbrellaToolsKit.EditorEngine.Windows.Interfaces;
 using UmbrellaToolsKit.Input;
 using UmbrellaToolsKit.EditorEngine.Fields;
+using UmbrellaToolsKit.EditorEngine.Attributes;
 
 namespace UmbrellaToolsKit.EditorEngine.Windows
 {
@@ -20,7 +21,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
         private VariableSettings _variableSettings;
 
-        private string _currentNode;
+        private string _currentNodeName;
 
         private GameManagement _gameManagement;
         public GameManagement GameManagement => _gameManagement;
@@ -28,6 +29,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         public Storage.Load Storage => _storage;
 
         public BasicNode SelectedNode;
+
+        public string CurrentNodeName => _currentNodeName;
 
         public INodeOutPutle NodeStartConnection;
         public bool IsConnecting = false;
@@ -58,6 +61,12 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         {
             _storage = new Storage.Load(filename);
             LoadNodes();
+        }
+
+        public void SetAsMainWindow(string nodeName)
+        {
+            _currentNodeName = nodeName;
+            SetAsMainWindow();
         }
 
         public void SetAsMainWindow()
@@ -108,7 +117,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.End();
 
             ImGui.SetNextWindowDockID(rightID, ImGuiCond.Once);
-            ImGui.Begin("Dialogue Editor");
+            ImGui.Begin($"{AttributesHelper.FormatName(CurrentNodeName)} Editor");
             ImGui.SetWindowFontScale(1.2f);
 
             var drawList = ImGui.GetWindowDrawList();

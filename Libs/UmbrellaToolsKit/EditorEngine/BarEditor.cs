@@ -18,7 +18,7 @@ namespace UmbrellaToolsKit.EditorEngine
         private string[] nodesTypes;
 
         public static event Action OnOpenMainEditor;
-        public static event Action OnOpenDialogueEditor;
+        public static event Action<string> OnOpenDialogueEditor;
         public static event Action OnOpenGameSettingsEditor;
 
         public static event Action OnSwitchEditorWindow;
@@ -59,10 +59,10 @@ namespace UmbrellaToolsKit.EditorEngine
 
                     foreach (string nodeTypeName in nodesTypes)
                     {
-                        if (ImGui.MenuItem($"{nodeTypeName} Editor"))
+                        if (ImGui.MenuItem($"{AttributesHelper.FormatName(nodeTypeName)} Editor"))
                         {
                             OnSwitchEditorWindow?.Invoke();
-                            OnOpenDialogueEditor?.Invoke();
+                            OnOpenDialogueEditor?.Invoke(nodeTypeName);
                         }
                     }
 
