@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using UmbrellaToolsKit.EditorEngine;
 using UmbrellaToolsKit.EditorEngine.Attributes;
-using UmbrellaToolsKit.EditorEngine.Windows.GameSettings;
+using UmbrellaToolsKit.EditorEngine.GameSettings;
 
 namespace UmbrellaToolsKit.Components.Sprite
 {

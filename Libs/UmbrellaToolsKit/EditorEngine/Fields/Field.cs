@@ -6,7 +6,7 @@ using System;
 using System.Collections;
 using UmbrellaToolsKit.EditorEngine.Windows;
 using System.Numerics;
-using UmbrellaToolsKit.EditorEngine.Windows.GameSettings;
+using UmbrellaToolsKit.EditorEngine.GameSettings;
 using System.Collections.Generic;
 
 namespace UmbrellaToolsKit.EditorEngine.Fields
