@@ -56,10 +56,10 @@ namespace UmbrellaToolsKit.EditorEngine.Attributes
             return null;
         }
 
-        public bool TryGetConstructorArgumentsValue(Type type, string name, out object value)
+        public static bool TryGetConstructorArgumentsValue(Type type, string name, out object value)
         {
             object tempValue = GetConstructorArgumentsValue(type, name);
-            value = null;
+            value = tempValue;
             return tempValue != null;
         }
     }
