@@ -2,7 +2,6 @@ using UmbrellaToolsKit.EditorEngine.Attributes;
 using ImGuiNET;
 using System.Collections.Generic;
 using System.Numerics;
-using System;
 using UmbrellaToolsKit.EditorEngine.Primitives;
 
 
@@ -13,7 +12,24 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
         public float Start;
         public float Duration;
         public string Name;
-        public Vector4 _cachedRect;
+
+        public virtual void Draw(ImDrawListPtr drawList, Vector2 position, SpriteAnimationGameSettings timeLineSettings)
+        {
+            var timeLinePosition = new Vector2(position.X + timeLineSettings.GetPositionXOnTimeLine(Start), position.Y);
+            Square.Draw(
+                drawList,
+                new Microsoft.Xna.Framework.Vector2(timeLinePosition.X, timeLinePosition.Y),
+                new Microsoft.Xna.Framework.Vector2(timeLineSettings.GetPositionXOnTimeLine(Duration), timeLineSettings.TimelineHight),
+                Microsoft.Xna.Framework.Color.Red
+            );
+
+            drawList.AddText
+            (
+                timeLinePosition,
+                ImGui.GetColorU32(Vector4.One),
+                Name
+            );
+        }
     }
 
     public class TimelineEvent : TimelineItem
@@ -33,20 +49,42 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
         private float _totalFramesInWindow = 250f;
         private float _framePerSecond = 60f;
         private int _frameStep = 15;
-        float _timelineHight = 15f;
+        private float _timelineHight = 15f;
+        private float _stepSize;
+        private Vector2 _timeLinePosition;
 
-        public List<List<TimelineItem>> TimeLines = new List<List<TimelineItem>>() { new List<TimelineItem>(), new List<TimelineItem>() };
+        public List<List<TimelineItem>> TimeLines = new List<List<TimelineItem>>()
+        {
+            new List<TimelineItem>()
+            {
+                new TimelineSequence() { Name = "teste 1", Start = 0, Duration = 5f * ( 1f / 60f)  },
+                new TimelineSequence() { Name = "teste 2", Start =  15f * ( 1f / 60f), Duration =  20f * ( 1f / 60f) }
+            },
+            new List<TimelineItem>()
+            {
+                new TimelineSequence() { Name = "teste 3", Start = 3f * ( 1f / 60f), Duration = 5f* ( 1f / 60f)},
+                new TimelineSequence() { Name = "teste 4", Start =  9f * ( 1f / 60f), Duration =  10f* ( 1f / 60f) }
+            }
+        };
+
+        public float DurationInSeconds { get => _durationInSeconds; set => _durationInSeconds = value; }
+        public float TotalFramesInWindow { get => _totalFramesInWindow; set => _totalFramesInWindow = value; }
+        public float FramePerSecond { get => _framePerSecond; set => _framePerSecond = value; }
+        public int FrameStep { get => _frameStep; set => _frameStep = value; }
+        public float TimelineHight { get => _timelineHight; set => _timelineHight = value; }
+        public Vector2 TimeLinePosition { get => _timeLinePosition; set => _timeLinePosition = value; }
+        public float StepSize { get => _stepSize; set => _stepSize = value; }
 
         public void Draw(uint dockId)
         {
             ImGui.SetNextWindowDockID(dockId, ImGuiCond.Once);
             ImGui.Begin("Timeline", ImGuiWindowFlags.NoScrollbar);
 
-            var position = ImGui.GetCursorScreenPos();
+            _timeLinePosition = ImGui.GetCursorScreenPos();
             var drawList = ImGui.GetWindowDrawList();
 
-            DrawTimeLineRule(drawList, position);
-            DrawTimeLines(drawList, position);
+            DrawTimeLineRule(drawList, _timeLinePosition);
+            DrawTimeLines(drawList, _timeLinePosition);
 
             ImGui.End();
         }
@@ -76,12 +114,23 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
                 timeLineCount++;
             }
 
+            timeLineCount = 0;
+            foreach (var timeLine in TimeLines)
+            {
+                float yPosition = position.Y + offsetY * timeLineCount + offsetY;
+                foreach (var timeLineItem in timeLine)
+                {
+                    timeLineItem.Draw(drawList, new Vector2(position.X, yPosition), this);
+                }
+                timeLineCount++;
+            }
+
         }
 
         public void DrawTimeLineRule(ImDrawListPtr drawList, Vector2 position)
         {
             float timeLineWidth = ImGui.GetWindowSize().X;
-            float stepSize = timeLineWidth / _totalFramesInWindow;
+            _stepSize = timeLineWidth / _totalFramesInWindow;
             int totalFrames = (int)(_durationInSeconds * _framePerSecond);
 
             drawList.AddLine(
@@ -94,7 +143,7 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
             {
                 drawList.AddText
                 (
-                    new Vector2(position.X + stepSize * frameIndex, position.Y),
+                    new Vector2(position.X + _stepSize * frameIndex, position.Y),
                     ImGui.GetColorU32(Vector4.One),
                     $"{frameIndex}|"
                 );
@@ -110,6 +159,11 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
             ImGui.EndChild();
 
             Draw(idTimeline);
+        }
+
+        public float GetPositionXOnTimeLine(float valueInSeconds)
+        {
+            return valueInSeconds * FramePerSecond * StepSize;
         }
     }
 }
