@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using UmbrellaToolsKit.EditorEngine.Primitives;
 using System;
+using UmbrellaToolsKit.EditorEngine.Windows;
 
 namespace UmbrellaToolsKit.EditorEngine.GameSettings
 {
@@ -45,8 +46,12 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
     public class SpriteAnimationGameSettings : GameSettingsProperty
     {
         private TimelineItem _selected;
-        private float _currentTime = 0.5f;
-        private float _durationInSeconds = 2f;
+        private int _trackSelected = -1;
+        private int _trackHover = -1;
+        private bool _clickedHoverRule = false;
+
+        [ShowEditor] private float _currentTime = 0.5f;
+        [ShowEditor] private float _durationInSeconds = 2f;
         private float _totalFramesInWindow = 250f;
         private float _framePerSecond = 60f;
         private int _frameStep = 15;
@@ -61,6 +66,7 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
             typeof(TimelineSequence),
         };
 
+        [ShowEditor]
         public List<List<TimelineItem>> TimeLines = new List<List<TimelineItem>>()
         {
             new List<TimelineItem>()
@@ -93,8 +99,11 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
             var drawList = ImGui.GetWindowDrawList();
 
             DrawTimeLineRule(drawList, _timeLinePosition);
-            DrawTimeLines(drawList, _timeLinePosition);
+            DrawTracks(drawList, _timeLinePosition);
             DrawTimeCursor(drawList, _timeLinePosition);
+
+            HandleTrackSelect(_timeLinePosition);
+            HandleCursorTrackMouse(_timeLinePosition);
 
             ImGui.End();
         }
@@ -103,6 +112,23 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
         {
             ImGui.SetNextWindowDockID(dockId, ImGuiCond.Once);
             ImGui.Begin("PropertiesDock");
+
+            if (Fields.Buttons.BlueButton(">", new Vector2(50f, 0f)))
+            {
+
+            }
+
+            var currentTime = TimeSpan.FromSeconds(_currentTime);
+            var totalTime = TimeSpan.FromSeconds(_durationInSeconds);
+            string timerInfo = $"timer {currentTime.Minutes}:{currentTime.Seconds}:{currentTime.Milliseconds} ({totalTime.Minutes}:{totalTime.Seconds}:{totalTime.Milliseconds})";
+            ImGui.Text(timerInfo);
+
+            InspectorClass.DrawAllFields(this);
+
+            ImGui.Spacing();
+            ImGui.Separator();
+            ImGui.Spacing();
+
             foreach (var timeLineItem in _timeLineItemTypes)
             {
                 if (Fields.Buttons.BlueButton($"Add {AttributesHelper.FormatName(timeLineItem.Name)}"))
@@ -113,42 +139,87 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
             ImGui.End();
         }
 
-        public void DrawTimeLines(ImDrawListPtr drawList, Vector2 position)
+        public void HandleTrackSelect(Vector2 position)
         {
-            float timeLineWidth = ImGui.GetWindowSize().X;
+            _trackHover = -1;
+            if (!ImGui.IsWindowHovered(ImGuiHoveredFlags.AllowWhenBlockedByActiveItem)) return;
 
-            int timeLineCount = 0;
+            var io = ImGui.GetIO();
+            var mouseScreen = io.MousePos;
+
+            int trackCount = 0;
             float offsetY = _timelineRuleHight;
             foreach (var timelineItem in TimeLines)
             {
-                float yPosition = position.Y + offsetY + TimeLineHight * timeLineCount;
+                float yPosition = position.Y + offsetY + TimeLineHight * trackCount;
+                if (yPosition <= mouseScreen.Y && yPosition + TimeLineHight >= mouseScreen.Y)
+                {
+                    _trackHover = trackCount;
+                    if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+                        _trackSelected = trackCount;
+                }
+                trackCount++;
+            }
+        }
+
+        public void DrawTracks(ImDrawListPtr drawList, Vector2 position)
+        {
+            float timeLineWidth = ImGui.GetWindowSize().X;
+
+            int trackCount = 0;
+            float offsetY = _timelineRuleHight;
+            var selectedColor = Microsoft.Xna.Framework.Color.DarkGray;
+            var hoverColor = Microsoft.Xna.Framework.Color.Gray;
+
+            foreach (var timelineItem in TimeLines)
+            {
+                float yPosition = position.Y + offsetY + TimeLineHight * trackCount;
                 Square.Draw(
                     drawList,
                     new Microsoft.Xna.Framework.Vector2(position.X, yPosition),
                     new Microsoft.Xna.Framework.Vector2(timeLineWidth, TimeLineHight),
                     Microsoft.Xna.Framework.Color.White
                 );
+
+                var trackColor = trackCount == _trackHover ? hoverColor : Microsoft.Xna.Framework.Color.Black;
+                trackColor = trackCount == _trackSelected ? selectedColor : trackColor;
                 Square.Draw(
                     drawList,
                     new Microsoft.Xna.Framework.Vector2(position.X, yPosition + 1),
                     new Microsoft.Xna.Framework.Vector2(timeLineWidth, TimeLineHight - 2),
-                    Microsoft.Xna.Framework.Color.Black
+                    trackColor
                 );
 
-                timeLineCount++;
+                trackCount++;
             }
 
-            timeLineCount = 0;
+            trackCount = 0;
             foreach (var timeLine in TimeLines)
             {
-                float yPosition = position.Y + offsetY + TimeLineHight * timeLineCount;
+                float yPosition = position.Y + offsetY + TimeLineHight * trackCount;
                 foreach (var timeLineItem in timeLine)
-                {
                     timeLineItem.Draw(drawList, new Vector2(position.X, yPosition), this);
-                }
-                timeLineCount++;
+                trackCount++;
             }
+        }
 
+        public void HandleCursorTrackMouse(Vector2 position)
+        {
+            if (ImGui.IsMouseReleased(ImGuiMouseButton.Left))
+                _clickedHoverRule = false;
+
+            if (!ImGui.IsWindowHovered(ImGuiHoveredFlags.AllowWhenBlockedByActiveItem)) return;
+            var io = ImGui.GetIO();
+            var mouseScreen = io.MousePos;
+
+            if (position.Y <= mouseScreen.Y && position.Y + _timelineRuleHight >= mouseScreen.Y)
+            {
+                bool clicked = ImGui.IsMouseClicked(ImGuiMouseButton.Left);
+                if (!clicked && !_clickedHoverRule) return;
+
+                _currentTime = GetTimeLineOnPositionX(mouseScreen.X - position.X);
+                _clickedHoverRule = true;
+            }
         }
 
         public void DrawTimeLineRule(ImDrawListPtr drawList, Vector2 position)
@@ -192,7 +263,6 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
                new Vector2(xPosition + position.X, position.Y + 200f),
                ImGui.GetColorU32(Microsoft.Xna.Framework.Color.Yellow.PackedValue)
             );
-
         }
 
         public override void DrawFields(EditorMain editorMain)
@@ -200,12 +270,12 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
             uint idProperties = ImGui.GetID("Properties");
             uint idTimeline = ImGui.GetID("Timeline");
 
-            ImGui.BeginChild("properties", new Vector2(ImGui.GetWindowWidth() * 0.2f));
+            ImGui.BeginChild("timelineLeft", new Vector2(ImGui.GetWindowWidth() * 0.15f, 0));
             ImGui.DockSpace(idProperties, new Vector2(0, 0));
             ImGui.EndChild();
             ImGui.SameLine();
 
-            ImGui.BeginChild("timelineMain", new Vector2(ImGui.GetWindowWidth() * 0.8f));
+            ImGui.BeginChild("timelineRight", new Vector2(ImGui.GetWindowWidth() * 0.85f, 0));
             ImGui.DockSpace(idTimeline, new Vector2(0, 0));
             ImGui.EndChild();
 
@@ -213,9 +283,20 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
             DrawProperties(idProperties);
         }
 
+        [Button]
+        public void AddTrack()
+        {
+            TimeLines.Add(new List<TimelineItem>());
+        }
+
         public float GetPositionXOnTimeLine(float valueInSeconds)
         {
             return valueInSeconds * FramePerSecond * StepSize;
+        }
+
+        public float GetTimeLineOnPositionX(float positionValue)
+        {
+            return positionValue / (FramePerSecond * StepSize);
         }
     }
 }
