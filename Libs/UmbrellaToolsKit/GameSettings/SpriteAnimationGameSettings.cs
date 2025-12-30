@@ -10,13 +10,29 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
 {
     public abstract class TimelineItem
     {
-        public float Start;
-        public float Duration;
-        public string Name;
+        [ShowEditor] public float Start;
+        [ShowEditor] public float Duration;
+        [ShowEditor] public string Name;
+
+        protected bool _isMouseHover = false;
+        protected bool _isSelected = false;
+
+        public bool IsSelected { get => _isSelected; set => _isSelected = value; }
 
         public virtual void Draw(ImDrawListPtr drawList, Vector2 position, SpriteAnimationGameSettings timeLineSettings)
         {
             var timeLinePosition = new Vector2(position.X + timeLineSettings.GetPositionXOnTimeLine(Start), position.Y);
+
+            if (_isMouseHover || _isSelected)
+            {
+                Square.Draw(
+                    drawList,
+                    new Microsoft.Xna.Framework.Vector2(timeLinePosition.X - 1, timeLinePosition.Y),
+                    new Microsoft.Xna.Framework.Vector2(timeLineSettings.GetPositionXOnTimeLine(Duration) + 2, timeLineSettings.TimeLineHight),
+                    Microsoft.Xna.Framework.Color.Yellow
+                );
+            }
+
             Square.Draw(
                 drawList,
                 new Microsoft.Xna.Framework.Vector2(timeLinePosition.X, timeLinePosition.Y + 1f),
@@ -30,16 +46,53 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
                 ImGui.GetColorU32(Vector4.One),
                 Name
             );
+
+            HandleMouse(position, timeLineSettings);
+        }
+
+        private void HandleMouse(Vector2 position, SpriteAnimationGameSettings timeLineSettings)
+        {
+            _isMouseHover = false;
+
+            if (!ImGui.IsWindowHovered(ImGuiHoveredFlags.AllowWhenBlockedByActiveItem))
+                return;
+
+            var mouse = ImGui.GetIO().MousePos;
+
+            var pos = new Vector2(
+                position.X + timeLineSettings.GetPositionXOnTimeLine(Start),
+                position.Y
+            );
+
+            var size = new Vector2(
+                timeLineSettings.GetPositionXOnTimeLine(Duration),
+                timeLineSettings.TimeLineHight
+            );
+
+            bool hover =
+                mouse.X >= pos.X &&
+                mouse.X <= pos.X + size.X &&
+                mouse.Y >= pos.Y &&
+                mouse.Y <= pos.Y + size.Y;
+
+            _isMouseHover = hover;
+
+            if (hover && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+            {
+                timeLineSettings.SetSelectedItem(this);
+                _isSelected = true;
+            }
         }
     }
 
     public class TimelineEvent : TimelineItem
     {
-        public string EventId;
+        [ShowEditor] public string EventId;
     }
 
     public class TimelineSequence : TimelineItem
     {
+
     }
 
     [GameSettingsProperty(nameof(SpriteAnimationGameSettings), "/Content/")]
@@ -90,6 +143,13 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
         public float StepSize { get => _stepSize; set => _stepSize = value; }
         public float TimeLineHight { get => _timeLineHight; set => _timeLineHight = value; }
 
+        public void SetSelectedItem(TimelineItem timelineItem)
+        {
+            if (_selected != null)
+                _selected.IsSelected = false;
+            _selected = timelineItem;
+        }
+
         public void DrawTimeLine(uint dockId)
         {
             ImGui.SetNextWindowDockID(dockId, ImGuiCond.Once);
@@ -136,6 +196,14 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
 
                 }
             }
+
+            ImGui.Spacing();
+            ImGui.Separator();
+            ImGui.Spacing();
+
+            if (_selected != null)
+                InspectorClass.DrawAllFields(_selected);
+
             ImGui.End();
         }
 
