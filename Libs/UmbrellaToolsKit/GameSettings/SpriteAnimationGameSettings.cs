@@ -169,10 +169,22 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
         public void DrawTimeLine(uint dockId)
         {
             ImGui.SetNextWindowDockID(dockId, ImGuiCond.Once);
-            ImGui.Begin("TimelineDock", ImGuiWindowFlags.NoScrollbar);
+            ImGui.Begin("TimelineDock", ImGuiWindowFlags.HorizontalScrollbar);
 
             _timeLinePosition = ImGui.GetCursorScreenPos();
             var drawList = ImGui.GetWindowDrawList();
+
+            float scrollX = ImGui.GetScrollX();
+            float scrollY = ImGui.GetScrollY();
+
+            _timeLinePosition = ImGui.GetCursorScreenPos();
+            _timeLinePosition.X -= scrollX;
+            _timeLinePosition.Y -= scrollY;
+
+            float contentWidth = _durationInSeconds * _framePerSecond * StepSize + 200f;
+            float contentHeight = _timelineRuleHight + TimeLines.Count * TimeLineHight + 50f;
+            ImGui.SetCursorPos(new Vector2(contentWidth, contentHeight));
+
 
             DrawTimeLineRule(drawList, _timeLinePosition);
             DrawTracks(drawList, _timeLinePosition);
@@ -270,7 +282,7 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
 
         public void DrawTracks(ImDrawListPtr drawList, Vector2 position)
         {
-            float timeLineWidth = ImGui.GetWindowSize().X;
+            float timeLineWidth = GetPositionXOnTimeLine(_durationInSeconds);
 
             int trackCount = 0;
             float offsetY = _timelineRuleHight;
@@ -287,7 +299,7 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
                     ImGui.GetColorU32(ImGuiCol.Border)
                 );
 
-                var trackColor = trackCount == _trackHover ? hoverColor : ImGui.GetColorU32(ImGuiCol.TabUnfocused);
+                var trackColor = trackCount == _trackHover ? hoverColor : ImGui.GetColorU32(ImGuiCol.WindowBg);
                 trackColor = trackCount == _trackSelected ? selectedColor : trackColor;
                 Square.Draw(
                     drawList,
@@ -414,7 +426,7 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
             ImGui.EndChild();
             ImGui.SameLine();
 
-            ImGui.BeginChild("timelineRight", new Vector2(ImGui.GetWindowWidth() * 0.85f, 0));
+            ImGui.BeginChild("timelineRight", new Vector2(ImGui.GetWindowWidth() * 0.85f, 0), false, ImGuiWindowFlags.HorizontalScrollbar);
             ImGui.DockSpace(idTimeline, new Vector2(0, 0));
             ImGui.EndChild();
 
