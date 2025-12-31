@@ -5,6 +5,7 @@ using System.Numerics;
 using UmbrellaToolsKit.EditorEngine.Primitives;
 using System;
 using UmbrellaToolsKit.EditorEngine.Windows;
+using UmbrellaToolsKit.Utils;
 
 namespace UmbrellaToolsKit.EditorEngine.GameSettings
 {
@@ -98,15 +99,24 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
     [GameSettingsProperty(nameof(SpriteAnimationGameSettings), "/Content/")]
     public class SpriteAnimationGameSettings : GameSettingsProperty
     {
-        private TimelineItem _selected;
+        private enum State
+        {
+            PLAYING,
+            STOPPED
+        }
+
+        private Timer timer;
+
+        private TimelineItem _selectedSequenceItem;
         private int _trackSelected = -1;
         private int _trackHover = -1;
         private bool _clickedHoverRule = false;
+        private State _currentState = State.STOPPED;
 
-        [ShowEditor] private float _currentTime = 0.5f;
+        [ShowEditor] private float _currentTime = 0f;
         [ShowEditor] private float _durationInSeconds = 2f;
         private float _totalFramesInWindow = 250f;
-        private float _framePerSecond = 60f;
+        [ShowEditor] private float _framePerSecond = 60f;
         private int _frameStep = 15;
         private float _timelineRuleHight = 15f;
         private float _stepSize;
@@ -145,9 +155,10 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
 
         public void SetSelectedItem(TimelineItem timelineItem)
         {
-            if (_selected != null)
-                _selected.IsSelected = false;
-            _selected = timelineItem;
+            if (_selectedSequenceItem != null)
+                _selectedSequenceItem.IsSelected = false;
+            timelineItem.IsSelected = true;
+            _selectedSequenceItem = timelineItem;
         }
 
         public void DrawTimeLine(uint dockId)
@@ -173,9 +184,21 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
             ImGui.SetNextWindowDockID(dockId, ImGuiCond.Once);
             ImGui.Begin("PropertiesDock");
 
-            if (Fields.Buttons.BlueButton(">", new Vector2(50f, 0f)))
-            {
+            if (Fields.Buttons.BlueButton("|<", new Vector2(50f, 0f)))
+                _currentTime = 0f;
 
+            ImGui.SameLine();
+            if (Fields.Buttons.BlueButton(_currentState is State.STOPPED ? ">" : "||", new Vector2(50f, 0f)))
+            {
+                switch (_currentState)
+                {
+                    case State.PLAYING:
+                        Stop();
+                        break;
+                    case State.STOPPED:
+                        Play();
+                        break;
+                }
             }
 
             var currentTime = TimeSpan.FromSeconds(_currentTime);
@@ -191,9 +214,18 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
 
             foreach (var timeLineItem in _timeLineItemTypes)
             {
-                if (Fields.Buttons.BlueButton($"Add {AttributesHelper.FormatName(timeLineItem.Name)}"))
+                if (Fields.Buttons.BlueButton($"Add {AttributesHelper.FormatName(timeLineItem.Name)}") && _trackSelected != -1)
                 {
-
+                    var item = Activator.CreateInstance(timeLineItem);
+                    if (item is TimelineSequence)
+                    {
+                        var timeLineItemInstance = (TimelineItem)item;
+                        timeLineItemInstance.Start = _currentTime;
+                        timeLineItemInstance.Duration = 1f / _framePerSecond;
+                        timeLineItemInstance.Name = AttributesHelper.FormatName(timeLineItem.Name);
+                        TimeLines[_trackSelected].Add(timeLineItemInstance);
+                        SetSelectedItem(timeLineItemInstance);
+                    }
                 }
             }
 
@@ -201,8 +233,8 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
             ImGui.Separator();
             ImGui.Spacing();
 
-            if (_selected != null)
-                InspectorClass.DrawAllFields(_selected);
+            if (_selectedSequenceItem != null)
+                InspectorClass.DrawAllFields(_selectedSequenceItem);
 
             ImGui.End();
         }
@@ -333,6 +365,33 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
             );
         }
 
+        public void Play()
+        {
+            _currentState = State.PLAYING;
+            timer = new Timer();
+            timer.Begin();
+        }
+
+        public void Stop()
+        {
+            _currentState = State.STOPPED;
+            timer.End();
+        }
+
+        public void TimeLineUpdate()
+        {
+            if (_currentState == State.STOPPED) return;
+            timer.End();
+            _currentTime += timer.GetTotalSeconds();
+            if (_currentTime >= DurationInSeconds)
+            {
+                _currentTime = DurationInSeconds;
+                Stop();
+                return;
+            }
+            timer.Begin();
+        }
+
         public override void DrawFields(EditorMain editorMain)
         {
             uint idProperties = ImGui.GetID("Properties");
@@ -349,6 +408,7 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
 
             DrawTimeLine(idTimeline);
             DrawProperties(idProperties);
+            TimeLineUpdate();
         }
 
         [Button]
