@@ -53,6 +53,9 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
 
         private void HandleMouse(Vector2 position, SpriteAnimationGameSettings timeLineSettings)
         {
+            if (_isSelected && timeLineSettings.CurrentItem != this)
+                _isSelected = false;
+
             _isMouseHover = false;
 
             if (!ImGui.IsWindowHovered(ImGuiHoveredFlags.AllowWhenBlockedByActiveItem))
@@ -121,6 +124,7 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
         private float _timelineRuleHight = 15f;
         private float _stepSize;
         private float _timeLineHight = 30f;
+        private float _timePerFrame => 1f / _framePerSecond;
         private Vector2 _timeLinePosition;
 
         private List<Type> _timeLineItemTypes = new List<Type>()
@@ -152,6 +156,7 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
         public Vector2 TimeLinePosition { get => _timeLinePosition; set => _timeLinePosition = value; }
         public float StepSize { get => _stepSize; set => _stepSize = value; }
         public float TimeLineHight { get => _timeLineHight; set => _timeLineHight = value; }
+        public TimelineItem CurrentItem => _selectedSequenceItem;
 
         public void SetSelectedItem(TimelineItem timelineItem)
         {
@@ -205,6 +210,7 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
             var totalTime = TimeSpan.FromSeconds(_durationInSeconds);
             string timerInfo = $"timer {currentTime.Minutes}:{currentTime.Seconds}:{currentTime.Milliseconds} ({totalTime.Minutes}:{totalTime.Seconds}:{totalTime.Milliseconds})";
             ImGui.Text(timerInfo);
+            ImGui.Text($"Frame: {GetFrameByTimer(_currentTime)}");
 
             InspectorClass.DrawAllFields(this);
 
@@ -220,8 +226,8 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
                     if (item is TimelineSequence)
                     {
                         var timeLineItemInstance = (TimelineItem)item;
-                        timeLineItemInstance.Start = _currentTime;
-                        timeLineItemInstance.Duration = 1f / _framePerSecond;
+                        timeLineItemInstance.Start = GetFrameByTimer(_currentTime) * _timePerFrame;
+                        timeLineItemInstance.Duration = _timePerFrame;
                         timeLineItemInstance.Name = AttributesHelper.FormatName(timeLineItem.Name);
                         TimeLines[_trackSelected].Add(timeLineItemInstance);
                         SetSelectedItem(timeLineItemInstance);
@@ -363,6 +369,12 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
                new Vector2(xPosition + position.X, position.Y + 200f),
                ImGui.GetColorU32(Microsoft.Xna.Framework.Color.Yellow.PackedValue)
             );
+        }
+
+        public int GetFrameByTimer(float timeInSeconds)
+        {
+            float timePerFrame = _timePerFrame;
+            return (int)(timeInSeconds / timePerFrame);
         }
 
         public void Play()
