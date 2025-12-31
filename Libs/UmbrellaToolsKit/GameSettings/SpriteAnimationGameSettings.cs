@@ -274,8 +274,8 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
 
             int trackCount = 0;
             float offsetY = _timelineRuleHight;
-            var selectedColor = Microsoft.Xna.Framework.Color.DarkGray;
-            var hoverColor = Microsoft.Xna.Framework.Color.Gray;
+            var selectedColor = ImGui.GetColorU32(ImGuiCol.TabActive);
+            var hoverColor = ImGui.GetColorU32(ImGuiCol.TabHovered);
 
             foreach (var timelineItem in TimeLines)
             {
@@ -284,10 +284,10 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
                     drawList,
                     new Microsoft.Xna.Framework.Vector2(position.X, yPosition),
                     new Microsoft.Xna.Framework.Vector2(timeLineWidth, TimeLineHight),
-                    Microsoft.Xna.Framework.Color.White
+                    ImGui.GetColorU32(ImGuiCol.Border)
                 );
 
-                var trackColor = trackCount == _trackHover ? hoverColor : Microsoft.Xna.Framework.Color.Black;
+                var trackColor = trackCount == _trackHover ? hoverColor : ImGui.GetColorU32(ImGuiCol.TabUnfocused);
                 trackColor = trackCount == _trackSelected ? selectedColor : trackColor;
                 Square.Draw(
                     drawList,
