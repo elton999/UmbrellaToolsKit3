@@ -36,6 +36,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
         public static void DrawAllFields(object obj)
         {
 #if !RELEASE
+
             if (obj is null) return;
             var type = obj.GetType();
             var fieldsCategories = new Dictionary<string, List<FieldInfo>>();
@@ -55,7 +56,9 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
 
                     }
                     if (attr.AttributeType == typeof(ShowEditorAttribute))
+                    {
                         fieldsWithoutCategories.Add(fInfo);
+                    }
                 }
             }
 

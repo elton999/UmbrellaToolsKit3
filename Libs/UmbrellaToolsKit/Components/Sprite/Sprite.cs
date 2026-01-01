@@ -22,7 +22,8 @@ namespace UmbrellaToolsKit.Components.Sprite
             get
             {
                 if (_body == null || _body.IsEmpty)
-                    _body = new Rectangle(0, 0, Texture.Width, Texture.Height);
+                    if (Texture != null)
+                        _body = new Rectangle(0, 0, Texture.Width, Texture.Height);
                 return _body;
             }
             set { _body = value; }
