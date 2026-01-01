@@ -3,7 +3,7 @@ using UmbrellaToolsKit.EditorEngine.Attributes;
 using Microsoft.Xna.Framework.Input;
 using UmbrellaToolsKit.Input;
 
-namespace UmbrellaToolsKit.EditorEngine.Windows.GameSettings
+namespace UmbrellaToolsKit.EditorEngine.GameSettings
 {
     [GameSettingsProperty(nameof(InputGameSettings), "/Content/")]
     public class InputGameSettings : GameSettingsProperty

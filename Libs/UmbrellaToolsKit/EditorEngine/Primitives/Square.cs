@@ -8,7 +8,7 @@ namespace UmbrellaToolsKit.EditorEngine.Primitives
 {
     public class Square
     {
- #if !RELEASE
+#if !RELEASE
         public static void Draw(ImDrawListPtr imDraw, Vector2 position, Vector2 size, Color color)
         {
             imDraw.AddQuadFilled(
@@ -17,6 +17,17 @@ namespace UmbrellaToolsKit.EditorEngine.Primitives
                 (position + size * Vector2.One).ToNumericVector2(),
                 (position + size * Vector2.UnitX).ToNumericVector2(),
                 color.PackedValue
+            );
+        }
+
+        public static void Draw(ImDrawListPtr imDraw, Vector2 position, Vector2 size, uint color)
+        {
+            imDraw.AddQuadFilled(
+                position.ToNumericVector2(),
+                (position + size * Vector2.UnitY).ToNumericVector2(),
+                (position + size * Vector2.One).ToNumericVector2(),
+                (position + size * Vector2.UnitX).ToNumericVector2(),
+                color
             );
         }
 #endif

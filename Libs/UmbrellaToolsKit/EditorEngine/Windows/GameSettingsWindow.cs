@@ -72,7 +72,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows
             ImGui.SameLine();
 
             ImGui.SetNextWindowDockID(rightID, ImGuiCond.Once);
-            ImGui.Begin("Game Settings Editor");
+            ImGui.Begin("Game Settings Editor", ImGuiWindowFlags.NoScrollbar);
             ImGui.SetWindowFontScale(1.2f);
             ShowSettingProperty();
             ImGui.End();
