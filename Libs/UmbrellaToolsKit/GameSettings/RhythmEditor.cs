@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Eto.Forms;
 using ImGuiNET;
 using UmbrellaToolsKit.EditorEngine.Attributes;
+using UmbrellaToolsKit.EditorEngine.Fields;
 using UmbrellaToolsKit.EditorEngine.Windows;
 using UmbrellaToolsKit.EditorEngine.Windows.Feature;
 using Framework = Microsoft.Xna.Framework;
@@ -37,11 +39,12 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
         private Framework.Media.Song _song;
         private bool _isPlaying = false;
 
-        public MusicItem()
+        public void Init()
         {
             if (string.IsNullOrEmpty(MusicPath))
                 return;
             SetMusicFromPath(MusicPath);
+            Log.Write($"[MusicItem] Initialized music item with path: {MusicPath}");
         }
 
         private void SetMusicFromPath(string path)
@@ -59,7 +62,7 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Failed to load song '{path}': {ex.Message}");
+                Log.Write($"Failed to load song '{path}': {ex.Message}");
                 _song = null;
                 MusicPath = string.Empty;
             }
@@ -130,17 +133,55 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
         }
     }
 
+    [Serializable]
+    public class RhythmTimeLineSettings
+    {
+        [ShowEditor] public string Name;
+        [ShowEditor] public RhythmTimeLine TimeLineFeature = new();
+    }
+
     [GameSettingsProperty(nameof(RhythmEditor), "/Content/")]
     public class RhythmEditor : GameSettingsProperty
     {
-        public RhythmTimeLine TimeLineFeature = new RhythmTimeLine();
+        [ShowEditor] public List<RhythmTimeLineSettings> TimeLineFeatureList;
+
+        private int _currentTimeLineIndex = -1;
+        private string _newTimeLineName = "New Timeline";
+        private bool _isInitialized = false;
+        private RhythmTimeLine _currentTimeLine
+        {
+            get
+            {
+                if (_currentTimeLineIndex < 0 && TimeLineFeatureList.Count > 0)
+                    _currentTimeLineIndex = 0;
+                return TimeLineFeatureList[_currentTimeLineIndex].TimeLineFeature;
+            }
+        }
         private EditorMain _editorMain;
+
+        public void Init()
+        {
+            if (TimeLineFeatureList == null) return;
+            if (_isInitialized) return;
+            _isInitialized = true;
+
+            foreach (var timeLineFeature in TimeLineFeatureList)
+            {
+                foreach (var track in timeLineFeature.TimeLineFeature.TimeLines)
+                    foreach (var item in track)
+                        if (item is MusicItem musicItem)
+                            musicItem.Init();
+            }
+        }
 
         public void DrawTimeLine(uint dockId)
         {
             ImGui.SetNextWindowDockID(dockId, ImGuiCond.Once);
             ImGui.Begin("TimelineDock", ImGuiWindowFlags.HorizontalScrollbar);
-            TimeLineFeature.DrawTimeLine();
+            if (_currentTimeLineIndex != -1)
+            {
+                _currentTimeLine.DrawTimeLine();
+            }
             ImGui.End();
         }
 
@@ -148,29 +189,69 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
         {
             ImGui.SetNextWindowDockID(dockId, ImGuiCond.Once);
             ImGui.Begin("PropertiesDock");
-            TimeLineFeature.DrawProperties();
+            if (_currentTimeLineIndex != -1)
+            {
+                _currentTimeLine.DrawProperties();
+            }
             ImGui.End();
         }
 
         public override void DrawFields(EditorMain editorMain)
         {
+            Init();
             _editorMain ??= editorMain;
 
+            uint idProjects = ImGui.GetID("Projects");
             uint idProperties = ImGui.GetID("Properties");
             uint idTimeline = ImGui.GetID("Timeline");
+
+            ImGui.BeginChild("timelineLeftProjects", new Vector2(ImGui.GetWindowWidth() * 0.15f, 0));
+            ImGui.DockSpace(idProjects, new Vector2(0, 0));
+            ImGui.EndChild();
+            ImGui.SameLine();
 
             ImGui.BeginChild("timelineLeft", new Vector2(ImGui.GetWindowWidth() * 0.15f, 0));
             ImGui.DockSpace(idProperties, new Vector2(0, 0));
             ImGui.EndChild();
             ImGui.SameLine();
 
-            ImGui.BeginChild("timelineRight", new Vector2(ImGui.GetWindowWidth() * 0.85f, 0), false, ImGuiWindowFlags.HorizontalScrollbar);
+            ImGui.BeginChild("timelineRight", new Vector2(ImGui.GetWindowWidth() * 0.70f, 0), false, ImGuiWindowFlags.HorizontalScrollbar);
             ImGui.DockSpace(idTimeline, new Vector2(0, 0));
             ImGui.EndChild();
 
             DrawTimeLine(idTimeline);
             DrawProperties(idProperties);
-            TimeLineFeature.TimeLineUpdate();
+            if (_currentTimeLineIndex != -1)
+            {
+                _currentTimeLine.TimeLineUpdate();
+            }
+
+            ImGui.SetNextWindowDockID(idProjects, ImGuiCond.Once);
+            ImGui.Begin("ProjectsDocks", ImGuiWindowFlags.HorizontalScrollbar);
+            if (TimeLineFeatureList != null)
+            {
+                foreach (var rhythmTimeLine in TimeLineFeatureList)
+                {
+                    if (ImGui.Selectable(rhythmTimeLine.Name, _currentTimeLineIndex == TimeLineFeatureList.IndexOf(rhythmTimeLine), ImGuiSelectableFlags.None, new(0, 30.0f)))
+                    {
+                        _currentTimeLineIndex = TimeLineFeatureList.IndexOf(rhythmTimeLine);
+                    }
+                }
+            }
+
+            ImGui.Separator();
+            Field.DrawString("Timeline Name", ref _newTimeLineName);
+            if (ImGui.Button("Add New Timeline"))
+            {
+                if (TimeLineFeatureList == null)
+                    TimeLineFeatureList = new List<RhythmTimeLineSettings>();
+                TimeLineFeatureList.Add(new RhythmTimeLineSettings() { Name = _newTimeLineName });
+                _currentTimeLineIndex = TimeLineFeatureList.Count - 1;
+                _newTimeLineName = "New Timeline";
+            }
+
+            ImGui.Separator();
+            ImGui.End();
         }
     }
 }
