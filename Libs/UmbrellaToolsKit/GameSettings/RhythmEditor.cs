@@ -5,12 +5,13 @@ using ImGuiNET;
 using UmbrellaToolsKit.EditorEngine.Attributes;
 using UmbrellaToolsKit.EditorEngine.Windows;
 using UmbrellaToolsKit.EditorEngine.Windows.Feature;
+using Framework = Microsoft.Xna.Framework;
 
 namespace UmbrellaToolsKit.EditorEngine.GameSettings
 {
     public class EventItem : TimelineItem
     {
-        protected override Microsoft.Xna.Framework.Color _color => Microsoft.Xna.Framework.Color.Green;
+        protected override Framework.Color _color => Framework.Color.Green;
 
         public enum Keys
         {
@@ -32,11 +33,19 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
     {
         public string MusicPath;
         public float StartMusicAt;
+        private Framework.Media.Song _song;
 
         public override void DrawProperties()
         {
             InspectorClass.DrawAllFields(this);
         }
+
+        public override void Draw(ImDrawListPtr drawList, Vector2 position, TimeLineFeature timeLineSettings)
+        {
+            base.Draw(drawList, position, timeLineSettings);
+        }
+
+        private void SetSong(Framework.Media.Song song) => _song = song;
     }
 
     public class RhythmTimeLine : TimeLineFeature
@@ -46,13 +55,28 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
             typeof(MusicItem),
             typeof(RhythmTimeLine),
         };
-    }
 
+        public void CallOnUpdateTimeLineData(Action callback)
+        {
+            callback?.Invoke();
+        }
+
+        public override void AddANewItem(Type timeLineItem, object item)
+        {
+            base.AddANewItem(timeLineItem, item);
+        }
+    }
 
     [GameSettingsProperty(nameof(RhythmEditor), "/Content/")]
     public class RhythmEditor : GameSettingsProperty
     {
         public RhythmTimeLine TimeLineFeature = new RhythmTimeLine();
+        private EditorMain _editorMain;
+
+        public RhythmEditor()
+        {
+            TimeLineFeature.CallOnUpdateTimeLineData(UpdateFilesFromTimeLine);
+        }
 
         public void DrawTimeLine(uint dockId)
         {
@@ -72,6 +96,8 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
 
         public override void DrawFields(EditorMain editorMain)
         {
+            _editorMain ??= editorMain;
+
             uint idProperties = ImGui.GetID("Properties");
             uint idTimeline = ImGui.GetID("Timeline");
 
@@ -87,6 +113,23 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
             DrawTimeLine(idTimeline);
             DrawProperties(idProperties);
             TimeLineFeature.TimeLineUpdate();
+        }
+
+        private void UpdateFilesFromTimeLine()
+        {
+            if (_editorMain == null) return;
+
+            foreach (var tracks in TimeLineFeature.TimeLines)
+            {
+                foreach (var item in tracks)
+                {
+                    if (item is MusicItem musicItem)
+                    {
+                        _
+                    }
+                }
+            }
+
         }
     }
 }
