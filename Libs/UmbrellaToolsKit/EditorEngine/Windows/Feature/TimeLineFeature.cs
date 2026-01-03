@@ -109,12 +109,15 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.Feature
             ImGui.Separator();
             ImGui.Spacing();
 
-            foreach (var timeLineItem in _timeLineItemTypes)
+            if (_trackSelected != -1)
             {
-                if (Fields.Buttons.BlueButton($"Add {AttributesHelper.FormatName(timeLineItem.Name)}") && _trackSelected != -1)
+                foreach (var timeLineItem in _timeLineItemTypes)
                 {
-                    var item = Activator.CreateInstance(timeLineItem);
-                    AddANewItem(timeLineItem, item);
+                    if (Fields.Buttons.BlueButton($"Add {AttributesHelper.FormatName(timeLineItem.Name)}") && _trackSelected != -1)
+                    {
+                        var item = Activator.CreateInstance(timeLineItem);
+                        AddANewItem(timeLineItem, item);
+                    }
                 }
             }
 
