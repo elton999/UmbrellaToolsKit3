@@ -10,7 +10,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.Feature
 {
     public class TimeLineFeature
     {
-        private enum State
+        public enum State
         {
             PLAYING,
             STOPPED
@@ -39,6 +39,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.Feature
 
         [ShowEditor]
         public List<List<TimelineItem>> TimeLines = new() { new() };
+
+        public State CurrentState { get => _currentState; }
 
         public float DurationInSeconds { get => _durationInSeconds; set => _durationInSeconds = value; }
         public float TotalFramesInWindow { get => _totalFramesInWindow; set => _totalFramesInWindow = value; }
@@ -111,14 +113,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.Feature
                 if (Fields.Buttons.BlueButton($"Add {AttributesHelper.FormatName(timeLineItem.Name)}") && _trackSelected != -1)
                 {
                     var item = Activator.CreateInstance(timeLineItem);
-                    if (item is TimelineItem timeLineItemInstance)
-                    {
-                        timeLineItemInstance.Start = GetFrameByTimer(_currentTime) * _timePerFrame;
-                        timeLineItemInstance.Duration = _timePerFrame;
-                        timeLineItemInstance.Name = AttributesHelper.FormatName(timeLineItem.Name);
-                        TimeLines[_trackSelected].Add(timeLineItemInstance);
-                        SetSelectedItem(timeLineItemInstance);
-                    }
+                    AddANewItem(timeLineItem, item);
                 }
             }
 
@@ -128,6 +123,18 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.Feature
 
             if (_selectedSequenceItem != null)
                 _selectedSequenceItem.DrawProperties();
+        }
+
+        public virtual void AddANewItem(Type timeLineItem, object item)
+        {
+            if (item is TimelineItem timeLineItemInstance)
+            {
+                timeLineItemInstance.Start = GetFrameByTimer(_currentTime) * _timePerFrame;
+                timeLineItemInstance.Duration = _timePerFrame;
+                timeLineItemInstance.Name = AttributesHelper.FormatName(timeLineItem.Name);
+                TimeLines[_trackSelected].Add(timeLineItemInstance);
+                SetSelectedItem(timeLineItemInstance);
+            }
         }
 
         public void SetSelectedItem(TimelineItem timelineItem)
