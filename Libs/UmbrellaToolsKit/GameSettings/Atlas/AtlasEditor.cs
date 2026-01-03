@@ -24,7 +24,7 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings.Atlas
         private System.Numerics.Vector2 selectionStart;
         private System.Numerics.Vector2 selectionEnd;
         private ISprite _currentSpriteSelect = null;
-        private ISprite _currentSriteHover = null;
+        private ISprite _currentSpriteHover = null;
 
         private System.Numerics.Vector2 _gridSettings = new System.Numerics.Vector2(4, 4);
 
@@ -118,19 +118,19 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings.Atlas
                 ImGui.Image(_currentSprite.GetTextureBuffer(), drawSize);
 
                 var mouseLocal = (mouseScreen - contentStart + _scrollOffset) / _zoom;
-                _currentSriteHover = null;
+                _currentSpriteHover = null;
 
                 foreach (var sprite in _currentSprite.Sprites)
                     if (sprite.GetRectangle().Intersects(new Rectangle(mouseLocal.ToXnaVector2().ToPoint(), new Point(1, 1))))
-                        _currentSriteHover = sprite;
+                        _currentSpriteHover = sprite;
 
                 bool hasClicked = ImGui.IsWindowHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Left);
                 bool hasReleased = ImGui.IsWindowHovered() && ImGui.IsMouseReleased(ImGuiMouseButton.Left);
 
-                if (hasClicked && _currentSriteHover != null)
-                    _currentSpriteSelect = _currentSriteHover;
+                if (hasClicked && _currentSpriteHover != null)
+                    _currentSpriteSelect = _currentSpriteHover;
 
-                if (hasReleased && _currentSpriteSelect != null && _currentSriteHover == null)
+                if (hasReleased && _currentSpriteSelect != null && _currentSpriteHover == null)
                     _currentSpriteSelect = null;
 
                 if (hasClicked && _currentSpriteSelect == null)
@@ -197,7 +197,7 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings.Atlas
 
                     var borderColorSpriteDefault = new System.Numerics.Vector4(0, 1, 0, 1);
                     var borderColorHover = new System.Numerics.Vector4(1, 1, 1, 1);
-                    var borderColorSprite = sprite == _currentSpriteSelect || sprite == _currentSriteHover ? borderColorHover : borderColorSpriteDefault;
+                    var borderColorSprite = sprite == _currentSpriteSelect || sprite == _currentSpriteHover ? borderColorHover : borderColorSpriteDefault;
 
                     drawList.AddRect(rectStart, rectEnd, ImGui.ColorConvertFloat4ToU32(borderColorSprite), 0, ImDrawFlags.None, 1.5f);
 
