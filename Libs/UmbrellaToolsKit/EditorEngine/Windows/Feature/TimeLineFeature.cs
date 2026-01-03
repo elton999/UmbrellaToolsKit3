@@ -41,6 +41,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.Feature
         public List<List<TimelineItem>> TimeLines = new() { new() };
 
         public State CurrentState { get => _currentState; }
+        public float CurrentTimeInSeconds { get => _currentTime; }
 
         public float DurationInSeconds { get => _durationInSeconds; set => _durationInSeconds = value; }
         public float TotalFramesInWindow { get => _totalFramesInWindow; set => _totalFramesInWindow = value; }
