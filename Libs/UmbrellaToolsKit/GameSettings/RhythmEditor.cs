@@ -10,6 +10,18 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
 {
     public class EventItem : TimelineItem
     {
+        protected override Microsoft.Xna.Framework.Color _color => Microsoft.Xna.Framework.Color.Green;
+
+        public enum Keys
+        {
+            UP,
+            DOWN,
+            LEFT,
+            RIGHT,
+        }
+
+        public Keys Key;
+
         public override void DrawProperties()
         {
             InspectorClass.DrawAllFields(this);
@@ -18,6 +30,9 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
 
     public class MusicItem : TimelineItem
     {
+        public string MusicPath;
+        public float StartMusicAt;
+
         public override void DrawProperties()
         {
             InspectorClass.DrawAllFields(this);
