@@ -14,6 +14,8 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.Feature
         protected bool _isMouseHover = false;
         protected bool _isSelected = false;
 
+        protected virtual Microsoft.Xna.Framework.Color _color => Microsoft.Xna.Framework.Color.Red;
+
         public bool IsSelected { get => _isSelected; set => _isSelected = value; }
 
         public virtual void Draw(ImDrawListPtr drawList, Vector2 position, TimeLineFeature timeLineSettings)
@@ -34,7 +36,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.Feature
                 drawList,
                 new Microsoft.Xna.Framework.Vector2(timeLinePosition.X, timeLinePosition.Y + 1f),
                 new Microsoft.Xna.Framework.Vector2(timeLineSettings.GetPositionXOnTimeLine(Duration), timeLineSettings.TimeLineHight - 2f),
-                Microsoft.Xna.Framework.Color.Red
+                _color
             );
 
             drawList.AddText
