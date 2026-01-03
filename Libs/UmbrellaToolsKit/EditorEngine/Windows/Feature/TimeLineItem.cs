@@ -13,6 +13,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.Feature
 
         protected bool _isMouseHover = false;
         protected bool _isSelected = false;
+        protected bool _showName => true;
 
         protected virtual Microsoft.Xna.Framework.Color _color => Microsoft.Xna.Framework.Color.Red;
 
@@ -39,12 +40,15 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.Feature
                 _color
             );
 
-            drawList.AddText
-            (
-                timeLinePosition,
-                ImGui.GetColorU32(Vector4.One),
-                Name
-            );
+            if (_showName)
+            {
+                drawList.AddText
+                (
+                    timeLinePosition,
+                    ImGui.GetColorU32(Vector4.One),
+                    Name
+                );
+            }
 
             HandleMouse(position, timeLineSettings);
         }
