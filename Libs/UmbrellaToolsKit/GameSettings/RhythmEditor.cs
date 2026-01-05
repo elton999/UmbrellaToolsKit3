@@ -167,8 +167,8 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
 
             foreach (var timeLineFeature in TimeLineFeatureList)
             {
-                foreach (var track in timeLineFeature.TimeLineFeature.TimeLines)
-                    foreach (var item in track)
+                foreach (var track in timeLineFeature.TimeLineFeature.Tracks)
+                    foreach (var item in track.Items)
                         if (item is MusicItem musicItem)
                             musicItem.Init();
             }
