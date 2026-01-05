@@ -10,6 +10,11 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.Feature
 {
     public class TimeLineFeature
     {
+        public class Track
+        {
+            public List<TimelineItem> Items = new();
+        }
+
         public enum State
         {
             PLAYING,
@@ -38,7 +43,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.Feature
         protected virtual List<Type> _timeLineItemTypes { get; }
 
         [ShowEditor]
-        public List<List<TimelineItem>> TimeLines = new() { new() };
+        public List<Track> Tracks = new();
 
         public State CurrentState { get => _currentState; }
         public float CurrentTimeInSeconds { get => _currentTime; }
@@ -66,7 +71,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.Feature
             _timeLinePosition.Y -= scrollY;
 
             float contentWidth = _durationInSeconds * _framePerSecond * StepSize + 200f;
-            float contentHeight = _timelineRuleHight + TimeLines.Count * TimeLineHight + 50f;
+            float contentHeight = _timelineRuleHight + Tracks.Count * TimeLineHight + 50f;
             ImGui.SetCursorPos(new Vector2(contentWidth, contentHeight));
 
 
@@ -136,7 +141,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.Feature
                 timeLineItemInstance.Start = GetFrameByTimer(_currentTime) * _timePerFrame;
                 timeLineItemInstance.Duration = _timePerFrame;
                 timeLineItemInstance.Name = AttributesHelper.FormatName(timeLineItem.Name);
-                TimeLines[_trackSelected].Add(timeLineItemInstance);
+                Tracks[_trackSelected].Items.Add(timeLineItemInstance);
                 SetSelectedItem(timeLineItemInstance);
             }
         }
@@ -178,7 +183,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.Feature
 
             int trackCount = 0;
             float offsetY = _timelineRuleHight;
-            foreach (var timelineItem in TimeLines)
+            foreach (var timelineItem in Tracks)
             {
                 float yPosition = position.Y + offsetY + TimeLineHight * trackCount;
                 if (yPosition <= mouseScreen.Y && yPosition + TimeLineHight >= mouseScreen.Y)
@@ -223,7 +228,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.Feature
             var selectedColor = ImGui.GetColorU32(ImGuiCol.TabActive);
             var hoverColor = ImGui.GetColorU32(ImGuiCol.TabHovered);
 
-            foreach (var timelineItem in TimeLines)
+            foreach (var timelineItem in Tracks)
             {
                 float yPosition = position.Y + offsetY + TimeLineHight * trackCount;
                 Square.Draw(
@@ -246,10 +251,10 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.Feature
             }
 
             trackCount = 0;
-            foreach (var timeLine in TimeLines)
+            foreach (var timeLine in Tracks)
             {
                 float yPosition = position.Y + offsetY + TimeLineHight * trackCount;
-                foreach (var timeLineItem in timeLine)
+                foreach (var timeLineItem in timeLine.Items)
                     timeLineItem.Draw(drawList, new Vector2(position.X, yPosition), this);
                 trackCount++;
             }
@@ -293,7 +298,7 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.Feature
         [Button]
         public void AddTrack()
         {
-            TimeLines.Add(new List<TimelineItem>());
+            Tracks.Add(new Track());
         }
 
         public void TimeLineUpdate()
