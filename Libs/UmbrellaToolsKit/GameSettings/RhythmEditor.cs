@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Numerics;
 using Eto.Forms;
 using ImGuiNET;
@@ -38,6 +39,7 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
         [ShowEditor] public float StartMusicAt;
         private Framework.Media.Song _song;
         private bool _isPlaying = false;
+        private WaveformData _wave;
 
         public void Init()
         {
@@ -47,25 +49,25 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
             Log.Write($"[MusicItem] Initialized music item with path: {MusicPath}");
         }
 
-        private void SetMusicFromPath(string path)
+        public void SetMusicFromPath(string path)
         {
-            if (string.IsNullOrEmpty(path) || !System.IO.File.Exists(path))
+            if (!File.Exists(path))
                 return;
 
-            var fullPath = System.IO.Path.GetFullPath(path);
-            var uri = new Uri(fullPath, UriKind.Absolute);
+            var cachePath = path + ".wavecache";
 
-            try
+            if (!File.Exists(cachePath))
             {
-                _song = Framework.Media.Song.FromUri(System.IO.Path.GetFileName(fullPath), uri);
-                Duration = (float)(_song?.Duration.TotalSeconds ?? 0);
+                var wave = WaveformGenerator.Generate(path);
+                WaveformGenerator.Save(cachePath, wave);
             }
-            catch (Exception ex)
-            {
-                Log.Write($"Failed to load song '{path}': {ex.Message}");
-                _song = null;
-                MusicPath = string.Empty;
-            }
+
+            _wave = WaveformGenerator.Load(cachePath);
+
+            var uri = new Uri(Path.GetFullPath(path), UriKind.Absolute);
+            _song = Framework.Media.Song.FromUri(Path.GetFileName(path), uri);
+            Duration = (float)_song.Duration.TotalSeconds;
+            MusicPath = path;
         }
 
         public override void DrawProperties()
@@ -96,6 +98,34 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
             }
         }
 
+        private void DrawWaveform(ImDrawListPtr drawList, Vector2 pos, Vector2 size, TimeLineFeature timeline)
+        {
+            if (_wave == null)
+                return;
+            float pixelsPerSecond = timeline.FramePerSecond * timeline.StepSize;
+
+            float secondsPerBucket = 1f / _wave.BucketsPerSecond;
+
+            int startBucket = (int)(Start / secondsPerBucket);
+            int endBucket = (int)((Start + Duration) / secondsPerBucket);
+
+            for (int i = startBucket; i < endBucket && i < _wave.BucketCount; i++)
+            {
+                float min = _wave.MinMax[i * 2];
+                float max = _wave.MinMax[i * 2 + 1];
+
+                float x = pos.X + (i * secondsPerBucket - Start) * pixelsPerSecond;
+
+                float yMid = pos.Y + size.Y * 0.5f;
+
+                drawList.AddLine(
+                    new Vector2(x, yMid - max * size.Y * 0.5f),
+                    new Vector2(x, yMid - min * size.Y * 0.5f),
+                    ImGui.GetColorU32(new Vector4(0, 1, 0, 1))
+                );
+            }
+        }
+
         public override void Draw(ImDrawListPtr drawList, Vector2 position, TimeLineFeature timeLineSettings)
         {
             base.Draw(drawList, position, timeLineSettings);
@@ -116,6 +146,13 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
                 Framework.Media.MediaPlayer.Stop();
                 _isPlaying = false;
             }
+
+            var size = new Vector2(
+                timeLineSettings.GetPositionXOnTimeLine(Duration),
+                timeLineSettings.TimeLineHight - 2f
+            );
+
+            DrawWaveform(drawList, position, size, timeLineSettings);
         }
     }
 
