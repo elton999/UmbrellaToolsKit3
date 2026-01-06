@@ -24,7 +24,7 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
             RIGHT,
         }
 
-        public Keys Key;
+        [ShowEditor] public Keys Key;
 
         public override void DrawProperties()
         {
