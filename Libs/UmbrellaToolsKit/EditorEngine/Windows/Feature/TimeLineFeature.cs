@@ -262,23 +262,25 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.Feature
 
         public void DrawTimeCursor(ImDrawListPtr drawList, Vector2 position)
         {
-            float xPosition = GetPositionXOnTimeLine(_currentTime);
-            float cursorSize = 200f;
-            float triangleSize = 5f;
+            var fg = ImGui.GetForegroundDrawList();
 
-            drawList.AddTriangleFilled
-            (
-                new Vector2(xPosition + position.X - triangleSize, position.Y),
-                new Vector2(xPosition + position.X + triangleSize, position.Y),
-                new Vector2(xPosition + position.X, position.Y + triangleSize),
-                ImGui.GetColorU32(Microsoft.Xna.Framework.Color.Yellow.PackedValue)
+            float x = position.X + GetPositionXOnTimeLine(_currentTime);
+            float top = position.Y;
+            float bottom = position.Y + ImGui.GetWindowHeight();
+
+            fg.AddLine(
+                new Vector2(x, top),
+                new Vector2(x, bottom),
+                ImGui.GetColorU32(Microsoft.Xna.Framework.Color.Yellow.PackedValue),
+                2f
             );
 
-            drawList.AddLine
-            (
-               new Vector2(xPosition + position.X, position.Y),
-               new Vector2(xPosition + position.X, position.Y + cursorSize),
-               ImGui.GetColorU32(Microsoft.Xna.Framework.Color.Yellow.PackedValue)
+            float t = 6f;
+            fg.AddTriangleFilled(
+                new Vector2(x - t, top),
+                new Vector2(x + t, top),
+                new Vector2(x, top + t),
+                ImGui.GetColorU32(Microsoft.Xna.Framework.Color.Yellow.PackedValue)
             );
         }
 
