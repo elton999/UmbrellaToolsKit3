@@ -13,82 +13,101 @@ namespace UmbrellaToolsKit.EditorEngine.Fields
 {
 	public class Field
 	{
-		public static void DrawVector(string name, ref Vector2 vector)
-		{
 #if !RELEASE
-			const float kWeightName = 0.30f;
-			const float kWeightVal = 0.35f;
-
-			if (ImGui.BeginTable($"##vec{name}", 3, ImGuiTableFlags.SizingStretchSame))
-			{
-				ImGui.TableSetupColumn("##n", ImGuiTableColumnFlags.WidthStretch, kWeightName);
-				ImGui.TableSetupColumn("##x", ImGuiTableColumnFlags.WidthStretch, kWeightVal);
-				ImGui.TableSetupColumn("##y", ImGuiTableColumnFlags.WidthStretch, kWeightVal);
-				ImGui.TableNextRow();
-
-				ImGui.TableNextColumn();
-				ImGui.TextUnformatted(name);
-
-				ImGui.TableNextColumn();
-				{
-					float inner = ImGui.GetColumnWidth()
-								- ImGui.GetStyle().CellPadding.X * 2;
-					ImGui.SetNextItemWidth(inner);
-					ImGui.PushStyleColor(ImGuiCol.FrameBg, new Vector4(1, 0, 0, 0.5f));
-					ImGui.InputFloat($"##{name}_x", ref vector.X);
-					ImGui.PopStyleColor();
-				}
-
-				ImGui.TableNextColumn();
-				{
-					float inner = ImGui.GetColumnWidth()
-								- ImGui.GetStyle().CellPadding.X * 2;
-					ImGui.SetNextItemWidth(inner);
-					ImGui.PushStyleColor(ImGuiCol.FrameBg, new Vector4(0, 1, 0, 0.5f));
-					ImGui.InputFloat($"##{name}_y", ref vector.Y);
-					ImGui.PopStyleColor();
-				}
-
-				ImGui.EndTable();
-			}
+		private const float LabelWidthRatio = 0.32f;
 #endif
-		}
-
-		public static void DrawVector(string name, ref Vector3 vector)
-		{
-#if !RELEASE
-			ImGui.InputFloat3(name, ref vector);
-#endif
-		}
 
 		public static void DrawFloat(string name, ref float value)
 		{
 #if !RELEASE
-			ImGui.InputFloat(name, ref value);
+			BeginField(name);
+			ImGui.SetNextItemWidth(-1);
+			ImGui.InputFloat($"##{name}", ref value);
+			EndField();
 #endif
 		}
 
 		public static void DrawInt(string name, ref int value)
 		{
 #if !RELEASE
-			ImGui.InputInt(name, ref value);
+			BeginField(name);
+			ImGui.SetNextItemWidth(-1);
+			ImGui.InputInt($"##{name}", ref value);
+			EndField();
 #endif
 		}
+
+		public static void DrawBoolean(string name, ref bool value)
+		{
+#if !RELEASE
+			BeginField(name);
+			ImGui.Checkbox($"##{name}", ref value);
+			EndField();
+#endif
+		}
+
 		public static void DrawString(string name, ref string value)
 		{
 #if !RELEASE
-			if (String.IsNullOrEmpty(value)) value = string.Empty;
-			ImGui.InputText(name, ref value, 255);
+			if (string.IsNullOrEmpty(value)) value = string.Empty;
+			BeginField(name);
+			ImGui.SetNextItemWidth(-1);
+			ImGui.InputText($"##{name}", ref value, 255);
+			EndField();
 #endif
 		}
 
 		public static void DrawLongText(string name, ref string value)
 		{
 #if !RELEASE
-			TableFormatBegin(name, 1);
-			if (String.IsNullOrEmpty(value)) value = string.Empty;
-			ImGui.InputTextMultiline(string.Empty, ref value, 500, (Vector2.One * 500), ImGuiInputTextFlags.EnterReturnsTrue);
-			TableFormatEnd();
+			if (string.IsNullOrEmpty(value)) value = string.Empty;
+
+			BeginField(name);
+			ImGui.InputTextMultiline(
+				$"##{name}",
+				ref value,
+				1000,
+				new Vector2(-1, 120)
+			);
+			EndField();
+#endif
+		}
+
+		public static void DrawVector(string name, ref Vector2 vector)
+		{
+#if !RELEASE
+			BeginField(name);
+
+			float spacing = ImGui.GetStyle().ItemSpacing.X + 60f;
+			float width = (ImGui.GetContentRegionAvail().X - spacing) * 0.5f;
+
+			ImGui.PushItemWidth(width);
+			ImGui.InputFloat("X", ref vector.X);
+			ImGui.SameLine();
+			ImGui.InputFloat("Y", ref vector.Y);
+			ImGui.PopItemWidth();
+
+			EndField();
+#endif
+		}
+
+		public static void DrawVector(string name, ref Vector3 vector)
+		{
+#if !RELEASE
+			BeginField(name);
+
+			float spacing = ImGui.GetStyle().ItemSpacing.X;
+			float width = (ImGui.GetContentRegionAvail().X - spacing * 2) / 3f;
+
+			ImGui.PushItemWidth(width);
+			ImGui.InputFloat("X", ref vector.X);
+			ImGui.SameLine();
+			ImGui.InputFloat("Y", ref vector.Y);
+			ImGui.SameLine();
+			ImGui.InputFloat("Z", ref vector.Z);
+			ImGui.PopItemWidth();
+
+			EndField();
 #endif
 		}
 
@@ -96,11 +115,125 @@ namespace UmbrellaToolsKit.EditorEngine.Fields
 		{
 #if !RELEASE
 			var values = Enum.GetNames(type);
-			string valueName = value.ToString();
-			DrawStringOptions(name, ref valueName, values);
-			value = Enum.Parse(type, valueName, true);
+			string current = value.ToString();
+
+			BeginField(name);
+			if (ImGui.BeginCombo($"##{name}", current))
+			{
+				foreach (var option in values)
+				{
+					bool selected = option == current;
+					if (ImGui.Selectable(option, selected))
+						value = Enum.Parse(type, option);
+					if (selected) ImGui.SetItemDefaultFocus();
+				}
+				ImGui.EndCombo();
+			}
+			EndField();
 #endif
 		}
+
+		public static void DrawStringOptions(string name, ref string value, string[] options)
+		{
+#if !RELEASE
+			if (string.IsNullOrEmpty(value)) value = string.Empty;
+
+			BeginField(name);
+			if (ImGui.BeginCombo($"##{name}", value))
+			{
+				foreach (var option in options)
+				{
+					bool selected = option == value;
+					if (ImGui.Selectable(option, selected))
+						value = option;
+					if (selected) ImGui.SetItemDefaultFocus();
+				}
+				ImGui.EndCombo();
+			}
+			EndField();
+#endif
+		}
+
+		public static void DrawList(string name, ref IList value)
+		{
+#if !RELEASE
+			int count = value.IsValid() ? value.Count : 0;
+
+			if (ImGui.TreeNode($"#{name}", $"{name} ({count})"))
+			{
+				ImGui.Spacing();
+				DrawListFields(name, value);
+
+				ImGui.Spacing();
+				ImGui.Separator();
+				ImGui.Spacing();
+
+				ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 6);
+				if (ImGui.Button("+ Add Item"))
+					value.AddNewItem();
+
+				ImGui.TreePop();
+			}
+#endif
+		}
+
+#if !RELEASE
+		private static void DrawListFields(string name, IList value)
+		{
+			int removeIndex = -1;
+
+			for (int i = 0; i < value.Count; i++)
+			{
+				ImGui.PushID(i);
+
+				if (ImGui.BeginTable("##item_header", 2, ImGuiTableFlags.SizingStretchProp))
+				{
+					ImGui.TableSetupColumn("Header", ImGuiTableColumnFlags.WidthStretch, 1f);
+					ImGui.TableSetupColumn("Action", ImGuiTableColumnFlags.WidthFixed, 32f);
+					ImGui.TableNextRow();
+
+					ImGui.TableNextColumn();
+					bool open = ImGui.TreeNodeEx(
+						$"Item {i}",
+						ImGuiTreeNodeFlags.FramePadding
+					);
+
+					ImGui.TableNextColumn();
+					ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 2);
+					if (Buttons.RedButton("X"))
+						removeIndex = i;
+
+					ImGui.EndTable();
+
+					if (open)
+					{
+						ImGui.Indent();
+
+						ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(6, 4));
+						ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(6, 3));
+
+						var field = new InspectorClass.InspectorField
+						{
+							Name = name,
+							Value = value[i],
+							Type = value[i].GetType()
+						};
+
+						InspectorClass.DrawField(field);
+						value[i] = field.Value;
+
+						ImGui.PopStyleVar(2);
+						ImGui.Unindent();
+						ImGui.TreePop();
+					}
+				}
+
+				ImGui.PopID();
+			}
+
+			value.RemoveAtSafe(removeIndex);
+		}
+#endif
 
 		public static void DrawSprite(string name, Components.Sprite.Sprite spriteRef, out Components.Sprite.Sprite sprite)
 		{
@@ -131,93 +264,23 @@ namespace UmbrellaToolsKit.EditorEngine.Fields
 #endif
 		}
 
-		public static void DrawStringOptions(string name, ref string value, string[] options)
+#if !RELEASE
+		private static void BeginField(string label)
 		{
-#if !RELEASE
-			if (String.IsNullOrEmpty(value)) value = string.Empty;
+			ImGui.BeginTable($"##{label}", 2, ImGuiTableFlags.SizingStretchProp);
+			ImGui.TableSetupColumn("Label", ImGuiTableColumnFlags.WidthStretch, LabelWidthRatio);
+			ImGui.TableSetupColumn("Value", ImGuiTableColumnFlags.WidthStretch, 1f);
 
-			if (ImGui.BeginCombo(name, value, ImGuiComboFlags.HeightLarge | ImGuiComboFlags.HeightLargest))
-			{
-				for (int optionIndex = 0; optionIndex < options.Length; optionIndex++)
-				{
-					bool is_selected = options[optionIndex] == value;
-					if (ImGui.Selectable(options[optionIndex], is_selected)) value = options[optionIndex];
-					if (is_selected) ImGui.SetItemDefaultFocus();
-				}
-				ImGui.EndCombo();
-			}
-#endif
-		}
-
-		public static void DrawList(string name, ref IList value)
-		{
-#if !RELEASE
-			int listCount = value.IsValid() ? value.Count : 0;
-
-			if (ImGui.TreeNode(name, $"{name} ({listCount})"))
-			{
-				DrawListFields(name, value);
-
-				if (ImGui.Button("add new item")) value.AddNewItem();
-				ImGui.Unindent();
-			}
-#endif
-		}
-
-#if !RELEASE
-		private static void DrawListFields(string name, IList value)
-		{
-			int indexToRemove = -1;
-			for (int itemIndex = 0; itemIndex < value.Count; itemIndex++)
-			{
-				var item = value[itemIndex];
-				var fieldSettings = new InspectorClass.InspectorField()
-				{
-					Name = name,
-					Value = item,
-					Type = item.GetType()
-				};
-
-				TableFormatBeginCustom($"#{name}");
-				InspectorClass.DrawField(fieldSettings);
-				ImGui.TableNextColumn();
-				if (Buttons.RedButton("Delete")) indexToRemove = itemIndex;
-				TableFormatEnd();
-
-				value[itemIndex] = fieldSettings.Value;
-			}
-
-			value.RemoveAtSafe(indexToRemove);
-		}
-#endif
-
-#if !RELEASE
-		public static void DrawBoolean(string name, ref bool value) => ImGui.Checkbox(name, ref value);
-#endif
-
-		public static void TableFormatBegin(string name, int columns = 2)
-		{
-#if !RELEASE
-			ImGui.BeginTable($"##{name}", columns);
+			ImGui.TableNextRow();
 			ImGui.TableNextColumn();
-			ImGui.TextUnformatted(name);
+			ImGui.TextUnformatted(label);
 			ImGui.TableNextColumn();
-#endif
 		}
 
-		public static void TableFormatBeginCustom(string name, int columns = 2)
+		private static void EndField()
 		{
-#if !RELEASE
-			ImGui.BeginTable($"##{name}", columns);
-			ImGui.TableNextColumn();
-#endif
-		}
-
-		public static void TableFormatEnd()
-		{
-#if !RELEASE
 			ImGui.EndTable();
-#endif
 		}
+#endif
 	}
 }

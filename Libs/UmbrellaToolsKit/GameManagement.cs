@@ -35,6 +35,7 @@ namespace UmbrellaToolsKit
             _editor = new EditorMain(Game, this);
 #if !RELEASE
             new Application(new Eto.WinForms.Platform());
+            EditorTheme.ApplyDarkPro();
 #endif
         }
 
