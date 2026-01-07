@@ -229,10 +229,6 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
             ImGui.Begin("PropertiesDock");
             if (_currentTimeLineIndex != -1)
             {
-                if (Fields.Buttons.BlueButton("Export JSON"))
-                {
-                    ExportJson();
-                }
                 _currentTimeLine.DrawProperties();
             }
             ImGui.End();
@@ -341,6 +337,11 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
                 TimeLineFeatureList.Add(new RhythmTimeLineSettings() { Name = _newTimeLineName });
                 _currentTimeLineIndex = TimeLineFeatureList.Count - 1;
                 _newTimeLineName = "New Timeline";
+            }
+
+            if (Fields.Buttons.BlueButton("Export JSON"))
+            {
+                ExportJson();
             }
 
             ImGui.Separator();
