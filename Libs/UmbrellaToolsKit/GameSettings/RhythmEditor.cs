@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using Eto.Forms;
 using ImGuiNET;
@@ -80,7 +81,7 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
 
             if (!string.IsNullOrEmpty(MusicPath))
             {
-                ImGui.Text($"Loaded music: {System.IO.Path.GetFileName(MusicPath)}");
+                ImGui.Text($"Loaded music: {Path.GetFileName(MusicPath)}");
             }
 
             if (Fields.Buttons.BlueButton("Load Music"))
@@ -228,9 +229,64 @@ namespace UmbrellaToolsKit.EditorEngine.GameSettings
             ImGui.Begin("PropertiesDock");
             if (_currentTimeLineIndex != -1)
             {
+                if (Fields.Buttons.BlueButton("Export JSON"))
+                {
+                    ExportJson();
+                }
                 _currentTimeLine.DrawProperties();
             }
             ImGui.End();
+        }
+
+        private void ExportJson()
+        {
+            var exportFileDialog = ExportDialogue.SaveFileDialog("Export", "file json", ".json");
+            if (ExportDialogue.ShowSaveDialog(exportFileDialog))
+            {
+                var songJson = new SongEvents.Song();
+                var rhythmEditorList = new List<SongEvents.RhythmEditor>();
+                string filePath = exportFileDialog.FileName;
+                foreach (var music in TimeLineFeatureList)
+                {
+                    var allEvents = new List<TimelineItem>();
+                    var rhythmEditor = new SongEvents.RhythmEditor();
+                    var eventList = new List<SongEvents.Event>();
+                    foreach (var track in music.TimeLineFeature.Tracks)
+                    {
+                        allEvents.AddRange(track.Items);
+                    }
+
+                    foreach (var item in allEvents.OrderBy(x => x.Start))
+                    {
+                        if (item is EventItem eventItem)
+                        {
+                            var songEvent = new SongEvents.Event()
+                            {
+                                Timer = item.Start,
+                                Arrow = eventItem.Key switch
+                                {
+                                    EventItem.Keys.UP => 0,
+                                    EventItem.Keys.DOWN => 1,
+                                    EventItem.Keys.LEFT => 2,
+                                    EventItem.Keys.RIGHT => 3,
+                                    _ => 0,
+                                }
+                            };
+
+                            eventList.Add(songEvent);
+                        }
+
+                        if (item is MusicItem musicItem)
+                            rhythmEditor.Song = Path.GetFileName(musicItem.MusicPath);
+                    }
+
+                    rhythmEditor.Events = eventList.ToArray();
+                    rhythmEditorList.Add(rhythmEditor);
+                }
+
+                songJson.RhythmEditor = rhythmEditorList.ToArray();
+                SongEvents.Song.ExportJsonSong(songJson, filePath);
+            }
         }
 
         public override void DrawFields(EditorMain editorMain)
