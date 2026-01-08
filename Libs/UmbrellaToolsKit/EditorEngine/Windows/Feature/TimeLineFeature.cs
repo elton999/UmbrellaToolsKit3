@@ -131,7 +131,14 @@ namespace UmbrellaToolsKit.EditorEngine.Windows.Feature
             ImGui.Spacing();
 
             if (_selectedSequenceItem != null)
+            {
                 _selectedSequenceItem.DrawProperties();
+                if (Fields.Buttons.RedButton("Delete Item"))
+                {
+                    Tracks[_trackSelected].Items.Remove(_selectedSequenceItem);
+                    _selectedSequenceItem = null;
+                }
+            }
         }
 
         public virtual void AddANewItem(Type timeLineItem, object item)
